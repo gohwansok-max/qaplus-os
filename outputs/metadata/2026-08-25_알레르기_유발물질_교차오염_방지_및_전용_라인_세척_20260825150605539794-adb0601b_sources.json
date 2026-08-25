@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-08-25T15:07:06+00:00",
+  "story_id": "20260825150605539794-adb0601b",
+  "topic": "알레르기 유발물질 교차오염 방지 및 전용 라인 세척",
+  "story_angle": "field-troubleshooting",
+  "generation_mode": "llm_verified",
+  "model": "gpt-5.6-sol",
+  "script_fingerprint": "a16c19dc84108d3b25363fff9f4f54485d531ad63d55f0fbb6021c10c5f295e6",
+  "recent_fingerprint_count": 1,
+  "official_sources": [
+    {
+      "title": "식품의약품안전처>법령/자료>자료실>자료집/정보집 - 상세보기 | 식품의약품안전처",
+      "url": "https://www.mfds.go.kr/brd/m_218/view.do?seq=8866",
+      "snippet": "식품제조업체 식품안전관리 매뉴얼.pdf 다운받기 미리보기 첨부파일 닫기"
+    },
+    {
+      "title": "식품의약품안전처>법령/자료>자료실>자료집/정보집 - 상세보기 | 식품의약품안전처",
+      "url": "https://www.mfds.go.kr/brd/m_218/view.do?seq=33624",
+      "snippet": "2025년 식품안전관리지침.pdf 다운받기 미리보기 첨부파일 닫기 720 2025년 식품안전관리지침.hwpx 다운받기 미리보기 첨부파일 보기 2025년 식품안전관리지침 서식모음.hwpx 다운받기 미리보기 첨부파일 보기"
+    },
+    {
+      "title": "식품 · 안전 > 식품안전 > 식품안전 지식 | 식품안전나라",
+      "url": "https://www.foodsafetykorea.go.kr/portal/board/boardDetail.do?menu_no=3120&menu_grp=MENU_NEW01&bbs_no=bbs001&ntctxt_no=1091412",
+      "snippet": "(28159) 충청북도 청주시 흥덕구 오송읍 오송생명2로 187 오송보건의료행정타운 식품의약품안전처 > 시스템 문의 통합망 고객지원센터 ｜ 1899-5590 (유료) (문의 예시) 로그인 오류, 회원가입 오류, 시스템 사용방법, 화면 오류 및 장애 신고 > 기타 문의"
+    }
+  ],
+  "source_count": 3,
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요."
+}
