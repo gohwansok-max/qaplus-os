@@ -285,7 +285,7 @@ def _provider_candidates() -> list[dict[str, str]]:
             "provider": "official_openai",
             "base_url": os.environ.get("OFFICIAL_OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/"),
             "api_key": official_key,
-            "model": os.environ.get("OFFICIAL_OPENAI_STORY_MODEL", "gpt-5-mini").strip(),
+            "model": os.environ.get("OFFICIAL_OPENAI_STORY_MODEL", "gpt-4.1-mini").strip(),
         })
     return candidates
 
@@ -336,14 +336,18 @@ def generate_live_web_script(topic_name: str, angle: dict[str, str], sources: li
         for attempt in range(1, max_attempts + 1):
             try:
                 system, user = _prompt(topic_name, angle, sources, story_id, attempt)
+                payload: dict[str, Any] = {
+                    "model": candidate["model"],
+                    "temperature": 1.0,
+                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+                }
+                # 공식 OpenAI 대체 경로는 빠른 5씬 응답을 위해 출력 길이를 제한한다.
+                if candidate["provider"] == "official_openai":
+                    payload["max_tokens"] = 1400
                 response = requests.post(
                     f"{candidate['base_url']}/chat/completions",
                     headers={"Authorization": f"Bearer {candidate['api_key']}", "Content-Type": "application/json"},
-                    json={
-                        "model": candidate["model"],
-                        "temperature": 1.0,
-                        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-                    },
+                    json=payload,
                     timeout=timeout,
                 )
                 if not response.ok:

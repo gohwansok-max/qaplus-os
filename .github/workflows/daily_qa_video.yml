@@ -58,7 +58,7 @@ jobs:
           # 칩섭의 재시도가 모두 실패할 때만 선택되는 공식 OpenAI API 대체 경로입니다.
           OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
           OFFICIAL_OPENAI_BASE_URL: https://api.openai.com/v1
-          OFFICIAL_OPENAI_STORY_MODEL: gpt-5-mini
+          OFFICIAL_OPENAI_STORY_MODEL: gpt-4.1-mini
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             echo "사용자 지정 주제 실행: ${{ github.event.inputs.topic }}"
