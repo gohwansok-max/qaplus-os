@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-08-25 14:34:56",
+  "last_run": "2026-08-25 21:35:19",
   "topics": [
     {
       "id": 1,
@@ -63,8 +63,8 @@
         185,
         129
       ],
-      "status": "pending",
-      "rendered_file": null
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-08-25_식품공장_위생복·방진복_착용_기준_및_손세척_30초_검_shorts.mp4"
     },
     {
       "id": 6,
