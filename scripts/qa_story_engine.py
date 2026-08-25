@@ -99,6 +99,20 @@ def _has_banned_phrase(value: Any) -> bool:
     return any(phrase in text for phrase in BANNED_PHRASES)
 
 
+def _object_particle(value: str) -> str:
+    """한글 종성 유무에 맞춰 목적격 조사를 선택한다."""
+    text = str(value or "").strip()
+    if not text:
+        return "을"
+    last = text[-1]
+    if "가" <= last <= "힣":
+        return "을" if (ord(last) - ord("가")) % 28 else "를"
+    return "을"
+
+
+
+
+
 def _topic(value: str) -> str:
     return _clean_text(value, 60) or "식품 품질관리 핵심 점검"
 
@@ -375,7 +389,7 @@ def local_verified_fallback(topic_name: str, angle: dict[str, str], story_id: st
 
     if angle["id"] == "junior-mistake":
         return [
-            _fallback_scene(1, badge, "신입 QA가\n가장 먼저 하는 실수", focus, ["타사 양식 그대로 사용", "내 공장 조건 미확인"], "양식은 답안지가 아니라 확인할 질문 목록입니다.", f"{topic_name}에서 실수는 문서부터 복사하는 것입니다. {focus}를 먼저 이해하지 않으면 좋은 양식도 현장에서 힘을 못 씁니다."),
+            _fallback_scene(1, badge, "신입 QA가\n가장 먼저 하는 실수", focus, ["타사 양식 그대로 사용", "내 공장 조건 미확인"], "양식은 답안지가 아니라 확인할 질문 목록입니다.", f"{topic_name}에서 실수는 문서부터 복사하는 것입니다. {focus}{_object_particle(focus)} 먼저 이해하지 않으면 좋은 양식도 현장에서 힘을 못 씁니다."),
             _fallback_scene(2, badge, "먼저 적을 것은\n관리 수치가 아닙니다", "기준이 필요한 이유", ["위해요소와 관리 목적", "현재 공정 조건"], "숫자 앞에 '왜 관리하는가'를 한 줄로 적어보세요.", "관리 수치부터 정하려고 하지 마세요. 제품과 공정에서 무엇을 막으려는지 정리하면 필요한 확인 방법이 보입니다."),
             _fallback_scene(3, badge, "작업자에게 꼭\n물어볼 질문 2개", "문서 밖의 실제 흐름", ["실제로 확인하는 시점", "막힐 때의 대응 방법"], "문서 검토 전에 5분 현장 인터뷰를 해보세요.", f"{action}. 문서와 작업이 다르면 문서를 고치는 것이 먼저인지, 작업을 바로잡는 것이 먼저인지 판단할 수 있습니다."),
             _fallback_scene(4, badge, "기록을 쓸 때\n빠지기 쉬운 것", "판단 근거 남기기", ["누가 확인했는지", "무엇을 근거로 판단했는지"], "나중에 본 사람이 같은 결론을 낼 수 있어야 합니다.", "기록은 체크 표시만 남기는 종이가 아닙니다. 판단 근거가 이어져야 다음 근무자도 같은 기준으로 움직일 수 있습니다."),
@@ -384,7 +398,7 @@ def local_verified_fallback(topic_name: str, angle: dict[str, str], story_id: st
 
     if angle["id"] == "response-window":
         return [
-            _fallback_scene(1, badge, "이상 신호가 뜨면\n첫 1분에 할 일", focus, ["시간·라인·제품 식별", "현재 작업 상태 확인"], "원인을 말하기 전에 사실부터 묶어 두세요.", f"{topic_name} 이탈은 발견 직후가 가장 중요합니다. {focus}를 먼저 잡아야 뒤의 판단이 흔들리지 않습니다."),
+            _fallback_scene(1, badge, "이상 신호가 뜨면\n첫 1분에 할 일", focus, ["시간·라인·제품 식별", "현재 작업 상태 확인"], "원인을 말하기 전에 사실부터 묶어 두세요.", f"{topic_name} 이탈은 발견 직후가 가장 중요합니다. {focus}{_object_particle(focus)} 먼저 잡아야 뒤의 판단이 흔들리지 않습니다."),
             _fallback_scene(2, badge, "멈추고 찾고\n표시하는 순서", "영향 범위 혼선 줄이기", ["해당 제품 임시 분리", "전후 작업 흐름 확인"], "제품 표시가 명확해야 나중에 추적이 가능합니다.", f"둘째는 범위 관리입니다. {action}. 이 단계에서 빠르게 구분해 두면 불필요한 혼선도 줄어듭니다."),
             _fallback_scene(3, badge, "원인 분석은\n그 다음입니다", "추정과 사실 구분", ["확인된 사실 기록", "추가 확인 항목 지정"], "모르는 내용은 빈칸으로 남기지 말고 확인 계획을 적으세요.", "원인을 빨리 단정하면 조치가 흔들릴 수 있습니다. 확인한 사실과 더 확인할 내용을 나누어 기록하는 것이 안전합니다."),
             _fallback_scene(4, badge, "재가동 전\n질문 하나", "조치 유효성 확인", ["조치가 현장에 적용됐는지", "책임자 확인이 남았는지"], "재가동 기준은 사내 절차와 연결해 두세요.", "조치했다는 말보다 조치가 실제로 작동하는지 확인하는 기록이 중요합니다. 재가동 전에는 이 연결을 한 번 더 보세요."),
@@ -392,7 +406,7 @@ def local_verified_fallback(topic_name: str, angle: dict[str, str], story_id: st
         ]
 
     return [
-        _fallback_scene(1, badge, "같은 이상 신호\n반복될 때", focus, ["문제 발생 시점", "직전 변경 사항"], "가설보다 먼저 시간 순서를 적어보세요.", f"{topic_name}에서 이상 신호가 반복되면 장비 교체부터 하지 마세요. {focus}를 따라가면 현장 단서가 보이기 시작합니다."),
+        _fallback_scene(1, badge, "같은 이상 신호\n반복될 때", focus, ["문제 발생 시점", "직전 변경 사항"], "가설보다 먼저 시간 순서를 적어보세요.", f"{topic_name}에서 이상 신호가 반복되면 장비 교체부터 하지 마세요. {focus}{_object_particle(focus)} 따라가면 현장 단서가 보이기 시작합니다."),
         _fallback_scene(2, badge, "기록만 보지 말고\n현장을 같이 보기", "숫자가 나온 조건 확인", ["기록값의 시간", "실제 작업의 시간"], "기록 시각과 작업 시각을 나란히 비교하세요.", f"둘째는 현장 확인입니다. {action}. 숫자는 결과이고, 그 숫자가 나온 조건이 원인을 좁혀 줍니다."),
         _fallback_scene(3, badge, "변경점 3가지를\n한 줄에 적기", "원료·설비·작업 방법", ["새로 바뀐 요소", "바뀌지 않은 요소"], "변경이 없었다는 말도 확인 기록으로 남기세요.", "원료, 설비, 작업 방법을 한 번에 모두 의심하지 마세요. 바뀐 것과 그대로인 것을 나누면 점검 범위가 줄어듭니다."),
         _fallback_scene(4, badge, "현장 조치는\n작게 검증하기", "조치 전후 비교", ["조치 내용 기록", "확인 방법 설정"], "조치와 확인 방법을 한 쌍으로 작성하세요.", "조치가 맞는지 보려면 확인 방법도 함께 정해야 합니다. 작은 범위에서 검증하고 결과를 기록한 뒤 다음 판단으로 넘어가세요."),
