@@ -40,12 +40,17 @@ jobs:
       - name: 파이썬 라이브러리 설치 (Pillow, Edge-TTS, Requests)
         run: |
           python -m pip install --upgrade pip
-          pip install pillow edge-tts requests
+          pip install pillow edge-tts requests ddgs
 
       - name: 큐에이플러스 쇼츠 오토파일럿 실행 & 텔레그램 발송
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # 저장소에 등록된 CHIPSUB_API를 런타임 환경변수로만 전달합니다.
+          CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
+          CHEAPAI_BASE_URL: https://api.cheapai.im/v1
+          CHEAPAI_STORY_MODEL: claude-sonnet-5
+          CHEAPAI_STORY_FALLBACK_MODEL: gpt-5.6-sol
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             echo "사용자 지정 주제 실행: ${{ github.event.inputs.topic }}"
@@ -62,17 +67,37 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: daily-shorts-video
-          path: outputs/videos/*.mp4
+          path: |
+            outputs/videos/*.mp4
+            outputs/metadata/*.json
           retention-days: 30
 
       - name: 변경사항 Git 커밋 및 푸시 (outputs/videos & 토픽 큐 갱신)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add outputs/videos/ knowledge/qa_topics_queue.json outputs/frames/ outputs/audio/ || true
+          git add outputs/videos/ outputs/metadata/ knowledge/qa_topics_queue.json outputs/frames/ outputs/audio/ || true
           if git status --porcelain | grep -q .; then
             git commit -m "chore(auto): 일일 큐에이플러스 숏츠 영상 자동 렌더링 완료"
             git push origin HEAD || echo "Git push skipped or failed gracefully"
           else
             echo "커밋할 새로운 파일이 없습니다."
           fi
+
+  notify-failure:
+    name: 실패 시 텔레그램 알림
+    needs: generate-daily-shorts
+    if: ${{ needs.generate-daily-shorts.result == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 작업 실패 알림 전송
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MESSAGE="🚨 [QA+] 일일 쇼츠 자동화 실패\n\n실행 ID: ${{ github.run_id }}\n트리거: ${{ github.event_name }}\n로그: ${RUN_URL}\n\n로그에서 실패 단계를 확인한 뒤 다시 실행해 주세요."
+          curl --retry 2 --retry-delay 2 --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}" || echo "::warning::텔레그램 실패 알림 전송에 실패했습니다."
