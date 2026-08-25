@@ -1,0 +1,79 @@
+{
+  "projectTitle": "HACCP 금속검출기 검증 실무 완벽 가이드",
+  "fps": 30,
+  "totalDurationSeconds": 59,
+  "scenes": [
+    {
+      "badge": "🚨 긴급 점검",
+      "badgeBg": "#ef4444",
+      "title": "HACCP 심사 탈락 1위?\n금속검출기 검증 주기!",
+      "subtitle": "20년 선배가 알려주는 3분 합격 공식",
+      "keyPoints": [
+        "검증 주기 누락 시 당일 생산 전량 보류",
+        "심사관이 가장 먼저 확인하는 핵심 CCP"
+      ],
+      "seniorTip": "장비 고장 시 회수 범위를 줄이는 골든타임 관리!",
+      "image": "assets/broll_metal_line.jpg",
+      "accent": "#ef4444",
+      "durationSeconds": 11
+    },
+    {
+      "badge": "💡 한계기준 설정",
+      "badgeBg": "#f59e0b",
+      "title": "남의 기준 베끼면 부적합!\n제품 감도(Effect) 검증 필수",
+      "subtitle": "Fe 1.5mm / Sus 2.0mm 설정의 과학적 근거",
+      "keyPoints": [
+        "수분·염분·온도에 따른 감도 변화 실측",
+        "신제품/배합비 변경 시 유효성 평가 보고서 구비"
+      ],
+      "seniorTip": "10회 연속 통과 테스트 데이터가 없으면 감점 대상!",
+      "image": "assets/broll_test_piece.jpg",
+      "accent": "#f59e0b",
+      "durationSeconds": 12
+    },
+    {
+      "badge": "⏱️ 검증 골든타임",
+      "badgeBg": "#06b6d4",
+      "title": "무조건 지켜야 할\n'3시점 검증 원칙'",
+      "subtitle": "사고 났을 때 덤터기 쓸 물량을 차단하는 법",
+      "keyPoints": [
+        "1. 작업 시작 전 : 10분 예열 후 정상 작동 확인",
+        "2. 작업 중 (2~3시간) : 라인 가동 중 감도 유지",
+        "3. 작업 종료 직후 : 당일 생산 로트 유효성 최종 보증"
+      ],
+      "seniorTip": "종료 후 검증을 빼먹으면 하루 종일 만든 물량 전량 재검사!",
+      "image": "assets/broll_smart_haccp.jpg",
+      "accent": "#06b6d4",
+      "durationSeconds": 12
+    },
+    {
+      "badge": "🔥 20년 선배 꿀팁",
+      "badgeBg": "#8b5cf6",
+      "title": "가장자리로 넣으면 낭패!\n'헤드 정중앙' 통과 원칙",
+      "subtitle": "현장 작업자가 가장 많이 실수하는 치명적 포인트",
+      "keyPoints": [
+        "검출기 정중앙이 자기장이 가장 약한 Cold Spot",
+        "제품의 가장 두꺼운 중심부에 시편 올려서 통과"
+      ],
+      "seniorTip": "리젝트(Reject) 불합격품 보관함 시건장치 열쇠 확인!",
+      "image": "assets/broll_test_piece.jpg",
+      "accent": "#8b5cf6",
+      "durationSeconds": 12
+    },
+    {
+      "badge": "🏆 합격 체크리스트",
+      "badgeBg": "#10b981",
+      "title": "심사관이 감탄하는\n3대 필수 구비 서류",
+      "subtitle": "이것만 준비하면 HACCP / FSSC22000 100% 통과!",
+      "keyPoints": [
+        "1. 금속검출기 한계기준 설정 및 유효성 평가서",
+        "2. 일일 3시점 모니터링 일지 & 이탈 조치 기록",
+        "3. 테스트피스 연 1회 검교정 성적서"
+      ],
+      "seniorTip": "궁금한 서식이나 질문은 큐에이플러스 오픈채팅방으로!",
+      "image": "assets/broll_audit.jpg",
+      "accent": "#10b981",
+      "durationSeconds": 12
+    }
+  ]
+}

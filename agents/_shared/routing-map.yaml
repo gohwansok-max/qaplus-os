@@ -1,0 +1,77 @@
+# Routing Map — 안건 → Tier + 소집 임원 자동 결정
+# version: v1.0 (2026-04-09)
+# 사용: 김이사가 CEO 발화를 파싱 → trigger 매칭 → tier/summon/lead 결정
+# fallback: cso-judgment (매칭 없음 → Tier 1 김이사 단독)
+
+fallback: cso-judgment
+
+routes:
+  - id: ad-roas
+    name: 광고·ROAS·CPA·전환율
+    triggers: [광고, ROAS, CPA, CAC, 전환율, 퍼포먼스, 메타광고, 구글광고, 타겟팅]
+    tier: 2
+    summon: [cmo, cdo, cfo]
+    lead: cmo
+
+  - id: content-reels
+    name: 콘텐츠·릴스·숏폼·유튜브
+    triggers: [릴스, 숏폼, 유튜브, 콘텐츠, 대본, 후킹, 썸네일, 기획안]
+    tier: 2
+    summon: [cco, cmo]
+    lead: cco
+
+  - id: course-bootcamp
+    name: 강의·부트캠프·커리큘럼·완강률
+    triggers: [강의, 부트캠프, 커리큘럼, 수강생, 완강률, 교육, 챌린지]
+    tier: 2
+    summon: [cpo, cxo, cdo]
+    lead: cpo
+
+  - id: pricing-launch
+    name: 가격·런칭·신상품 (Tier 3)
+    triggers: [가격, 런칭, 신상품, 신서비스, 요금제, 프라이싱, 할인정책]
+    tier: 3
+    summon: [cmo, cfo, cpo, cxo, cco, cto, coo, cdo]
+    lead: cso
+
+  - id: tech-infra
+    name: 기술·자동화·인프라·봇
+    triggers: [서버, 봇, 크론, 인프라, 자동화, 배포, API, 스크립트]
+    tier: 1
+    summon: [cto]
+    lead: cto
+
+  - id: data-metrics
+    name: 데이터·지표·분석·대시보드
+    triggers: [데이터, 지표, KPI, 분석, 대시보드, 리포트, 측정, 트래킹]
+    tier: 2
+    summon: [cdo, cfo]
+    lead: cdo
+
+  - id: ops-process
+    name: 운영·프로세스·리소스·일정
+    triggers: [프로세스, 일정, 리소스, 병목, SOP, 운영, 조직]
+    tier: 1
+    summon: [coo]
+    lead: coo
+
+  - id: community-churn
+    name: 커뮤니티·이탈·온보딩·CS
+    triggers: [커뮤니티, 카페, 온보딩, 이탈, CS, 고객경험, 팬덤, DM]
+    tier: 2
+    summon: [cxo, cpo, cco]
+    lead: cxo
+
+  - id: finance-budget
+    name: 재무·예산·ROI·현금흐름
+    triggers: [매출, 비용, 예산, ROI, 현금흐름, 수익성, 마진, 재무]
+    tier: 2
+    summon: [cfo, cdo]
+    lead: cfo
+
+  - id: company-strategy
+    name: 전사 전략·분기 리뷰·방향 전환 (Tier 3)
+    triggers: [전략, 방향, 분기리뷰, 전체검토, 임원회의, 사업전체, 피벗]
+    tier: 3
+    summon: [cmo, cfo, cpo, cxo, cco, cto, coo, cdo]
+    lead: cso

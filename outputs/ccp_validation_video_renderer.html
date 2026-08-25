@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCP 한계기준 설정 및 유효성검증 - 3분 영상 렌더러</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700;800;900&display=swap");
+    body { font-family: 'Pretendard', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
+    .gradient-border { background: linear-gradient(135deg, #06b6d4, #3b82f6, #8b5cf6); padding: 1.5px; border-radius: 1rem; }
+    .active-scene-btn { background: linear-gradient(135deg, #0284c7, #2563eb) !important; color: white !important; font-weight: 700 !important; box-shadow: 0 0 15px rgba(14, 165, 233, 0.4); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 md:p-6 select-none">
+
+  <header class="w-full max-w-7xl flex flex-wrap justify-between items-center mb-4 gap-4 bg-slate-900/80 p-4 rounded-2xl border border-slate-800 backdrop-blur">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+        <i class="fa-solid fa-shield-virus text-white text-xl"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">HACCP & FSSC 22000</span>
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">3분 영상 코드 렌더러</span>
+        </div>
+        <h1 class="text-lg md:text-xl font-extrabold text-slate-100">CCP 한계기준 설정 및 유효성검증 완전정복 (3분 풀버전)</h1>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button id="btnRecord" class="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl shadow-lg shadow-rose-600/30 transition active:scale-95">
+        <i class="fa-solid fa-circle-dot animate-pulse"></i>
+        <span id="recText">1080p MP4/WebM 렌더링 녹화</span>
+      </button>
+      <button id="btnAudioToggle" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition">
+        <i id="audioIcon" class="fa-solid fa-volume-high"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="lg:col-span-8 flex flex-col gap-3">
+      <div class="gradient-border shadow-2xl relative group">
+        <div class="relative aspect-video w-full bg-slate-950 rounded-[15px] overflow-hidden flex items-center justify-center">
+          <canvas id="videoCanvas" width="1920" height="1080" class="w-full h-full object-contain"></canvas>
+          
+          <div id="playOverlay" class="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center cursor-pointer transition-opacity duration-300">
+            <div class="w-20 h-20 rounded-full bg-cyan-500/90 text-white flex items-center justify-center text-3xl shadow-xl shadow-cyan-500/40 transform group-hover:scale-110 transition">
+              <i class="fa-solid fa-play ml-1"></i>
+            </div>
+          </div>
+
+          <div id="recBadge" class="hidden absolute top-4 left-4 bg-rose-600/90 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-2 text-xs font-bold text-white shadow-lg border border-rose-400/40 animate-pulse">
+            <div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+            <span>RENDERING (REC 1080P 60FPS)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <span id="currentTimeDisplay" class="text-xs font-mono text-cyan-400 font-bold w-14 text-right">00:00</span>
+          <input type="range" id="timeSlider" min="0" max="180" step="0.1" value="0" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+          <span id="totalTimeDisplay" class="text-xs font-mono text-slate-400 w-14">03:00</span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button id="btnPlayPause" class="w-10 h-10 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center transition">
+              <i id="playIcon" class="fa-solid fa-play"></i>
+            </button>
+            <button id="btnReset" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="처음으로">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <div class="h-6 w-px bg-slate-800 mx-1"></div>
+            <select id="speedSelect" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-2 rounded-xl border border-slate-700 focus:outline-none focus:border-cyan-500">
+              <option value="1">1.0x 속도</option>
+              <option value="1.5">1.5x 속도</option>
+              <option value="2">2.0x 속도 (고속 렌더)</option>
+              <option value="4">4.0x 속도 (초고속 렌더)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+            <span id="fpsDisplay">60 FPS</span>
+            <span>•</span>
+            <span id="frameDisplay">Frame 0 / 10800</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        <button onclick="jumpToScene(0)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="0">
+          <span class="text-[10px] text-cyan-400 font-bold">01 [00:00]</span>
+          <span class="truncate font-semibold text-slate-300">한계기준 정의</span>
+        </button>
+        <button onclick="jumpToScene(1)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="1">
+          <span class="text-[10px] text-cyan-400 font-bold">02 [00:30]</span>
+          <span class="truncate font-semibold text-slate-300">설정 4단계</span>
+        </button>
+        <button onclick="jumpToScene(2)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="2">
+          <span class="text-[10px] text-cyan-400 font-bold">03 [01:00]</span>
+          <span class="truncate font-semibold text-slate-300">유효성검증 개념</span>
+        </button>
+        <button onclick="jumpToScene(3)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="3">
+          <span class="text-[10px] text-cyan-400 font-bold">04 [01:30]</span>
+          <span class="truncate font-semibold text-slate-300">검증 3대방법</span>
+        </button>
+        <button onclick="jumpToScene(4)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="4">
+          <span class="text-[10px] text-cyan-400 font-bold">05 [02:00]</span>
+          <span class="truncate font-semibold text-slate-300">현장 실무사례</span>
+        </button>
+        <button onclick="jumpToScene(5)" class="scene-btn p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-xs text-left transition flex flex-col gap-1" data-scene="5">
+          <span class="text-[10px] text-cyan-400 font-bold">06 [02:30]</span>
+          <span class="truncate font-semibold text-slate-300">재검증&체크</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-xl">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-microphone-lines text-cyan-400"></i>
+            <h2 class="font-bold text-sm text-slate-200">실시간 내레이션 대본 (싱크)</h2>
+          </div>
+          <span id="activeChapterPill" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Scene 1 / 6</span>
+        </div>
+        <div id="scriptBox" class="h-64 overflow-y-auto pr-1 flex flex-col gap-2.5 text-sm leading-relaxed text-slate-300 scroll-smooth"></div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex flex-col gap-3 shadow-xl">
+        <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
+          <i class="fa-solid fa-book-bookmark text-emerald-400"></i>
+          <h2 class="font-bold text-sm text-slate-200">법적/학술적 근거 표준</h2>
+        </div>
+        <ul class="text-xs space-y-2 text-slate-400">
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-cyan-400 mt-0.5"></i><span><strong>식품위생법 제48조 & HACCP 고시</strong>: 중요관리점 한계기준 설정 및 유효성 입증 의무</span></li>
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-cyan-400 mt-0.5"></i><span><strong>Codex HACCP 원칙 3 & 6</strong>: 과학적 타당성 검증(Validation) 및 모니터링 한계기준</span></li>
+          <li class="flex items-start gap-2"><i class="fa-solid fa-check text-cyan-400 mt-0.5"></i><span><strong>FSSC 22000 2.5.2</strong>: 공정 제어 한계 및 미생물 사멸 곡선(D/z-value) 데이터 연계</span></li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const TOTAL_DURATION = 180;
+    
+    const scenes = [
+      {
+        id: 0,
+        start: 0,
+        end: 30,
+        title: "한계기준(Critical Limit)의 본질 & 운용한계(OL)",
+        category: "STEP 1 • 기초 개념",
+        color: "#06b6d4",
+        accent: "#0284c7",
+        script: "식품안전 HACCP의 핵심, CCP 한계기준(Critical Limit)은 위해요소를 허용 수준 이하로 제어하기 위한 최소 또는 최대의 과학적 수치 기준입니다. 많은 분들이 '운용한계(OL)'와 혼동하는데요, 한계기준(CL)은 절대 넘어가선 안 되는 '법적 안전선'이고, 운용한계(OL)는 안전 마진을 둔 '현장 관리선'입니다.",
+        draw: drawScene1
+      },
+      {
+        id: 1,
+        start: 30,
+        end: 60,
+        title: "한계기준 설정 4단계 표준 프로세스",
+        category: "STEP 2 • 설정 방법론",
+        color: "#3b82f6",
+        accent: "#1d4ed8",
+        script: "한계기준은 감이나 경험으로 정하는 것이 아닙니다. 4단계 표준 프로세스를 거칩니다. 1단계: 생물학적·화학적·물리적 위해요소를 명확히 특정하고, 2단계: 온도, 시간, 압력, 수분활성도, 금속 규격 등 측정 가능한 파라미터를 선정합니다. 3단계: 공인 시험 성적서와 법적 기준을 확보하고, 4단계: 모니터링 가능한 명확한 수치로 확정합니다.",
+        draw: drawScene2
+      },
+      {
+        id: 2,
+        start: 60,
+        end: 90,
+        title: "유효성 검증(Validation) vs 일상 검증(Verification)",
+        category: "STEP 3 • 검증 철학",
+        color: "#8b5cf6",
+        accent: "#6d28d9",
+        script: "심사에서 가장 많이 탈락하는 핵심 질문! '우리가 설정한 한계기준이 정말로 세균을 죽이고 이물을 차단하는가?'를 사전에 과학적으로 입증하는 것이 바로 유효성 검증(Validation)입니다. 매일 기준대로 실행되었는지 확인하는 사후 일상 검증(Verification)과는 명확히 구분해야 합니다.",
+        draw: drawScene3
+      },
+      {
+        id: 3,
+        start: 90,
+        end: 120,
+        title: "유효성 검증 3대 핵심 방법론 (과학적 입증)",
+        category: "STEP 4 • 실증 기법",
+        color: "#10b981",
+        accent: "#047857",
+        script: "유효성 검증을 수행하는 3대 방법은 첫째, 식약처 표준공정 가이드 및 학술 논문 등 과학적 문헌 조사. 둘째, 공장 설비에서 직접 측정하는 열분포 및 열침투 실증 시험(D값, z값 미생물 사멸률 계산). 셋째, 실제 균주를 접종해 사멸 여부를 확인하는 챌린지 테스트입니다. 이 3가지 중 자사 공정에 맞는 객관적 근거 데이터를 확보해야 합니다.",
+        draw: drawScene4
+      },
+      {
+        id: 4,
+        start: 120,
+        end: 150,
+        title: "현장 실무 사례 분석: 가열살균 & 금속검출",
+        category: "STEP 5 • 실무 사례",
+        color: "#f59e0b",
+        accent: "#b45309",
+        script: "실제 현장 사례를 볼까요? 가열살균 CCP의 경우 '중심온도 85℃에서 1분 이상' 기준을 잡을 때, 솥의 가장 차가운 지점(Cold Spot)을 열전대 센서로 찾아내어 유효성을 검증합니다. 금속검출 CCP는 Fe 1.2mm, Sus 1.5mm 시편을 제품 전·중·후단에 통과시켜 100% 감지 및 킥커(취출기) 정상 작동을 입증해야 합니다.",
+        draw: drawScene5
+      },
+      {
+        id: 5,
+        start: 150,
+        end: 180,
+        title: "주기적 재검증(Re-validation) & 심사 3대 체크리스트",
+        category: "STEP 6 • 유지관리 & 요약",
+        color: "#ec4899",
+        accent: "#be185d",
+        script: "마지막으로 한계기준은 한 번 정했다고 끝이 아닙니다! 원료의 배합비 변경, 설비 교체, 생산량 증설 시에는 반드시 재유효성검증(Re-validation)을 거쳐야 합니다. 유효성 검증 보고서, 센서 검교정 성적서, 실측 데이터 그래프 이 3가지를 상시 구비해 두시면 식약처 및 인증기관 심사는 100% 통과할 수 있습니다.",
+        draw: drawScene6
+      }
+    ];
+
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let currentTime = 0;
+    let isPlaying = false;
+    let playbackSpeed = 1.0;
+    let lastFrameTimestamp = null;
+    let audioCtx = null;
+    let isAudioEnabled = true;
+
+    function initAudio() {
+      if (audioCtx) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      } catch (e) {}
+    }
+
+    function playToneCue(freq = 440, duration = 0.15) {
+      if (!isAudioEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    const timeSlider = document.getElementById('timeSlider');
+    const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+    const totalTimeDisplay = document.getElementById('totalTimeDisplay');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const playIcon = document.getElementById('playIcon');
+    const playOverlay = document.getElementById('playOverlay');
+    const btnReset = document.getElementById('btnReset');
+    const speedSelect = document.getElementById('speedSelect');
+    const frameDisplay = document.getElementById('frameDisplay');
+    const scriptBox = document.getElementById('scriptBox');
+    const activeChapterPill = document.getElementById('activeChapterPill');
+    const btnRecord = document.getElementById('btnRecord');
+    const recText = document.getElementById('recText');
+    const recBadge = document.getElementById('recBadge');
+    const btnAudioToggle = document.getElementById('btnAudioToggle');
+    const audioIcon = document.getElementById('audioIcon');
+
+    function renderScriptList() {
+      scriptBox.innerHTML = '';
+      scenes.forEach((sc, idx) => {
+        const item = document.createElement('div');
+        item.id = `script-item-${idx}`;
+        item.className = 'p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 transition-all duration-300 cursor-pointer hover:border-slate-700';
+        item.onclick = () => jumpToScene(idx);
+        item.innerHTML = `
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold text-cyan-400">Scene ${idx+1}. ${sc.title}</span>
+            <span class="text-[10px] text-slate-500 font-mono">${formatTime(sc.start)} - ${formatTime(sc.end)}</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-snug script-text">${sc.script}</p>
+        `;
+        scriptBox.appendChild(item);
+      });
+    }
+    renderScriptList();
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function togglePlay() {
+      initAudio();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        if (currentTime >= TOTAL_DURATION) currentTime = 0;
+        playIcon.className = 'fa-solid fa-pause';
+        playOverlay.classList.add('opacity-0', 'pointer-events-none');
+        lastFrameTimestamp = performance.now();
+        requestAnimationFrame(renderLoop);
+      } else {
+        playIcon.className = 'fa-solid fa-play';
+        playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    playOverlay.addEventListener('click', togglePlay);
+    btnPlayPause.addEventListener('click', togglePlay);
+    btnReset.addEventListener('click', () => { currentTime = 0; updateUI(); renderCurrentFrame(); });
+    timeSlider.addEventListener('input', (e) => { currentTime = parseFloat(e.target.value); updateUI(); renderCurrentFrame(); });
+    speedSelect.addEventListener('change', (e) => { playbackSpeed = parseFloat(e.target.value); });
+    btnAudioToggle.addEventListener('click', () => {
+      isAudioEnabled = !isAudioEnabled;
+      audioIcon.className = isAudioEnabled ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark text-rose-400';
+    });
+
+    window.jumpToScene = function(sceneIdx) {
+      if (scenes[sceneIdx]) {
+        currentTime = scenes[sceneIdx].start + 0.05;
+        playToneCue(520, 0.1);
+        updateUI();
+        renderCurrentFrame();
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    });
+
+    function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+    function getCurrentScene() { return scenes.find(s => currentTime >= s.start && currentTime < s.end) || scenes[scenes.length - 1]; }
+
+    function renderLoop(timestamp) {
+      if (!isPlaying) return;
+      if (!lastFrameTimestamp) lastFrameTimestamp = timestamp;
+      const deltaSec = ((timestamp - lastFrameTimestamp) / 1000) * playbackSpeed;
+      lastFrameTimestamp = timestamp;
+
+      const prevSceneIdx = getCurrentScene().id;
+      currentTime += deltaSec;
+
+      if (currentTime >= TOTAL_DURATION) {
+        currentTime = TOTAL_DURATION;
+        isPlaying = false;
+        playIcon.className = 'fa-solid fa-play';
+        playOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        if (isRecording) stopRecording();
+      }
+
+      const newSceneIdx = getCurrentScene().id;
+      if (newSceneIdx !== prevSceneIdx) playToneCue(440 + newSceneIdx * 50, 0.2);
+
+      updateUI();
+      renderCurrentFrame();
+      if (isPlaying) requestAnimationFrame(renderLoop);
+    }
+
+    function updateUI() {
+      timeSlider.value = currentTime;
+      currentTimeDisplay.textContent = formatTime(currentTime);
+      const frameNum = Math.floor(currentTime * 60);
+      frameDisplay.textContent = `Frame ${frameNum} / 10800`;
+
+      const curScene = getCurrentScene();
+      activeChapterPill.textContent = `Scene ${curScene.id + 1} / 6 • ${curScene.category}`;
+
+      document.querySelectorAll('.scene-btn').forEach(btn => {
+        const sIdx = parseInt(btn.getAttribute('data-scene'));
+        if (sIdx === curScene.id) btn.classList.add('active-scene-btn');
+        else btn.classList.remove('active-scene-btn');
+      });
+
+      scenes.forEach((sc, idx) => {
+        const el = document.getElementById(`script-item-${idx}`);
+        if (!el) return;
+        if (idx === curScene.id) {
+          el.className = 'p-3 rounded-xl border border-cyan-500 bg-cyan-950/40 text-slate-100 shadow-md shadow-cyan-900/20';
+          el.querySelector('.script-text').className = 'text-xs text-cyan-200 font-medium leading-relaxed';
+          el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          el.className = 'p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 opacity-60 hover:opacity-100 transition';
+          el.querySelector('.script-text').className = 'text-xs text-slate-400 leading-snug';
+        }
+      });
+    }
+
+    function renderCurrentFrame() {
+      ctx.save();
+      ctx.clearRect(0, 0, 1920, 1080);
+      drawStudioBackground();
+
+      const curScene = getCurrentScene();
+      const sceneElapsed = currentTime - curScene.start;
+      const sceneDuration = curScene.end - curScene.start;
+      const sceneProgress = Math.min(Math.max(sceneElapsed / sceneDuration, 0), 1);
+
+      curScene.draw(ctx, sceneProgress, sceneElapsed);
+      drawBroadcastOverlay(curScene, sceneProgress);
+      ctx.restore();
+    }
+
+    function drawStudioBackground() {
+      const grad = ctx.createRadialGradient(960, 540, 100, 960, 540, 1100);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(0.6, '#090d16');
+      grad.addColorStop(1, '#030712');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1920, 1080);
+
+      ctx.strokeStyle = 'rgba(30, 41, 59, 0.4)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < 1920; x += 80) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 1080); ctx.stroke();
+      }
+      for (let y = 0; y < 1080; y += 80) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1920, y); ctx.stroke();
+      }
+    }
+
+    function drawBroadcastOverlay(scene, progress) {
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.fillRect(60, 40, 1800, 90);
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(60, 40, 1800, 90);
+
+      ctx.fillStyle = scene.color;
+      ctx.beginPath();
+      roundRect(ctx, 90, 60, 220, 50, 10);
+      ctx.fill();
+
+      ctx.fillStyle = '#020617';
+      ctx.font = 'bold 22px Pretendard, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(scene.category, 200, 85);
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '800 32px Pretendard, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(scene.title, 340, 85);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 24px Pretendard, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(`HACCP MASTER • ${formatTime(currentTime)} / 03:00`, 1820, 85);
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+      ctx.beginPath();
+      roundRect(ctx, 160, 910, 1600, 110, 18);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.font = 'bold 20px Pretendard, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('🎙️ 실무 핵심 내레이션:', 200, 945);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 24px Pretendard, sans-serif';
+      const scriptWords = scene.script;
+      ctx.fillText(scriptWords.length > 70 ? scriptWords.substring(0, 68) + '...' : scriptWords, 200, 985);
+
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 1068, 1920, 12);
+      const totalProgress = currentTime / TOTAL_DURATION;
+      const barGrad = ctx.createLinearGradient(0, 0, 1920, 0);
+      barGrad.addColorStop(0, '#06b6d4');
+      barGrad.addColorStop(0.5, '#3b82f6');
+      barGrad.addColorStop(1, '#ec4899');
+      ctx.fillStyle = barGrad;
+      ctx.fillRect(0, 1068, 1920 * totalProgress, 12);
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      if (w < 2 * r) r = w / 2;
+      if (h < 2 * r) r = h / 2;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawScene1(ctx, progress, elapsed) {
+      const anim = easeOutCubic(Math.min(elapsed / 1.5, 1));
+      const gx = 250, gy = 200 + (1 - anim) * 40;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+      roundRect(ctx, gx, gy, 450, 640, 24);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(51, 65, 85, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 28px Pretendard';
+      ctx.textAlign = 'center';
+      ctx.fillText('공정 제어 한계 다이어그램', gx + 225, gy + 50);
+
+      const barX = gx + 80, barY = gy + 100, barW = 80;
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+      ctx.fillRect(barX, barY, barW, 140);
+      ctx.strokeStyle = '#ef4444';
+      ctx.strokeRect(barX, barY, barW, 140);
+      
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 20px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('위험 영역 (Danger)', barX + 100, barY + 70);
+      ctx.font = '16px Pretendard';
+      ctx.fillText('세균 증식 / 이물 통과 위험', barX + 100, barY + 95);
+
+      const clY = barY + 140;
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(barX - 20, clY); ctx.lineTo(barX + 220, clY); ctx.stroke();
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 22px Pretendard';
+      ctx.fillText('▲ 한계기준 (CL: 85.0℃)', barX + 100, clY - 10);
+      ctx.font = '16px Pretendard';
+      ctx.fillText('법적/과학적 절대 마지노선', barX + 100, clY + 20);
+
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+      ctx.fillRect(barX, clY, barW, 120);
+      ctx.strokeStyle = '#10b981';
+      ctx.strokeRect(barX, clY, barW, 120);
+
+      const olY = clY + 120;
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(barX - 10, olY); ctx.lineTo(barX + 220, olY); ctx.stroke();
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 22px Pretendard';
+      ctx.fillText('▲ 운용한계 (OL: 88.0℃)', barX + 100, olY - 10);
+      ctx.font = '16px Pretendard';
+      ctx.fillText('자사 안전 버퍼(Safety Margin)', barX + 100, olY + 20);
+
+      ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+      ctx.fillRect(barX, olY, barW, 200);
+      ctx.fillStyle = '#06b6d4';
+      ctx.font = 'bold 20px Pretendard';
+      ctx.fillText('정상 운전 영역 (Safe)', barX + 100, olY + 100);
+
+      const rx = 760, ry = 200 + (1 - anim) * 40;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, rx, ry, 920, 290, 20);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(234, 179, 8, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 30px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('📌 1. 한계기준 (Critical Limit, CL)', rx + 40, ry + 55);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '22px Pretendard';
+      ctx.fillText('• 정의: 중요관리점(CCP)에서 위해요소 발생을 예방·제거하거나', rx + 40, ry + 110);
+      ctx.fillText('        허용 안전수준 이하로 감소시킬 수 있는 최대치 또는 최소치', rx + 40, ry + 150);
+      ctx.fillText('• 특징: 위반 시 즉시 공정 중단 및 해당 제품 격리/개선조치 발생', rx + 40, ry + 200);
+      ctx.fillText('• 근거: 법적 기준 + 미생물 사멸 시험성적서 등 과학적 증빙 필수', rx + 40, ry + 245);
+
+      const ry2 = ry + 330;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, rx, ry2, 920, 290, 20);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 30px Pretendard';
+      ctx.fillText('🛡️ 2. 운용한계 (Operating Limit, OL)', rx + 40, ry2 + 55);
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '22px Pretendard';
+      ctx.fillText('• 정의: 한계기준(CL)을 벗어나는 것을 사전에 방지하기 위해', rx + 40, ry2 + 110);
+      ctx.fillText('        회사가 자체적으로 더 엄격하게 설정한 관리 기준선', rx + 40, ry2 + 150);
+      ctx.fillText('• 특징: OL 이탈 시 제품 격리 없이 기계 미세 조정으로 선제 대응', rx + 40, ry2 + 200);
+      ctx.fillText('• 장점: 한계기준(CL) 위반 사고를 사전에 99% 차단하는 안전 장치', rx + 40, ry2 + 245);
+    }
+
+    function drawScene2(ctx, progress, elapsed) {
+      const steps = [
+        { num: '01', title: '위해요소 명확화', desc: '생물학적(살모넬라), 화학적, 물리적(금속이물) 위해요소 특정', icon: '🦠', color: '#ef4444' },
+        { num: '02', title: '관리 파라미터 선정', desc: '정량 변수 선정 (온도, 시간, 압력, 수분활성도, pH, 감도 규격)', icon: '⏱️', color: '#f59e0b' },
+        { num: '03', title: '과학적/법적 근거 확보', desc: '식약처 고시, 공인시험성적서, 학술 논문, D/z값 사멸곡선 데이터 수집', icon: '📑', color: '#10b981' },
+        { num: '04', title: '한계치(수치) 확정', desc: '현장 모니터링 가능하도록 명확한 단일 수치로 최종 규정', icon: '🎯', color: '#06b6d4' }
+      ];
+
+      const cardW = 380, cardH = 560, startX = 140, startY = 220;
+      steps.forEach((st, idx) => {
+        const cardDelay = idx * 0.2;
+        const cardAnim = easeOutCubic(Math.min(Math.max((elapsed - cardDelay) / 1.0, 0), 1));
+        const cx = startX + idx * 420;
+        const cy = startY + (1 - cardAnim) * 50;
+
+        ctx.save();
+        ctx.globalAlpha = cardAnim;
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
+        roundRect(ctx, cx, cy, cardW, cardH, 20);
+        ctx.fill();
+        ctx.strokeStyle = st.color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = st.color;
+        roundRect(ctx, cx + 30, cy + 30, 70, 70, 16);
+        ctx.fill();
+        ctx.fillStyle = '#020617';
+        ctx.font = 'bold 34px Pretendard';
+        ctx.textAlign = 'center';
+        ctx.fillText(st.num, cx + 65, cy + 75);
+
+        ctx.font = '40px Pretendard';
+        ctx.fillText(st.icon, cx + cardW - 60, cy + 70);
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 28px Pretendard';
+        ctx.textAlign = 'left';
+        ctx.fillText(st.title, cx + 30, cy + 160);
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '20px Pretendard';
+        wrapText(ctx, st.desc, cx + 30, cy + 230, cardW - 60, 36);
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        roundRect(ctx, cx + 25, cy + cardH - 85, cardW - 50, 60, 12);
+        ctx.fill();
+        ctx.fillStyle = st.color;
+        ctx.font = 'bold 18px Pretendard';
+        ctx.textAlign = 'center';
+        ctx.fillText(`핵심: Step ${idx+1} 철저 입증`, cx + cardW / 2, cy + cardH - 50);
+        ctx.restore();
+      });
+    }
+
+    function drawScene3(ctx, progress, elapsed) {
+      const anim = easeOutCubic(Math.min(elapsed / 1.5, 1));
+      const lx = 140, ly = 210 + (1 - anim) * 30, w = 780, h = 640;
+      
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, lx, ly, w, h, 24);
+      ctx.fill();
+      ctx.strokeStyle = '#8b5cf6';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#c084fc';
+      ctx.font = 'bold 36px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('🔬 유효성 검증 (Validation)', lx + 50, ly + 65);
+      
+      ctx.fillStyle = '#f1f5f9';
+      ctx.font = 'bold 26px Pretendard';
+      ctx.fillText('핵심 질문: "우리가 세운 기준이 옳은가?"', lx + 50, ly + 140);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '22px Pretendard';
+      const valPoints = [
+        '• 시점: HACCP 플랜 수립 시 또는 공정 변경 전 (사전)',
+        '• 목적: 설정한 한계기준이 병원성 미생물(살모넬라 등)을',
+        '        실제 100% 사멸시키는지 과학적으로 입증',
+        '• 방법: 열침투 실험, 미생물 챌린지 테스트, 학술 문헌',
+        '• 비유: "신약 개발 시 임상시험을 통해 약효를 입증하는 단계"'
+      ];
+      valPoints.forEach((pt, i) => { ctx.fillText(pt, lx + 50, ly + 210 + i * 50); });
+
+      const rx = 1000, ry = 210 + (1 - anim) * 30;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, rx, ry, w, h, 24);
+      ctx.fill();
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#22d3ee';
+      ctx.font = 'bold 36px Pretendard';
+      ctx.fillText('📋 일상 검증 (Verification)', rx + 50, ry + 65);
+      ctx.fillStyle = '#f1f5f9';
+      ctx.font = 'bold 26px Pretendard';
+      ctx.fillText('핵심 질문: "계획한 대로 잘 지키고 있는가?"', rx + 50, ry + 140);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '22px Pretendard';
+      const verPoints = [
+        '• 시점: 일상적 매일/매주/매월 운영 중 (사후)',
+        '• 목적: 현장 작업자가 한계기준 모니터링 및 기록을',
+        '        규정대로 정확히 수행하고 있는지 확인',
+        '• 방법: 일지 검토, 계측기 검교정 확인, 완제품 검사',
+        '• 비유: "환자가 처방전대로 매일 약을 잘 복용하는지 체크"'
+      ];
+      verPoints.forEach((pt, i) => { ctx.fillText(pt, rx + 50, ry + 210 + i * 50); });
+    }
+
+    function drawScene4(ctx, progress, elapsed) {
+      const anim = easeOutCubic(Math.min(elapsed / 1.5, 1));
+      const cols = [
+        { title: '1. 과학 문헌 및 법규', subtitle: 'Literature & Regulations', color: '#3b82f6', items: ['• 식품공전 및 식약처 표준공정 모델', '• SCI급 학술 논문 미생물 D/z값', '• 공인 시험기관 공인 성적서', '• Codex 및 FDA 가이드라인 조사'] },
+        { title: '2. 공장 실증 실험', subtitle: 'In-plant Validation Test', color: '#10b981', items: ['• 열분포 시험 (챔버 내 온도 균일성)', '• 열침투 시험 (가장 늦게 데워지는 Cold Spot)', '• 열전대(다채널 센서) 8개 이상 실측', '• 누적 살균치(F0값) 계산 입증'] },
+        { title: '3. 챌린지 테스트', subtitle: 'Microbial Challenge Test', color: '#f59e0b', items: ['• 비병원성 유사 지표균 접종 시험', '• 가열/살균 전후 미생물 감소율(Log Reduction)', '• 5-Log 사멸(99.999% 사멸) 목표 검증', '• 유통기한 내 균 증식 억제 평가'] }
+      ];
+
+      const startX = 140, startY = 210 + (1 - anim) * 30, colW = 500, colH = 640;
+      cols.forEach((c, idx) => {
+        const cx = startX + idx * 560;
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+        roundRect(ctx, cx, startY, colW, colH, 20);
+        ctx.fill();
+        ctx.strokeStyle = c.color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = c.color;
+        roundRect(ctx, cx + 20, startY + 20, colW - 40, 85, 14);
+        ctx.fill();
+        ctx.fillStyle = '#020617';
+        ctx.font = 'bold 26px Pretendard';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.title, cx + colW / 2, startY + 55);
+        ctx.font = '16px Pretendard';
+        ctx.fillText(c.subtitle, cx + colW / 2, startY + 85);
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '20px Pretendard';
+        ctx.textAlign = 'left';
+        c.items.forEach((item, i) => { ctx.fillText(item, cx + 30, startY + 160 + i * 65); });
+      });
+    }
+
+    function drawScene5(ctx, progress, elapsed) {
+      const anim = easeOutCubic(Math.min(elapsed / 1.5, 1));
+      const lx = 140, ly = 210 + (1 - anim) * 30, w = 780, h = 640;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, lx, ly, w, h, 20);
+      ctx.fill();
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#f87171';
+      ctx.font = 'bold 32px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('🔥 사례 1. 가열살균 공정 (CCP-1B)', lx + 40, ly + 55);
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      roundRect(ctx, lx + 40, ly + 85, w - 80, 240, 14);
+      ctx.fill();
+
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath(); ctx.moveTo(lx + 80, ly + 160); ctx.lineTo(lx + w - 80, ly + 160); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#facc15';
+      ctx.font = '16px Pretendard';
+      ctx.fillText('한계기준선 (85.0℃)', lx + w - 210, ly + 150);
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      const curveProgress = Math.min(elapsed * 0.5, 1);
+      for (let px = 0; px < (w - 180) * curveProgress; px += 5) {
+        const tempY = ly + 270 - Math.min(px * 0.8, 140) + Math.sin(px * 0.1) * 3;
+        if (px === 0) ctx.moveTo(lx + 90 + px, tempY);
+        else ctx.lineTo(lx + 90 + px, tempY);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '20px Pretendard';
+      ctx.fillText('• 한계기준: 제품 중심온도 85℃ 이상에서 1분간 유지', lx + 40, ly + 365);
+      ctx.fillText('• 유효성검증 핵심: 가장 두꺼운 부위(Cold Spot)에 센서 삽입', lx + 40, ly + 415);
+      ctx.fillText('• 3회 연속 반복 측정하여 표준편차 및 공정능력(Cpk ≥ 1.33) 입증', lx + 40, ly + 465);
+      ctx.fillText('• 모니터링: 품온계 매 배치 측정 또는 자동 기록계 차트', lx + 40, ly + 515);
+
+      const rx = 1000, ry = 210 + (1 - anim) * 30;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, rx, ry, w, h, 20);
+      ctx.fill();
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 32px Pretendard';
+      ctx.fillText('🧲 사례 2. 금속검출 공정 (CCP-2P)', rx + 40, ry + 55);
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      roundRect(ctx, rx + 40, ry + 85, w - 80, 240, 14);
+      ctx.fill();
+
+      ctx.fillStyle = '#64748b';
+      roundRect(ctx, rx + 80, ry + 120, 260, 150, 16);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 24px Pretendard';
+      ctx.textAlign = 'center';
+      ctx.fillText('철 (Fe)', rx + 210, ry + 165);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 36px Pretendard';
+      ctx.fillText('Φ 1.2 mm', rx + 210, ry + 225);
+
+      ctx.fillStyle = '#475569';
+      roundRect(ctx, rx + 400, ry + 120, 260, 150, 16);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 24px Pretendard';
+      ctx.fillText('스테인리스 (SUS)', rx + 530, ry + 165);
+      ctx.fillStyle = '#a855f7';
+      ctx.font = 'bold 36px Pretendard';
+      ctx.fillText('Φ 1.5 mm', rx + 530, ry + 225);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = '20px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('• 한계기준: Fe 1.2mm, SUS 1.5mm 불검출 (100% 감지 및 취출)', rx + 40, ry + 365);
+      ctx.fillText('• 유효성검증 핵심: 완제품 앞단/중간/후단에 테스트피스 삽입 통과', rx + 40, ry + 415);
+      ctx.fillText('• 감지 즉시 컨베이어 벨트 정지 또는 에어 킥커(Kicker) 정상 분리', rx + 40, ry + 465);
+      ctx.fillText('• 주기: 작업 시작 전, 2시간 간격, 교대 시, 작업 종료 후', rx + 40, ry + 515);
+    }
+
+    function drawScene6(ctx, progress, elapsed) {
+      const anim = easeOutCubic(Math.min(elapsed / 1.5, 1));
+      const lx = 140, ly = 210 + (1 - anim) * 30, w = 780, h = 640;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, lx, ly, w, h, 20);
+      ctx.fill();
+      ctx.strokeStyle = '#ec4899';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#f472b6';
+      ctx.font = 'bold 32px Pretendard';
+      ctx.textAlign = 'left';
+      ctx.fillText('⚠️ 재유효성 검증(Re-validation) 4대 조건', lx + 40, ly + 55);
+
+      const triggers = [
+        { title: '1. 원료 및 배합비 변경', desc: '점도, 수분함량, pH, 고형분 등 열전도율 변화 시' },
+        { title: '2. 가공 설비의 교체 또는 대수리', desc: '살균기 노즐, 보일러 압력, 가열 코일 교체 시' },
+        { title: '3. 생산량 증설 및 포장 단위 변경', desc: '배치 용량 증가, 포장재 재질(파우치/캔) 변경 시' },
+        { title: '4. 신종 위해요소 발생 또는 기준 법 개정', desc: '식중독 사고 발생 또는 법적 규격 강화 시' }
+      ];
+
+      triggers.forEach((tr, i) => {
+        const ty = ly + 100 + i * 125;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        roundRect(ctx, lx + 40, ty, w - 80, 105, 14);
+        ctx.fill();
+        ctx.fillStyle = '#f472b6';
+        ctx.font = 'bold 22px Pretendard';
+        ctx.fillText(tr.title, lx + 65, ty + 40);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '18px Pretendard';
+        ctx.fillText(tr.desc, lx + 65, ty + 75);
+      });
+
+      const rx = 1000, ry = 210 + (1 - anim) * 30;
+      ctx.fillStyle = 'rgba(30, 41, 59, 0.9)';
+      roundRect(ctx, rx, ry, w, h, 20);
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 32px Pretendard';
+      ctx.fillText('🏆 심사관이 확인하는 3대 필수 서류', rx + 40, ry + 55);
+
+      const docs = [
+        { num: '01', title: 'CCP 유효성 검증 종합 보고서', desc: '설정 근거, 시험 방법, 미생물 사멸 시험 성적서 일체' },
+        { num: '02', title: '현장 실측 데이터 및 열분포도 차트', desc: 'Cold Spot 측정 원본 로그, F0값 계산서, 시운전 데이터' },
+        { num: '03', title: '측정 계측기 국가공인 검교정 성적서', desc: '온도 센서, 금속검출기, 저울의 연 1회 공인 교정 필증' }
+      ];
+
+      docs.forEach((d, i) => {
+        const dy = ry + 100 + i * 120;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        roundRect(ctx, rx + 40, dy, w - 80, 100, 14);
+        ctx.fill();
+
+        ctx.fillStyle = '#10b981';
+        roundRect(ctx, rx + 60, dy + 20, 55, 55, 12);
+        ctx.fill();
+        ctx.fillStyle = '#020617';
+        ctx.font = 'bold 24px Pretendard';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.num, rx + 87, dy + 55);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 22px Pretendard';
+        ctx.textAlign = 'left';
+        ctx.fillText(d.title, rx + 135, dy + 45);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '16px Pretendard';
+        ctx.fillText(d.desc, rx + 135, dy + 75);
+      });
+
+      ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
+      roundRect(ctx, rx + 40, ry + 490, w - 80, 110, 16);
+      ctx.fill();
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 24px Pretendard';
+      ctx.textAlign = 'center';
+      ctx.fillText('💡 20년 선배의 한 줄 원칙', rx + w / 2, ry + 535);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '20px Pretendard';
+      ctx.fillText('"기록되지 않은 것은 존재하지 않고, 증명되지 않은 기준은 무효다!"', rx + w / 2, ry + 575);
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
+
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isRecording = false;
+
+    btnRecord.addEventListener('click', () => {
+      if (isRecording) stopRecording();
+      else startRecording();
+    });
+
+    function startRecording() {
+      initAudio();
+      recordedChunks = [];
+      const stream = canvas.captureStream(60);
+
+      let options = { mimeType: 'video/webm;codecs=vp9' };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) options = { mimeType: 'video/webm' };
+
+      try {
+        mediaRecorder = new MediaRecorder(stream, options);
+      } catch (e) {
+        alert('MediaRecorder API 미지원 브라우저: ' + e.message);
+        return;
+      }
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `HACCP_CCP한계기준_유효성검증_3분영상.webm`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { document.body.removeChild(a); window.URL.revokeObjectURL(url); }, 100);
+
+        recText.textContent = '1080p MP4/WebM 렌더링 녹화';
+        recBadge.classList.add('hidden');
+        btnRecord.classList.remove('bg-amber-600');
+        btnRecord.classList.add('bg-rose-600');
+        isRecording = false;
+        alert('🎉 3분 1080p 60fps 영상 렌더링 녹화가 완료되어 파일로 다운로드되었습니다!');
+      };
+
+      currentTime = 0;
+      updateUI();
+      renderCurrentFrame();
+
+      mediaRecorder.start();
+      isRecording = true;
+      recText.textContent = '⏹ 렌더링 녹화 중단 및 저장';
+      recBadge.classList.remove('hidden');
+      btnRecord.classList.remove('bg-rose-600');
+      btnRecord.classList.add('bg-amber-600');
+
+      if (!isPlaying) togglePlay();
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    }
+
+    renderCurrentFrame();
+    updateUI();
+  </script>
+</body>
+</html>

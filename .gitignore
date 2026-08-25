@@ -1,0 +1,65 @@
+# ========================================
+# ai-ceo-os — Public Repository .gitignore
+# ========================================
+
+# Environment & Secrets
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# Google API Credentials
+google_token.json
+oauth_credentials.json
+credentials.json
+
+# Internal Operations
+# CEO/ 폴더 — starter 파일은 추적, 사용자가 채운 실제 데이터는 로컬 .gitignore로 제외 권장
+Shared_Memory.md
+tasks/curriculum-detail-v1.md
+
+# 사용자 데이터 (개인 레포에서는 커밋해도 OK, Public 공유 시 주의)
+# tasks/     ← 할일/학습기록은 커밋 가능
+# outputs/   ← 산출물도 커밋 가능
+
+# Strategy & Business Data
+**/전략_테제.md
+**/사업*계획*.md
+**/비전전략서*.md
+**/CEO_멘탈모델.md
+# predictions.md는 starter 상태로 추적. 실제 예측 데이터가 민감하면 로컬에서 ignore
+
+# Channel Data & Personal Content
+**/릴스 대본.md
+**/릴스 후킹.md
+**/릴스 인사이트.md
+**/릴스 제목.md
+**/릴스 캡션.md
+**/claudecode-series/
+**/insta-ainow-content/
+**/youtube-data/
+
+# Agent Memory & Session Data
+.claude/agent-memory/
+.claude/worktrees/
+.claude/logs/
+.claude/hooks/
+.claude/*.local.*
+
+# Build & Runtime
+node_modules/
+.next/
+.venv/
+__pycache__/
+*.pyc
+.tmp/
+
+# OS Files
+.DS_Store
+Thumbs.db
+@eaDir/
+
+# IDE
+.vscode/
+.idea/

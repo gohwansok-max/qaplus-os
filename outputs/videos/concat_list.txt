@@ -1,0 +1,5 @@
+file 'G:/내 드라이브/09_AI 모델 하네스 만들기/ai-ceo-os/outputs/videos/scene_01.mp4'
+file 'G:/내 드라이브/09_AI 모델 하네스 만들기/ai-ceo-os/outputs/videos/scene_02.mp4'
+file 'G:/내 드라이브/09_AI 모델 하네스 만들기/ai-ceo-os/outputs/videos/scene_03.mp4'
+file 'G:/내 드라이브/09_AI 모델 하네스 만들기/ai-ceo-os/outputs/videos/scene_04.mp4'
+file 'G:/내 드라이브/09_AI 모델 하네스 만들기/ai-ceo-os/outputs/videos/scene_05.mp4'

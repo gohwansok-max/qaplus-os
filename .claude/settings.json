@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "LS",
+      "Write(//**)",
+      "Edit(//**)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(./scripts/*)",
+      "Bash(bash scripts/*)",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(sudo:*)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "echo \"🧠 김이사 온라인 | $(git branch --show-current 2>/dev/null || echo 'no-git') | $(date '+%H:%M')\""
+  },
+  "env": {
+    "AI_CEO_OS_VERSION": "1.0.0"
+  },
+  "_comment": "수강생 커스터마이징 가이드: permissions.allow에 자주 쓰는 툴을 추가하세요. statusLine은 터미널 하단에 표시됩니다. 민감한 명령(rm -rf, sudo)은 deny에 유지하세요."
+}

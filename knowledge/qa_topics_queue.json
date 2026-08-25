@@ -1,0 +1,161 @@
+{
+  "last_run": "2026-08-25 17:24:51",
+  "topics": [
+    {
+      "id": 1,
+      "topic": "금속검출기(CCP) 테스트피스 모니터링 주기 및 한계기준",
+      "category": "물리적 위해요소 관리 (CCP)",
+      "badge": "🚨 심사관 지적 1위",
+      "badge_color": [
+        239,
+        68,
+        68
+      ],
+      "status": "completed",
+      "rendered_file": "outputs/videos/qa_metal_detector_shorts.mp4"
+    },
+    {
+      "id": 2,
+      "topic": "가열살균 공정(CCP-B) Cold Spot 중심온도 실측 및 시간 관리",
+      "category": "생물학적 위해요소 관리 (CCP)",
+      "badge": "🔥 핵심 CCP 관리",
+      "badge_color": [
+        245,
+        158,
+        11
+      ],
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-08-25_가열살균_공정CCP-B_Cold_Spot_중심온도_실측_shorts.mp4"
+    },
+    {
+      "id": 3,
+      "topic": "급속 냉각 공정(CCP) 미생물 증식대(10~60℃) 신속 통과 기준",
+      "category": "온도 및 시간 관리 (CCP)",
+      "badge": "❄️ 골든타임 관리",
+      "badge_color": [
+        6,
+        182,
+        212
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 4,
+      "topic": "알레르기 유발물질 교차오염 방지 및 전용 라인 세척 검증",
+      "category": "화학적 위해요소 & 표시기준",
+      "badge": "⚠️ 교차오염 차단",
+      "badge_color": [
+        236,
+        72,
+        153
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 5,
+      "topic": "식품공장 위생복·방진복 착용 기준 및 손세척 30초 검증 (ATP 측정)",
+      "category": "개인위생 & 선행요건",
+      "badge": "🧼 개인위생 표준",
+      "badge_color": [
+        16,
+        185,
+        129
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 6,
+      "topic": "CCP 한계기준 이탈 시 개선조치(CAPA) 및 부적합품 격리 4단계",
+      "category": "HACCP 7원칙 실무",
+      "badge": "🚨 긴급 이탈 조치",
+      "badge_color": [
+        220,
+        38,
+        38
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 7,
+      "topic": "작업장 공조(HVAC) 양압 관리 및 클린룸 차압 점검 주기",
+      "category": "시설 및 환경 관리",
+      "badge": "💨 공조/차압 관리",
+      "badge_color": [
+        59,
+        130,
+        246
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 8,
+      "topic": "원부재료 입고 검수 기준 (품온 측정, 성적서 대조, 이물 확인)",
+      "category": "입고 및 원료 관리",
+      "badge": "📦 원료 입고 검수",
+      "badge_color": [
+        139,
+        92,
+        246
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 9,
+      "topic": "식품공전 미생물 규격 (일반세균수, 대장균군, 황색포도상구균) 판정법",
+      "category": "품질 검사 및 분석",
+      "badge": "🔬 미생물 규격 기준",
+      "badge_color": [
+        14,
+        165,
+        233
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 10,
+      "topic": "HACCP 검교정 관리 (온도계, 저울, 압력계 연 1회 공인 검교정)",
+      "category": "계측기 및 유지관리",
+      "badge": "📏 계측기 검교정",
+      "badge_color": [
+        245,
+        158,
+        11
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 11,
+      "topic": "이물 관리 시스템: X-ray 이물검출기 vs 금속검출기 차이와 복합 운영",
+      "category": "물리적 이물 방어",
+      "badge": "🔍 이물 제로화",
+      "badge_color": [
+        16,
+        185,
+        129
+      ],
+      "status": "pending",
+      "rendered_file": null
+    },
+    {
+      "id": 12,
+      "topic": "스마트HACCP 도입 효과 및 데이터 위변조 방지 센서 연동 실무",
+      "category": "스마트 HACCP 시스템",
+      "badge": "💻 스마트 HACCP",
+      "badge_color": [
+        99,
+        102,
+        241
+      ],
+      "status": "pending",
+      "rendered_file": null
+    }
+  ]
+}

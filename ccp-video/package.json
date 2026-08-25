@@ -1,0 +1,20 @@
+{
+  "name": "ccp-video",
+  "version": "1.0.0",
+  "description": "CCP 한계기준 설정 및 유효성검증 영상",
+  "scripts": {
+    "start": "remotion preview",
+    "build": "remotion render Root out/video.mp4",
+    "upgrade": "remotion upgrade"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@remotion/cli": "^4.0.516",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.516"
+  }
+}
