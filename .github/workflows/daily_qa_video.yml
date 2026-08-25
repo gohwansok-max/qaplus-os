@@ -46,11 +46,19 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          # 저장소에 등록된 CHIPSUB_API를 런타임 환경변수로만 전달합니다.
+          # 칩섭을 우선 사용합니다. 값은 로그에 남지 않는 GitHub Secret으로만 전달합니다.
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
           CHEAPAI_BASE_URL: https://api.cheapai.im/v1
-          CHEAPAI_STORY_MODEL: claude-sonnet-5
-          CHEAPAI_STORY_FALLBACK_MODEL: gpt-5.6-sol
+          CHEAPAI_STORY_MODEL: gpt-5.6-sol
+          CHEAPAI_STORY_FALLBACK_MODEL: claude-sonnet-5
+          QA_LLM_TIMEOUT_SECONDS: '15'
+          QA_LLM_MAX_ATTEMPTS_PER_MODEL: '2'
+          QA_WEB_MIN_SOURCE_COUNT: '2'
+          QA_SCRIPT_SIMILARITY_THRESHOLD: '0.72'
+          # 칩섭의 재시도가 모두 실패할 때만 선택되는 공식 OpenAI API 대체 경로입니다.
+          OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
+          OFFICIAL_OPENAI_BASE_URL: https://api.openai.com/v1
+          OFFICIAL_OPENAI_STORY_MODEL: gpt-5-mini
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             echo "사용자 지정 주제 실행: ${{ github.event.inputs.topic }}"
