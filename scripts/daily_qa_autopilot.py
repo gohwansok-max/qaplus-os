@@ -465,7 +465,8 @@ def run_daily_autopilot(custom_topic=None):
     concat_list_path = os.path.join(VIDEOS_DIR, "auto_concat_list.txt")
     with open(concat_list_path, "w", encoding="utf-8") as f:
         for v in scene_videos:
-            f.write(f"file '{v.replace('\\', '/')}'\n")
+            v_clean = v.replace("\\", "/")
+            f.write(f"file '{v_clean}'\n")
             
     clean_topic_name = topic_name.replace(" ", "_").replace("/", "_").replace("(", "").replace(")", "").replace(":", "")[:30]
     out_filename = f"{today_str}_{clean_topic_name}_shorts.mp4"
