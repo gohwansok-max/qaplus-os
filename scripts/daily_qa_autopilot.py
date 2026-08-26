@@ -908,33 +908,102 @@ TOPIC_TEMPLATES = {
 }
 
 def generate_dynamic_scenes_for_custom_topic(topic_name):
-    """지정되지 않은 임의의 신규 주제에 대해 도메인 키워드를 분석하여 100% 고유 대본 생성"""
-    if "금속" in topic_name or "이물" in topic_name:
+    """88개 인포그래픽 전 영역 주제에 대해 도메인 키워드를 분석하여 100% 고유 대본 생성"""
+    if any(k in topic_name for k in ["금속", "이물", "캘리퍼"]):
         return TOPIC_TEMPLATES[1]["scenes"]
-    elif "가열" in topic_name or "살균" in topic_name:
+    elif any(k in topic_name for k in ["가열", "살균", "Cold", "중심온도", "F0"]):
         return TOPIC_TEMPLATES[2]["scenes"]
-    elif "냉각" in topic_name or "식힘" in topic_name:
+    elif any(k in topic_name for k in ["냉각", "식힘", "냉동", "칠러", "동결", "품온"]):
         return TOPIC_TEMPLATES[3]["scenes"]
-    elif "알레르기" in topic_name or "교차" in topic_name:
+    elif any(k in topic_name for k in ["알레르기", "교차", "알레르겐", "스쿠프"]):
         return TOPIC_TEMPLATES[4]["scenes"]
-    elif "위생복" in topic_name or "손세척" in topic_name or "ATP" in topic_name:
+    elif any(k in topic_name for k in ["위생복", "방진복", "손세척", "ATP", "소독조", "개인위생"]):
         return TOPIC_TEMPLATES[5]["scenes"]
-    elif "이탈" in topic_name or "개선" in topic_name or "CAPA" in topic_name or "부적합" in topic_name:
+    elif any(k in topic_name for k in ["이탈", "개선", "CAPA", "부적합", "격리", "홀드", "폐기"]):
         return TOPIC_TEMPLATES[6]["scenes"]
-    elif "공조" in topic_name or "양압" in topic_name or "차압" in topic_name or "클린룸" in topic_name:
+    elif any(k in topic_name for k in ["공조", "양압", "차압", "클린룸", "HEPA", "헤파", "환기"]):
         return TOPIC_TEMPLATES[7]["scenes"]
-    elif "입고" in topic_name or "원료" in topic_name or "검수" in topic_name or "COA" in topic_name:
+    elif any(k in topic_name for k in ["입고", "원료", "검수", "COA", "팔레트", "보관", "창고"]):
         return TOPIC_TEMPLATES[8]["scenes"]
-    elif "미생물" in topic_name or "공전" in topic_name or "세균" in topic_name or "대장균" in topic_name:
+    elif any(k in topic_name for k in ["미생물", "식품공전", "세균", "대장균", "황색포도", "살모넬라", "FATTOM", "건조필름"]):
         return TOPIC_TEMPLATES[9]["scenes"]
-    elif "검교정" in topic_name or "저울" in topic_name or "온도계" in topic_name:
+    elif any(k in topic_name for k in ["검교정", "저울", "온도계", "압력계", "KOLAS", "분동"]):
         return TOPIC_TEMPLATES[10]["scenes"]
-    elif "X-ray" in topic_name or "엑스레이" in topic_name:
+    elif any(k in topic_name for k in ["X-ray", "엑스레이", "돌", "유리", "뼈", "플라스틱"]):
         return TOPIC_TEMPLATES[11]["scenes"]
-    elif "스마트" in topic_name or "센서" in topic_name:
+    elif any(k in topic_name for k in ["스마트", "센서", "IoT", "위변조", "자동기록"]):
         return TOPIC_TEMPLATES[12]["scenes"]
     else:
-        return TOPIC_TEMPLATES[1]["scenes"]
+        # FSSC22000, CIP, SUS, QC7가지 도구 등 특화 생성
+        return [
+            {
+                "id": 1, "badge": "💡 핵심 실무 브리핑", "badge_color": (37, 99, 235),
+                "title": f"식품안전 필수 정복!\n{topic_name[:16]}",
+                "subtitle": "20년 선배가 알려주는 실무 핵심 가이드",
+                "key_points": [
+                    f"1. {topic_name[:18]} 관련 법적/인증 기준 준수",
+                    "2. 현장 표준작업지침서(SOP)와 실제 운영의 일치성"
+                ],
+                "senior_tip": "현장 모니터링 기록과 실측 데이터 일치성이 심사 합격의 핵심!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": f"오늘 짚어볼 핵심 주제는 바로 {topic_name}입니다. 식품안전 심사 때 지적받지 않고 100점 만점으로 통과하는 3대 실무 포인트를 명쾌하게 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "📋 표준 기준 수립", "badge_color": (245, 158, 11),
+                "title": "과학적 근거 없는 기준은 감점!\n자사 라인 실측 데이터 확보",
+                "subtitle": f"{topic_name[:14]} 유효성 평가서 작성 원칙",
+                "key_points": [
+                    "1. 공정 조건(온도, 농도, 시간)별 실측 시험 데이터",
+                    "2. 공인 시험성적서 및 유효성 검증 바인더 구비"
+                ],
+                "senior_tip": "남의 서식을 그대로 베끼지 말고 자사 실측 데이터를 첨부하세요!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": f"첫째, {topic_name} 기준 수립의 과학적 근거입니다. 남의 공장 양식을 베끼지 마시고 우리 공장 라인에 맞는 실측 시험 데이터를 반드시 남겨두셔야 합니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 주기적 모니터링", "badge_color": (6, 182, 212),
+                "title": "사고를 막는 골든타임!\n작업 전·중·후 3시점 일상 점검",
+                "subtitle": "이탈 발생 시 당일 로트 격리 방어선",
+                "key_points": [
+                    "1. 작업 시작 전 : 설비 정상 가동 및 사전 준비 확인",
+                    "2. 작업 중 : 정기 모니터링 및 실시간 일지 작성",
+                    "3. 작업 종료 후 : 당일 생산 로트 최종 유효성 보증"
+                ],
+                "senior_tip": "종료 후 점검을 누락하면 당일 생산 전량을 재검사해야 합니다!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": f"둘째, 주기적인 일상 점검입니다. 작업 시작 전, 가동 중, 그리고 작업 종료 직후 3시점 모니터링을 준수해야 이상 발생 시 폐기 물량을 최소화할 수 있습니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "현장 트러블슈팅 노하우\n작업 시점에 즉시 기록하라!",
+                "subtitle": "심사관이 현장에서 확인하는 결정적 포인트",
+                "key_points": [
+                    "1. 일지는 퇴근 때 몰아서 쓰지 말고 실시간 기록",
+                    "2. 이상 발생 시 개선조치(CAPA) 이력철 필수 첨부"
+                ],
+                "senior_tip": "수정액(화이트) 사용은 조작 의심 1순위이므로 2줄 긋고 정정 서명!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 20년 선배의 실무 팁입니다. 점검 일지는 절대로 몰아서 쓰지 마시고 작업 시점에 즉시 기록하세요. 수정할 때는 두 줄을 긋고 정정자 서명을 남겨야 합니다."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "심사관이 감탄하는 3대 서식\n완벽 구비로 100% 합격!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    f"1. {topic_name[:16]} 표준작업지침서(SOP)",
+                    "2. 일일 점검 모니터링 일지 및 이력철",
+                    "3. 작업자 정기 교육 훈련 성적서"
+                ],
+                "senior_tip": "관련 실무 서식과 질문은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": f"이 세 가지만 준비하시면 {topic_name} 관리는 완벽합니다. 관련 서식과 실무 질문은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
 
 def get_font(size, bold=True):
     font_names = [
