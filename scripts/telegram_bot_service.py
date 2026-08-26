@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 큐에이플러스(QA+) 텔레그램 봇 리스너 서비스
-- 스마트폰 텔레그램에서 메시지를 보내면 GitHub 클라우드(Actions)를 즉시 트리거하여 영상을 렌더링
-- 명령어 예시:
-  /make 레토르트 살균 F0값 계산
-  /make 알레르기 교차오염 세척 검증
+- 스마트폰 텔레그램에서 메시지를 수신하여 즉시 쇼츠 비디오 렌더링 및 발송
+- 명령어:
+  /make [주제]
   /daily (오늘치 대기 주제 즉시 실행)
 """
 
@@ -12,15 +11,33 @@ import os
 import sys
 import time
 import requests
+import threading
+
+# Fix UTF-8 output
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.join(BASE_DIR, "scripts"))
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(BASE_DIR, ".env"))
+except ImportError:
+    pass
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")      # GitHub Personal Access Token (repo 권한)
-GITHUB_REPO = os.environ.get("GITHUB_REPO")        # 예: "myusername/ai-ceo-os"
+TELEGRAM_CHAT_ID = str(os.environ.get("TELEGRAM_CHAT_ID", ""))
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "gohwansok-max/qaplus-os")
 
 def trigger_github_action(topic=None):
     if not GITHUB_TOKEN or not GITHUB_REPO:
-        print("[!] GITHUB_TOKEN 또는 GITHUB_REPO가 설정되지 않았습니다.")
         return False
 
     url = f"https://api.github.com/repos/{GITHUB_REPO}/dispatches"
@@ -40,6 +57,15 @@ def trigger_github_action(topic=None):
         print(f"[!] GitHub API 호출 에러: {e}")
         return False
 
+def render_locally_and_send(chat_id, topic=None):
+    try:
+        from daily_qa_autopilot import run_daily_autopilot
+        send_telegram_reply(chat_id, "🎬 <b>[렌더링 진행 중]</b>\n20년 선배 TTS 음성과 1080x1920 세로형 카드를 합성하고 있습니다. 잠시만 기다려주세요...")
+        run_daily_autopilot(topic)
+    except Exception as e:
+        print(f"[!] 로컬 렌더링 에러: {e}")
+        send_telegram_reply(chat_id, f"⚠️ 영상 생성 중 오류가 발생했습니다: {e}")
+
 def send_telegram_reply(chat_id, text):
     if not TELEGRAM_BOT_TOKEN:
         return
@@ -49,22 +75,83 @@ def send_telegram_reply(chat_id, text):
     except Exception:
         pass
 
+def process_command(chat_id, text):
+    cleaned = text.strip()
+    
+    # 1. /make or 만들어줘
+    if cleaned.startswith("/make") or cleaned.startswith("만들어줘"):
+        topic = cleaned.replace("/make", "").replace("만들어줘:", "").replace("만들어줘", "").strip()
+        topic = topic.strip("[]'\"").strip()
+        
+        if not topic:
+            send_telegram_reply(chat_id, "💡 <b>사용법:</b> <code>/make [주제]</code>\n예: <code>/make 스마트HACCP 온도 센서 연동 방법</code>")
+            return
+            
+        send_telegram_reply(chat_id, f"🚀 <b>[접수 완료]</b>\n\n📌 <b>주제:</b> <code>{topic}</code>\n\n쇼츠 영상 제작을 시작했습니다. 1~2분 뒤 완성된 MP4 영상이 도착합니다!")
+        
+        # Try GitHub Actions first if token exists, otherwise render locally
+        if GITHUB_TOKEN:
+            success = trigger_github_action(topic)
+            if success:
+                return
+                
+        # Run local rendering in background thread
+        threading.Thread(target=render_locally_and_send, args=(chat_id, topic), daemon=True).start()
+
+    # 2. /daily or 오늘영상
+    elif cleaned in ["/daily", "오늘영상", "오늘"]:
+        send_telegram_reply(chat_id, "📅 <b>[일일 토픽 렌더링 시작]</b>\n\n30일 토픽 큐에서 오늘의 주제를 가져와 렌더링합니다!")
+        if GITHUB_TOKEN:
+            success = trigger_github_action(None)
+            if success:
+                return
+        threading.Thread(target=render_locally_and_send, args=(chat_id, None), daemon=True).start()
+
+    # 3. Help
+    elif cleaned in ["/start", "/help", "도움말"]:
+        help_msg = (
+            "👋 <b>큐에이플러스 AI 영상 제작 봇</b>\n\n"
+            "• <code>/make [주제]</code> : 원하는 주제로 즉시 숏츠 영상 제작\n"
+            "• <code>/daily</code> : 30일 큐에서 오늘자 주제 즉시 제작\n\n"
+            "💡 <b>예시:</b>\n"
+            "<code>/make 스마트HACCP 온도 센서 연동 방법</code>\n"
+            "<code>/make 레토르트 살균 F0값 계산</code>\n"
+            "<code>/make CCP 금속검출기 테스트피스 주기</code>"
+        )
+        send_telegram_reply(chat_id, help_msg)
+
 def run_bot():
     if not TELEGRAM_BOT_TOKEN:
         print("[!] TELEGRAM_BOT_TOKEN 환경변수가 필요합니다.")
         return
 
     print("==================================================================")
-    print("  🤖 [큐에이플러스] 텔레그램 봇 서비스 가동 중...")
+    print("  🤖 [큐에이플러스] 텔레그램 봇 서비스 가동 시작")
     print("==================================================================")
-    print("스마트폰 텔레그램에서 명령어를 보내면 클라우드에서 영상을 렌더링합니다.")
-    print("명령어: /make [주제] 또는 /daily")
+    print(f"  • Bot Token: {TELEGRAM_BOT_TOKEN[:10]}...")
+    print(f"  • Chat ID: {TELEGRAM_CHAT_ID}")
+    print("  • 대기 중... 텔레그램에서 명령어를 보내보세요.")
+
+    # Send online alert to Telegram
+    if TELEGRAM_CHAT_ID:
+        send_telegram_reply(TELEGRAM_CHAT_ID, "🟢 <b>[큐에이플러스 봇 온라인]</b>\n텔레그램 리스너가 가동되었습니다. <code>/make [주제]</code>를 입력해보세요!")
 
     last_update_id = 0
+    # First get latest update_id to avoid executing old buffered commands
+    try:
+        init_res = requests.get(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates?limit=100", timeout=10)
+        if init_res.status_code == 200:
+            updates = init_res.json().get("result", [])
+            if updates:
+                last_update_id = updates[-1]["update_id"]
+                print(f"  • 기존 {len(updates)}개 메시지 확인 완료. 최신 ID: {last_update_id}")
+    except Exception:
+        pass
+
     while True:
         try:
-            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates?offset={last_update_id + 1}&timeout=30"
-            res = requests.get(url, timeout=40)
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates?offset={last_update_id + 1}&timeout=20"
+            res = requests.get(url, timeout=30)
             if res.status_code == 200:
                 data = res.json()
                 for update in data.get("result", []):
@@ -73,29 +160,19 @@ def run_bot():
                     chat_id = str(msg.get("chat", {}).get("id", ""))
                     text = msg.get("text", "").strip()
 
-                    # Only respond to authorized chat_id if set
+                    if not text:
+                        continue
+
                     if TELEGRAM_CHAT_ID and chat_id != TELEGRAM_CHAT_ID:
                         continue
 
-                    if text.startswith("/make ") or text.startswith("만들어줘:"):
-                        topic = text.replace("/make ", "").replace("만들어줘:", "").strip()
-                        if topic:
-                            send_telegram_reply(chat_id, f"🚀 <b>[접수 완료]</b>\n\n주제: <code>{topic}</code>\n\n클라우드에서 1080x1920 세로형 쇼츠 MP4 렌더링을 시작했습니다!\n약 1~2분 뒤 완성된 영상이 톡으로 도착합니다.")
-                            success = trigger_github_action(topic)
-                            if not success:
-                                send_telegram_reply(chat_id, "⚠️ GitHub Actions 트리거 실패. 토큰 및 저장소 설정을 확인해주세요.")
-                    
-                    elif text == "/daily" or text == "오늘영상":
-                        send_telegram_reply(chat_id, "📅 <b>[일일 토픽 렌더링 시작]</b>\n\n토픽 큐에서 오늘의 주제를 가져와 렌더링합니다. 잠시만 기다려주세요!")
-                        trigger_github_action(None)
-
-                    elif text == "/start" or text == "/help":
-                        help_msg = "👋 <b>큐에이플러스 AI 영상 제작 봇</b>\n\n• <code>/make [주제]</code> : 원하는 주제로 즉시 쇼츠 영상 렌더링\n• <code>/daily</code> : 큐에 등록된 오늘자 주제 즉시 렌더링\n\nPC가 꺼져 있어도 클라우드가 1분 만에 MP4 영상을 만들어 보내드립니다!"
-                        send_telegram_reply(chat_id, help_msg)
+                    print(f"  [수신] Chat: {chat_id} | Text: {text}")
+                    process_command(chat_id, text)
 
         except Exception as e:
-            print(f"[!] 봇 에러 (5초 후 재시도): {e}")
-            time.sleep(5)
+            print(f"[!] 봇 루프 에러: {e}")
+            time.sleep(3)
 
 if __name__ == "__main__":
     run_bot()
+

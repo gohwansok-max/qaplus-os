@@ -243,6 +243,74 @@ def render_scene_frame(scene_data, frame_num_in_scene=0, total_scene_frames=300)
 
     return combined.convert("RGB")
 
+def normalize_qa_pronunciation(text: str) -> str:
+    """식품 품질관리(QA/QC) 및 HACCP 전문 용어를 자연스러운 한국어 발음(해썹, 씨씨피, 에프제로 등)으로 치환하여 TTS에 전달"""
+    if not text:
+        return ""
+    replacements = [
+        ("스마트HACCP", "스마트 해썹"),
+        ("스마트haccp", "스마트 해썹"),
+        ("FSSC22000", "에프에스에스씨 이만이천"),
+        ("fssc22000", "에프에스에스씨 이만이천"),
+        ("FSSC 22000", "에프에스에스씨 이만이천"),
+        ("FSSC", "에프에스에스씨"),
+        ("fssc", "에프에스에스씨"),
+        ("HACCP", "해썹"),
+        ("haccp", "해썹"),
+        ("CCP-B", "씨씨피 비"),
+        ("CCP-P", "씨씨피 피"),
+        ("CCP-C", "씨씨피 씨"),
+        ("CCP", "씨씨피"),
+        ("ccp", "씨씨피"),
+        ("SOP", "에스오피"),
+        ("sop", "에스오피"),
+        ("CAPA", "카파"),
+        ("capa", "카파"),
+        ("ATP", "에이티피"),
+        ("atp", "에이티피"),
+        ("CIP", "씨아이피"),
+        ("cip", "씨아이피"),
+        ("HVAC", "에이치백"),
+        ("hvac", "에이치백"),
+        ("PT100", "피티백"),
+        ("pt100", "피티백"),
+        ("RTD", "알티디"),
+        ("rtd", "알티디"),
+        ("PLC", "피엘씨"),
+        ("plc", "피엘씨"),
+        ("SCADA", "스카다"),
+        ("scada", "스카다"),
+        ("KOLAS", "코라스"),
+        ("kolas", "코라스"),
+        ("COA", "씨오에이"),
+        ("coa", "씨오에이"),
+        ("F0값", "에프제로값"),
+        ("F0", "에프제로"),
+        ("f0", "에프제로"),
+        ("F₀", "에프제로"),
+        ("QA+", "큐에이플러스"),
+        ("qa+", "큐에이플러스"),
+        ("QA", "큐에이"),
+        ("qa", "큐에이"),
+        ("QC", "큐씨"),
+        ("qc", "큐씨"),
+        ("SUS", "서스"),
+        ("sus", "서스"),
+        ("RLU", "알엘유"),
+        ("rlu", "알엘유"),
+        ("ppm", "피피엠"),
+        ("PPM", "피피엠"),
+        ("℃", "도"),
+        ("°C", "도씨"),
+        ("±", "플러스마이너스 "),
+        ("≥", "이상 "),
+        ("≤", "이하 "),
+    ]
+    processed = text
+    for target, repl in replacements:
+        processed = processed.replace(target, repl)
+    return processed
+
 async def generate_all_tts():
     import edge_tts
     voice = "ko-KR-InJoonNeural"
@@ -250,24 +318,34 @@ async def generate_all_tts():
     print("[1/4] Generating Korean TTS Voiceover (ko-KR-InJoonNeural)...")
     for s in SCENES:
         out_mp3 = os.path.join(AUDIO_DIR, f"scene_{s['id']:02d}.mp3")
-        # Check if already generated to save time
-        if not os.path.exists(out_mp3) or os.path.getsize(out_mp3) == 0:
-            communicate = edge_tts.Communicate(s["narration"], voice, rate="+5%", pitch="+0Hz")
-            await communicate.save(out_mp3)
+        spoken_text = normalize_qa_pronunciation(s["narration"])
+        communicate = edge_tts.Communicate(spoken_text, voice, rate="+5%", pitch="+0Hz")
+        await communicate.save(out_mp3)
         audio_files.append(out_mp3)
         print(f"  [OK] Scene {s['id']} TTS ready: {out_mp3}")
     return audio_files
 
-def get_audio_duration(file_path):
-    cmd = [
-        "ffprobe", "-v", "error", "-show_entries", "format=duration",
-        "-of", "default=noprint_wrappers=1:nokey=1", file_path
-    ]
-    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+def get_ffmpeg_cmd():
+    import shutil
+    if shutil.which("ffmpeg"):
+        return "ffmpeg"
     try:
-        return float(res.stdout.strip())
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
     except Exception:
-        return 10.0
+        return "ffmpeg"
+
+def get_audio_duration(file_path):
+    ffmpeg_exe = get_ffmpeg_cmd()
+    cmd = [ffmpeg_exe, "-i", file_path]
+    res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8", errors="replace")
+    stderr_text = res.stderr or ""
+    import re
+    m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.\d+)", stderr_text)
+    if m:
+        h, m_val, s = m.groups()
+        return int(h) * 3600 + int(m_val) * 60 + float(s)
+    return 10.0
 
 def build_full_video():
     # 1. TTS Generation
@@ -276,6 +354,7 @@ def build_full_video():
     # 2. Frame Rendering & Scene Video Encoding
     print("\n[2/4] Rendering 1080x1920 HD High-Contrast Frames & Encoding Scene Videos...")
     scene_videos = []
+    ffmpeg_exe = get_ffmpeg_cmd()
     
     for idx, s in enumerate(SCENES):
         audio_file = audio_files[idx]
@@ -292,7 +371,7 @@ def build_full_video():
         scene_mp4 = os.path.join(VIDEOS_DIR, f"scene_{s['id']:02d}.mp4")
         
         cmd = [
-            "ffmpeg", "-y",
+            ffmpeg_exe, "-y",
             "-loop", "1", "-i", frame_path,
             "-i", audio_file,
             "-c:v", "libx264", "-tune", "stillimage", "-c:a", "aac", "-b:a", "192k",
@@ -313,7 +392,7 @@ def build_full_video():
             
     master_mp4 = os.path.join(VIDEOS_DIR, "qa_metal_detector_shorts.mp4")
     concat_cmd = [
-        "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+        ffmpeg_exe, "-y", "-f", "concat", "-safe", "0",
         "-i", concat_list_path,
         "-c", "copy",
         master_mp4

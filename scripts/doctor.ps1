@@ -71,7 +71,7 @@ foreach ($a in $agents) {
     }
 
     $content = Get-Content $f -Raw
-    if ($content -match ("(?s)^---.*?name:\s*" + $a + ".*?---")) {
+    if ($content -match "name:\s*$a") {
         Write-Pass "$a 서브에이전트 (frontmatter 정상)"
     } else {
         Write-Warn "$a 있지만 frontmatter가 이상함"
@@ -133,11 +133,13 @@ foreach ($s in $scripts) {
 Write-Section "6. 플레이스홀더 미치환 검사"
 
 $slotCount = 0
-$files = Get-ChildItem -Path "CLAUDE.md", "context" -Filter "*.md" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '\.template\.' }
+$files = @(Get-Item "CLAUDE.md" -ErrorAction SilentlyContinue) + @(Get-ChildItem -Path "context" -Filter "*.md" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Name -notmatch '\.template\.' -and $_.Name -ne 'README.md' })
 foreach ($f in $files) {
-    $matches = Select-String -Path $f.FullName -Pattern '\{\{.*?\}\}'
-    if ($matches) {
-        $slotCount += $matches.Count
+    if ($f -and (Test-Path $f.FullName)) {
+        $matches = Select-String -Path $f.FullName -Pattern '\{\{.*?\}\}'
+        if ($matches) {
+            $slotCount += $matches.Count
+        }
     }
 }
 

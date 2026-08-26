@@ -9,6 +9,20 @@ import os
 import sys
 import requests
 
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+try:
+    from dotenv import load_dotenv
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    load_dotenv(os.path.join(base_dir, ".env"))
+except ImportError:
+    pass
+
 def send_video_to_telegram(video_path, caption=None):
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
@@ -41,20 +55,20 @@ def send_video_to_telegram(video_path, caption=None):
         try:
             res = requests.post(url, files=files, data=data, timeout=120)
             if res.status_code == 200:
-                print("  🎉 [성공] 텔레그램으로 영상 파일이 성공적으로 전송되었습니다!")
+                print("  [SUCCESS] 텔레그램으로 영상 파일이 성공적으로 전송되었습니다!")
                 return True
             else:
-                print(f"  [오류] 텔레그램 API 응답 에러: {res.status_code} - {res.text}")
+                print(f"  [ERROR] 텔레그램 API 응답 에러: {res.status_code} - {res.text}")
                 # Fallback to sendDocument if sendVideo fails
                 f.seek(0)
                 doc_url = f"https://api.telegram.org/bot{bot_token}/sendDocument"
                 doc_res = requests.post(doc_url, files={"document": f}, data={"chat_id": chat_id, "caption": caption, "parse_mode": "HTML"}, timeout=120)
                 if doc_res.status_code == 200:
-                    print("  🎉 [성공] 텔레그램 문서 형식으로 전송 완료!")
+                    print("  [SUCCESS] 텔레그램 문서 형식으로 전송 완료!")
                     return True
                 return False
         except Exception as e:
-            print(f"  [오류] 텔레그램 전송 중 예외 발생: {e}")
+            print(f"  [ERROR] 텔레그램 전송 중 예외 발생: {e}")
             return False
 
 def send_message_to_telegram(message):
