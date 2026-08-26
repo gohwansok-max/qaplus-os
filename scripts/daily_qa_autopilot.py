@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-큐에이플러스(QA+) 숏츠 5대 고도화 오토파일럿 엔진 (전문 지식 라이브러리 탑재)
-- 12개 실무 전 영역 100% 고유 대본 데이터베이스 (중복 문구 원천 차단)
-- 켄 번스 줌인 모션 & 슬림 실사 HUD
+큐에이플러스(QA+) 숏츠 5대 고도화 오토파일럿 엔진
+- 12대 전 실무 토픽 100% 고유 실무 지식 대본 완벽 탑재 (중복 문구 원천 차단)
+- 켄 번스(Ken Burns) 줌인 모션 & 슬림 실사 HUD
 - BGM & SFX 3중 오디오 믹싱
-- 온도계 / 캘리퍼 / 스왑 / 차압 인포그래픽 모션 그래픽 위젯
-- 텔레그램 연동 및 클라우드 자동 배달
+- 인포그래픽 모션 그래픽 위젯 (온도계 / 캘리퍼 / 차압계 / 미생물 / 3시점)
 """
 
 import os
@@ -39,11 +38,10 @@ os.makedirs(VIDEOS_DIR, exist_ok=True)
 os.makedirs(AUDIO_DIR, exist_ok=True)
 os.makedirs(FRAMES_DIR, exist_ok=True)
 
-# 12대 전문 실무 토픽 100% 고유 대본 데이터베이스
+# 12대 전문 실무 토픽 100% 고유 대본 데이터베이스 (중복 문구 원천 차단)
 TOPIC_TEMPLATES = {
     1: {
         "title": "금속검출기(CCP) 테스트피스 모니터링 주기 및 한계기준",
-        "category": "metal",
         "scenes": [
             {
                 "id": 1, "badge": "🚨 심사관 지적 1위", "badge_color": (239, 68, 68),
@@ -116,7 +114,6 @@ TOPIC_TEMPLATES = {
     },
     2: {
         "title": "가열살균 공정(CCP-B) Cold Spot 중심온도 실측 및 시간 관리",
-        "category": "temp",
         "scenes": [
             {
                 "id": 1, "badge": "🚨 심사관 지적 1위", "badge_color": (239, 68, 68),
@@ -189,7 +186,6 @@ TOPIC_TEMPLATES = {
     },
     3: {
         "title": "급속 냉각 공정(CCP) 미생물 증식대(10~60℃) 신속 통과 기준",
-        "category": "temp",
         "scenes": [
             {
                 "id": 1, "badge": "❄️ 골든타임 관리", "badge_color": (6, 182, 212),
@@ -262,7 +258,6 @@ TOPIC_TEMPLATES = {
     },
     4: {
         "title": "알레르기 유발물질 교차오염 방지 및 전용 라인 세척 검증",
-        "category": "allergy",
         "scenes": [
             {
                 "id": 1, "badge": "⚠️ 교차오염 차단", "badge_color": (236, 72, 153),
@@ -335,7 +330,6 @@ TOPIC_TEMPLATES = {
     },
     5: {
         "title": "식품공장 위생복·방진복 착용 기준 및 손세척 30초 검증 (ATP 측정)",
-        "category": "hygiene",
         "scenes": [
             {
                 "id": 1, "badge": "🧼 개인위생 표준", "badge_color": (16, 185, 129),
@@ -405,100 +399,542 @@ TOPIC_TEMPLATES = {
                 "narration": "이 세 가지만 철저히 지키시면 개인위생 심사는 무조건 만점입니다. 관련 양식과 체크리스트는 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
             }
         ]
+    },
+    6: {
+        "title": "CCP 한계기준 이탈 시 개선조치(CAPA) 및 부적합품 격리 4단계",
+        "scenes": [
+            {
+                "id": 1, "badge": "🚨 긴급 이탈 조치", "badge_color": (220, 38, 38),
+                "title": "한계기준 이탈 발생 시 당황 금지!\n즉시 라인 정지 & 빨간 HOLD 태그",
+                "subtitle": "20년 선배가 알려주는 부적합품 격리 4단계",
+                "key_points": [
+                    "이탈 즉시 설비 인터록 및 생산 라인 정지",
+                    "해당 로트 전량 격리 구역 이동 및 붉은색 HOLD 라벨 부착"
+                ],
+                "senior_tip": "격리 구역 시건장치 체결하고 열쇠는 품질팀장이 보관!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "생산 중 금속검출기나 가열온도 이탈이 발생하면 현장에서 가장 먼저 무엇을 해야 할까요? 바로 생산 중단과 빨간색 홀드 태그 부착입니다. 오늘 개선조치 4단계를 완벽 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "🔍 로트 역추적", "badge_color": (245, 158, 11),
+                "title": "직전 정상 점검 시점까지 전량 보류!\n영향받은 로트(Lot) 범위 확정",
+                "subtitle": "사고 범위 확산을 방어하는 추적성 관리",
+                "key_points": [
+                    "이전 정상 모니터링 시점 ~ 이탈 발견 시점 물량 전수 보류",
+                    "원부재료 입고 번호 및 포장 일자 매핑 대조"
+                ],
+                "senior_tip": "2시간 간격 모니터링을 했다면 최대 2시간 물량만 보류하면 됩니다!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 영향받은 로트 범위 확정입니다. 이탈이 발견되면 직전 정상 점검 시점부터 지금까지 생산된 전 물량을 보류해야 합니다. 점검 주기가 짧을수록 버려지는 물량을 줄일 수 있습니다."
+            },
+            {
+                "id": 3, "badge": "💡 5-Why 원인 분석", "badge_color": (6, 182, 212),
+                "title": "단순 작업자 부주의로 결론내면 탈락!\n근본 원인 5-Why 분석",
+                "subtitle": "설비 결함, 센서 오작동, 원료 편차 규명",
+                "key_points": [
+                    "1. 센서 케이블 단선 또는 히터 코일 열화 확인",
+                    "2. 배합비 점도 변화로 인한 열침투 지연 규명",
+                    "3. 동일 사례 재발 방지 장치(Poka-Yoke) 설계"
+                ],
+                "senior_tip": "'작업자 재교육'만 적힌 개선조치서는 심사관에게 100% 반려됩니다!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 5-Why 근본 원인 분석입니다. 이탈 원인을 단순히 작업자 부주의로 적으면 심사에서 감점받습니다. 설비 센서 고장이나 배합비 점도 변화 같은 근본 원인을 파헤쳐 적어야 합니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "부적합품 재가공 vs 폐기 결정\n품질책임자 서명 승인제",
+                "subtitle": "재가공 유효성 평가서 없는 재투입 절대 불가",
+                "key_points": [
+                    "재가공 기준(온도, 시간, 배합비율) 사전 명문화",
+                    "폐기 처리 시 폐기물 사진 및 계근표 일지 첨부"
+                ],
+                "senior_tip": "폐기 물품은 현장에서 즉시 락스를 뿌려 변질시켜 유출 차단!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 부적합품 처리 기준입니다. 재가공을 하려면 사전 유효성 평가서가 있어야 하고, 폐기할 때는 폐기 사진과 계근표를 반드시 남겨야 합니다."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "개선조치(CAPA) 심사 3대 서류\n이탈 이력철 완벽 대비!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 한계기준 이탈 및 개선조치 보고서 (CAPA)",
+                    "2. 부적합품 격리 및 폐기/재가공 처리 대장",
+                    "3. 재발방지 SOP 개정 및 교육 이력서"
+                ],
+                "senior_tip": "개선조치 보고서 양식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 갖추면 이탈이 발생해도 심사관에게 완벽한 품질 관리 능력을 입증할 수 있습니다. 관련 서식은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    7: {
+        "title": "작업장 공조(HVAC) 양압 관리 및 클린룸 차압 점검 주기",
+        "scenes": [
+            {
+                "id": 1, "badge": "💨 공조/차압 관리", "badge_color": (59, 130, 246),
+                "title": "외부 공기 역류 차단!\n청결구역 양압(Positive Pressure) 15Pa",
+                "subtitle": "20년 선배의 공조(HVAC) 기류 밸런싱",
+                "key_points": [
+                    "공기 흐름 원칙 : 청결구역 -> 준청결구역 -> 일반구역",
+                    "출입문 개방 시 실내 공기가 밖으로 밀려나가는 양압 유지"
+                ],
+                "senior_tip": "차압계(Magnehelic) 수치가 음압(-)으로 떨어지면 외부 오염 유입!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "작업장 문을 열었을 때 바깥 공기가 안으로 빨려 들어온다면 미생물과 분진이 그대로 침투합니다. 청결구역 양압 15 파스칼 관리와 공조 기류 제어법을 핵심만 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "💡 헤파필터 차압", "badge_color": (245, 158, 11),
+                "title": "헤파(HEPA) 필터 0.3㎛ 99.97% 포집!\n차압계(Magnehelic) 일일 점검",
+                "subtitle": "필터 막힘 및 찢어짐 실시간 감시",
+                "key_points": [
+                    "프리필터(1차) -> 미디엄(2차) -> 헤파(3차) 3단 구조",
+                    "초기 차압 대비 2배 이상 상승 시 필터 교체"
+                ],
+                "senior_tip": "헤파필터 연 1회 PAO 연무 누기 시험(Leak Test) 성적서 필수!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 헤파필터 차압 점검입니다. 필터에 먼지가 쌓이면 차압이 올라가고 풍량이 줄어듭니다. 마그네헬릭 차압계 수치를 매일 기록하여 교체 주기를 놓치지 마세요."
+            },
+            {
+                "id": 3, "badge": "⏱️ 풍속 및 환기", "badge_color": (6, 182, 212),
+                "title": "청결구역 풍속 0.3m/s 실측!\n시간당 환기 횟수 15~20회 유지",
+                "subtitle": "기류 정체 구역 및 결로 방지",
+                "key_points": [
+                    "1. 급기구(Diffuser) 디퓨저 풍속 아네모미터 실측",
+                    "2. 바닥 배기 갤러리 먼지 청소 주기 명문화",
+                    "3. 작업장 온습도(20℃ 이하, 습도 60% 이하) 유지"
+                ],
+                "senior_tip": "작업장 습도가 70% 넘어가면 천장 곰팡이 포자 번식 위험!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 환기 횟수와 온습도 관리입니다. 청결구역은 시간당 최소 15회 이상 환기가 되어야 공기 중 부유균이 배출됩니다. 습도는 60% 이하로 유지해야 곰팡이를 막을 수 있습니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "에어락 도어 인터록(Interlock)\n동시 개방 방지 연동",
+                "subtitle": "전실 양쪽 문이 한 번에 열리면 차압 붕괴",
+                "key_points": [
+                    "에어락 전실 한쪽 문이 닫혀야 반대쪽 문 개방",
+                    "도어 가스켓 틈새 마모 상태 주 1회 육안 점검"
+                ],
+                "senior_tip": "도어 하부 고무 패킹이 찢어지면 바닥 벌레 유입 1위!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 에어락 도어 인터록입니다. 전실의 안쪽 문과 바깥쪽 문이 동시에 열리면 순간적으로 차압이 깨집니다. 반드시 인터록 장치를 걸어 한쪽 문이 닫힌 뒤 열리도록 하세요."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "공조 시설 심사 3대 구비철\n환경 모니터링 100% 통과!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 공조기(AHU) 점검표 및 차압 일일 모니터링 일지",
+                    "2. 헤파필터 교체 이력 및 누기 시험 성적서",
+                    "3. 작업장 공기 중 낙하세균 / 부유균 시험 성적서"
+                ],
+                "senior_tip": "공조 점검 일지 서식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 관리하시면 작업장 공조와 차압 심사는 완벽히 패스합니다. 관련 서식과 실무 질문은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    8: {
+        "title": "원부재료 입고 검수 기준 (품온 측정, 성적서 대조, 이물 확인)",
+        "scenes": [
+            {
+                "id": 1, "badge": "📦 원료 입고 검수", "badge_color": (139, 92, 246),
+                "title": "입고에서 뚫리면 전 공정 오염!\n냉장 0~10℃ / 냉동 -18℃ 이하 실측",
+                "subtitle": "20년 선배의 원료 입고 3단계 방어선",
+                "key_points": [
+                    "납품 차량 타코메타(온도기록지) 운행 전구간 확인",
+                    "원료 박스 중심 품온 탐침 온도계 측정"
+                ],
+                "senior_tip": "냉동 원료 품온이 -15℃ 이상으로 녹아있으면 즉시 입고 거부 및 반품!",
+                "infographic": "temp",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "원부재료 입고 검수에서 오염된 원료를 통과시키면 이후 모든 가열과 살균 공정이 무용지물이 됩니다. 납품 차량 온도기록지와 중심품온 실측 원칙을 명쾌하게 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "💡 COA 성적서 대조", "badge_color": (245, 158, 11),
+                "title": "공급업체 시험성적서(COA) 전수 대조!\n유효기간 및 제조일자 확인",
+                "subtitle": "성적서 위변조 및 누락 방지",
+                "key_points": [
+                    "입고 로트 번호와 시험성적서 번호 일치 확인",
+                    "중금속, 잔류농약, 미생물 공인 규격 만족 확인"
+                ],
+                "senior_tip": "연 1회 이상 공급업체 성적서와 별도로 자체 공인기관 교차 검사!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 시험성적서 대조입니다. 입고된 박스의 로트 번호와 공급업체가 보낸 시험성적서 번호가 정확히 일치하는지 확인하고, 미생물과 유해물질 규격 적합 여부를 체크해야 합니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 외관/이물 검사", "badge_color": (6, 182, 212),
+                "title": "포장 파손 및 해충 흔적 전수 확인!\n샘플링 검수 기준(n=√N+1)",
+                "subtitle": "수침, 변색, 곰팡이 오염 원천 차단",
+                "key_points": [
+                    "1. 포장지 찢김, 찌그러짐, 쥐/해충 분변 검사",
+                    "2. 원료 색상, 이취, 수분 응결 상태 관능검사",
+                    "3. 검수 합격품에 '입고검사 합격증' 라벨 부착"
+                ],
+                "senior_tip": "박스 테이프에 외부 흙먼지가 묻은 채 내부로 들어가지 않게 겉박스 탈거!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 외관 및 이물 샘플링 검사입니다. 포장이 찢어지거나 젖은 박스는 즉시 격리하고, 관능검사로 냄새와 변색을 확인한 뒤 합격 라벨을 붙여 창고로 인계해야 합니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "선입선출(FIFO) & 바닥 이격 15cm\n벽면 30cm 이격 팔레트 적재",
+                "subtitle": "창고 해충 유입 및 습기 차단 원칙",
+                "key_points": [
+                    "바닥 직접 적재 금지, 플라스틱 위생 팔레트 사용",
+                    "제조일자 빠른 순서대로 출고 동선 라인 배치"
+                ],
+                "senior_tip": "나무 팔레트는 가시, 곰팡이, 벌레 유입 1위이므로 식품 창고 반입 절대 금지!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 창고 적재와 선입선출입니다. 원료는 바닥에서 15센티, 벽에서 30센티 띄워 적재해야 환기가 되고 벌레가 숨지 못합니다. 나무 팔레트는 이물 위험이 크니 플라스틱만 쓰세요."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "입고 검수 심사 3대 구비철\n협력업체 관리 완벽 대비!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 원부재료 입고 검사 기준서 및 일일 검수 일지",
+                    "2. 원료 공급업체 시험성적서(COA) 바인더",
+                    "3. 연 1회 원료 공급업체 정기 현장 위생 평가서"
+                ],
+                "senior_tip": "입고 검수 서식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 갖추면 원료 입고 심사는 100점 만점입니다. 입고 검수 일지와 공급업체 평가표는 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    9: {
+        "title": "식품공전 미생물 규격 (일반세균수, 대장균군, 황색포도상구균) 판정법",
+        "category": "micro",
+        "scenes": [
+            {
+                "id": 1, "badge": "🔬 미생물 규격 기준", "badge_color": (14, 165, 233),
+                "title": "통계적 샘플링 n, c, m, M 완벽 해석!\n1개라도 초과하면 부적합 판정",
+                "subtitle": "20년 선배의 식품공전 미생물 규격 정복",
+                "key_points": [
+                    "n: 시료 수, c: 최대 허용 시료 수, m: 기준값, M: 최대 한계값",
+                    "가열제품 vs 비가열제품 규격 기준 명확한 구분"
+                ],
+                "senior_tip": "단 1개 시료라도 M값을 넘으면 c값과 무관하게 즉시 부적합!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "식품공전 미생물 기준에서 엔, 씨, 엠, 라지엠 표기를 제대로 해석하지 못하면 자가품질검사에서 큰 낭패를 봅니다. 오늘 통계적 샘플링 판정법을 3분 만에 마스터해드릴게요."
+            },
+            {
+                "id": 2, "badge": "💡 일반세균수 판정", "badge_color": (245, 158, 11),
+                "title": "일반세균수(Aerobic Plate Count)\nn=5, c=2, m=10^5, M=10^6 계산법",
+                "subtitle": "표준평판배양법 35℃ 48시간 배양",
+                "key_points": [
+                    "집락수 30~300개 평판 선택하여 계산",
+                    "5개 샘플 중 10^5 초과 10^6 이하 샘플은 최대 2개까지만 합격"
+                ],
+                "senior_tip": "희석배수별 집락수 계산 공식(N = ΣC / [(1*n1)+(0.1*n2)]*d) 준수!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 일반세균수 판정입니다. 시료 5개를 검사했을 때, 소문자 엠과 대문자 엠 사이의 수치는 최대 2개까지만 허용됩니다. 3개 이상 나오거나 대문자 엠을 넘으면 부적합입니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 병원성 미생물", "badge_color": (239, 68, 68),
+                "title": "살모넬라 / 리스테리아 / 장출혈성대장균\n25g 당 음성(n=5, c=0, m=0/25g)",
+                "subtitle": "절대 검출되어서는 안 되는 제로 톨러런스(Zero Tolerance)",
+                "key_points": [
+                    "1. 증균배양 -> 선택배지 분리배양 -> 확인시험(PCR/동정)",
+                    "2. 5개 시료 모두에서 25g 당 음성(불검출) 필수",
+                    "3. 대장균군(Coliform) 정량/정성 시험 기준 준수"
+                ],
+                "senior_tip": "병원성 식중독균 양성 판정 시 보건당국 즉시 보고 및 전량 회수!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 병원성 미생물 음성 기준입니다. 살모넬라나 리스테리아 같은 식중독균은 25그램 당 무조건 불검출이어야 합니다. 단 1개라도 양성이 나오면 즉시 전량 회수 조치됩니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "실험실 무균 작업대(Clean Bench)\n배지 멸균 검증 블랭크 테스트",
+                "subtitle": "실험실 자체 오염으로 인한 가짜 양성(False Positive) 방어",
+                "key_points": [
+                    "클린벤치 UV 램프 30분 소독 후 알코올 70% 분무",
+                    "배지 1장 공시험(Blank)으로 배지 자체 무균성 보증"
+                ],
+                "senior_tip": "공시험 배지에 균이 자랐다면 실험 결과 전체 무효 처리 후 재시험!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 블랭크 테스트입니다. 실험실 공기나 배지 자체 오염으로 가짜 양성이 나오는 경우가 많습니다. 시료를 넣지 않은 공시험 배지를 함께 배양해서 실험 무결성을 증명하세요."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "미생물 시험 검사 3대 서류\n자가품질검사 완벽 대비!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 자가품질검사 관리 대장 및 공인 시험성적서",
+                    "2. 사내 미생물 일일 모니터링 원장 및 균수 계산표",
+                    "3. 배양기 및 오토클레이브 검교정 성적서"
+                ],
+                "senior_tip": "미생물 검사 대장 양식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 구비하시면 미생물 검사와 자가품질검사 심사는 무조건 통과입니다. 관련 계산 서식은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    10: {
+        "title": "HACCP 검교정 관리 (온도계, 저울, 압력계 연 1회 공인 검교정)",
+        "scenes": [
+            {
+                "id": 1, "badge": "📏 계측기 검교정", "badge_color": (245, 158, 11),
+                "title": "계측기 오차 1도가 합격/불합격을 가른다!\nKOLAS 연 1회 공인 검교정",
+                "subtitle": "20년 선배의 계측기 신뢰성 보증 룰",
+                "key_points": [
+                    "국가표준기본법 소급성(Traceability) 성적서 구비",
+                    "온도계, 전자저울, 압력계, 타이머 관리 대상"
+                ],
+                "senior_tip": "교정 유효기간 만료 30일 전에 교정기관 사전 접수 필수!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "온도계가 1도만 틀어져도 살균 온도를 채우지 못한 미생물 번식 사고로 이어집니다. 공인기관 국가 소급성 검교정과 사내 일상 영점 관리법을 명쾌하게 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "💡 사내 0점 보정", "badge_color": (6, 182, 212),
+                "title": "중심온도계 얼음물 0℃ / 끓는물 100℃\n월 1회 2점 영점보정 원칙",
+                "subtitle": "심사 전날 급조하지 않는 상시 데이터 축적",
+                "key_points": [
+                    "증류수 얼음물 0℃ ±0.2℃ / 끓는물 100℃ ±0.3℃ 실측",
+                    "오차 ±0.5℃ 초과 시 센서 폐기 및 신규 교체"
+                ],
+                "senior_tip": "온도계 센서 코일 단선 시 튀는 수치(불안정) 주 1회 육안 점검!",
+                "infographic": "temp",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 사내 2점 영점보정입니다. 중심온도계는 매월 얼음물 0도와 끓는물 100도에서 사내 보정을 해야 합니다. 오차가 0.5도를 넘어가면 센서를 즉시 교체해야 합니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 전자저울 분동", "badge_color": (16, 185, 129),
+                "title": "전자저울 F1급 표준분동 일일 점검!\n작업 시작 전 영점 및 수평계 확인",
+                "subtitle": "배합비 오차 및 식품첨가물 초과 투입 차단",
+                "key_points": [
+                    "1. 저울 기포관 수평 정중앙 일치 확인",
+                    "2. 공인 표준분동(100g, 500g, 1kg) 일일 실측 기록",
+                    "3. 분동 취급 시 핀셋 및 면장갑 착용 (손 지문 오염 차단)"
+                ],
+                "senior_tip": "표준분동을 맨손으로 잡으면 땀과 기름기로 무게 오차 발생!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 전자저울 표준분동 점검입니다. 저울 수평을 맞추고 공인 분동으로 매일 아침 오차를 기록해야 합니다. 표준분동은 지문이 묻지 않게 반드시 핀셋이나 장갑을 끼고 만지세요."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "계측기 관리 대장(Matrix) & 교정필증\n현장 계측기 녹색 스티커 부착",
+                "subtitle": "교정 기한 지난 계측기 현장 방치 적발 방어",
+                "key_points": [
+                    "고유 식별번호(ID) 부여 및 계측기 관리 이력카드 작성",
+                    "차기 교정 예정일이 명시된 녹색 교정필증 부착"
+                ],
+                "senior_tip": "고장난 계측기는 '사용금지(붉은색)' 라벨을 붙여 별도 격리 보관!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 계측기 이력 관리와 교정필증 스티커입니다. 모든 계측기에 고유 번호를 붙이고 다음 교정일 스티커를 부착해야 합니다. 고장난 계측기는 즉시 사용금지 라벨을 붙여 격리하세요."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "검교정 심사 3대 필수 바인더\n심사관 지적 0건 달성!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 계측기 총괄 관리 대장 및 사내 검교정 기준서",
+                    "2. KOLAS 공인 검교정 성적서 원본 바인더",
+                    "3. 일일 저울/온도계 사내 일상 점검 일지"
+                ],
+                "senior_tip": "검교정 관리 양식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 철저히 정리해두시면 계측기 심사는 무조건 패스입니다. 계측기 관리 대장 양식은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    11: {
+        "title": "이물 관리 시스템: X-ray 이물검출기 vs 금속검출기 차이와 복합 운영",
+        "scenes": [
+            {
+                "id": 1, "badge": "🔍 이물 제로화", "badge_color": (16, 185, 129),
+                "title": "금속검출기 vs X-ray 이물검출기!\n원리 차이와 상호 보완 완벽 정리",
+                "subtitle": "20년 선배의 다중 이물 방어선 구축",
+                "key_points": [
+                    "금속검출기 : 자기장 교란 기반, 철/스텐 고감도 검출",
+                    "X-ray 검출기 : 밀도(Density) 흡수차 기반, 비금속 이물 검출"
+                ],
+                "senior_tip": "알루미늄 파우치 포장 제품은 X-ray 검출기 필수 적용!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "금속검출기와 엑스레이 검사기, 둘 중 하나만 쓰면 왜 이물 클레임이 터질까요? 두 장비의 검출 원리가 완전히 다르기 때문입니다. 두 장비의 복합 운영 노하우를 정리해드립니다."
+            },
+            {
+                "id": 2, "badge": "💡 X-ray 검출 범위", "badge_color": (245, 158, 11),
+                "title": "뼈, 돌, 유리, 경질 플라스틱 검출!\n밀도차 기반 이미지 필터링",
+                "subtitle": "금속검출기가 못 잡는 비금속 위험 이물 차단",
+                "key_points": [
+                    "유리(Glass 2.0mm), 돌(Stone 2.0mm), 뼈(Bone 3.0mm) 검출",
+                    "제품 두께 및 밀도에 따른 흑백 명암비(Contrast) 세팅"
+                ],
+                "senior_tip": "비닐이나 머리카락, 종이는 밀도가 낮아 X-ray로도 검출 불가!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "첫째, 엑스레이의 검출 범위입니다. 엑스레이는 돌, 유리, 뼈처럼 물보다 밀도가 높은 이물을 완벽히 잡아냅니다. 단, 머리카락이나 비닐은 밀도가 낮아 전처리 공정에서 걸러내야 합니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 시편 모니터링", "badge_color": (6, 182, 212),
+                "title": "X-ray 전용 테스트 시편 점검!\n유리/돌/세라믹 시편 통과 원칙",
+                "subtitle": "센서 다이오드 열화 및 감도 저하 방어",
+                "key_points": [
+                    "1. SUS, 유리구(Glass Ball), 세라믹 시편 3종 통과",
+                    "2. 제품 중심부 및 대각선 4개 모서리 통과 테스트",
+                    "3. 자동 리젝터(Rejector) 에어 블로우 정상 배출 확인"
+                ],
+                "senior_tip": "X-ray 디텍터 센서 먼지 청소 매주 정기 수행!",
+                "infographic": "metal",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "둘째, 엑스레이 시편 점검입니다. 금속 시편뿐만 아니라 유리와 세라믹 시편을 함께 통과시켜야 합니다. 제품의 네 귀퉁이와 중심부에 올려서 모두 정상 리젝트되는지 확인하세요."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "방사선 안전관리 기준 준수!\n법적 누설 선량 1μSv/h 이하 유지",
+                "subtitle": "원자력안전위원회 방사선 발생장치 신고 및 필증",
+                "key_points": [
+                    "작업자 방사선 피폭 방지 차폐 커튼(납 커튼) 마모 점검",
+                    "연 1회 공인기관 방사선 누설 측정 성적서 보관"
+                ],
+                "senior_tip": "납 차폐 커튼이 제품에 직접 닿지 않도록 가이드 롤러 설치!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 방사선 안전관리입니다. 엑스레이 장비는 차폐 커튼 손상이 없는지 매일 확인하고, 연 1회 방사선 누설 측정을 받아야 합니다. 안전 필증 원본을 바인더에 보관하세요."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "이물 관리 심사 3대 서식\n이물 클레임 제로화 달성!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. X-ray 및 금속검출기 한계기준 유효성 평가서",
+                    "2. 일일 3시점 시편 모니터링 및 불합격품 처리 대장",
+                    "3. 방사선 발생장치 안전관리 일지 및 측정 성적서"
+                ],
+                "senior_tip": "이물 관리 서식은 큐에이플러스 오픈채팅방에서 무료 다운!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 구축하시면 이물 클레임과 심사는 완벽히 방어됩니다. 이물 관리 점검 서식은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
+    },
+    12: {
+        "title": "스마트HACCP 도입 효과 및 데이터 위변조 방지 센서 연동 실무",
+        "scenes": [
+            {
+                "id": 1, "badge": "💻 스마트 HACCP", "badge_color": (99, 102, 241),
+                "title": "종이 일지 수기 작성 끝!\n스마트HACCP 디지털 실시간 자동 기록",
+                "subtitle": "20년 선배가 알려주는 스마트공장 전환 로드맵",
+                "key_points": [
+                    "CCP 모니터링 데이터 센서에서 서버로 초단위 직결",
+                    "일지 작성 시간 90% 단축 및 기록 누락 원천 차단"
+                ],
+                "senior_tip": "스마트HACCP 등록 시 정기 심사 서류 평가 면제 혜택!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
+                "narration": "바쁜 현장에서 하루 종일 볼펜 들고 CCP 일지 쓰느라 힘드셨죠? 스마트HACCP을 도입하면 센서가 데이터를 자동으로 수집하여 일지 작성 부담을 90% 없애줍니다."
+            },
+            {
+                "id": 2, "badge": "💡 위변조 방지 기술", "badge_color": (245, 158, 11),
+                "title": "데이터 위변조 방지 해시(Hash) 연동!\n심사관이 100% 신뢰하는 무결성",
+                "subtitle": "한국식품안전관리인증원 표준 프로토콜 연계",
+                "key_points": [
+                    "센서 원천 데이터 생성 시 블록체인/해시 암호화",
+                    "수정 및 삭제 시 감사 추적(Audit Trail) 이력 자동 기록"
+                ],
+                "senior_tip": "임의 수정이 불가능한 PLC 직결 통신 모듈(RS-485/IoT) 필수!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
+                "narration": "첫째, 데이터 위변조 방지 무결성입니다. 수기 일지는 조작 의심을 받기 쉽지만, 스마트HACCP은 센서 데이터가 암호화되어 서버로 넘어가므로 심사관이 100% 신뢰합니다."
+            },
+            {
+                "id": 3, "badge": "⏱️ 실시간 이탈 알림", "badge_color": (239, 68, 68),
+                "title": "한계기준 이탈 즉시 스마트폰 SMS/카톡 경보!\n골든타임 5분 내 대응 체계",
+                "subtitle": "설비 인터록 연동으로 불합격품 생산 자동차단",
+                "key_points": [
+                    "1. 온도/금속 이탈 발생 1초 만에 담당자 경보 푸시",
+                    "2. 설비 자동 정지 및 리젝트 박스 격리 연동",
+                    "3. 개선조치(CAPA) 전산 입력 전 라인 재가동 금지"
+                ],
+                "senior_tip": "스마트 경보 이력은 3년간 클라우드 서버에 안전 백업!",
+                "infographic": "temp",
+                "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
+                "narration": "둘째, 실시간 이탈 알림과 인터록입니다. 기준 온도를 벗어나거나 금속이 감지되면 담당자 스마트폰으로 즉시 카톡 경보가 울리고 라인이 자동으로 멈춰 불량품을 막아냅니다."
+            },
+            {
+                "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
+                "title": "정부 지원금(최대 50~70%) 활용법\n중소기업 스마트공장 구축",
+                "subtitle": "동김제 농협 등 현장 구축 실무 노하우",
+                "key_points": [
+                    "스마트제조혁신추진단 및 인증원 보조금 사업 신청",
+                    "기존 구형 설비에도 외장 센서 모듈 부착으로 저비용 구축"
+                ],
+                "senior_tip": "설비 교체 없이 IoT 센서만 붙여도 스마트HACCP 통과 가능!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "셋째, 정부 지원 사업 활용입니다. 설비를 통째로 바꾸지 않고 기존 설비에 IoT 센서만 부착해도 정부 지원금을 받아 적은 비용으로 스마트HACCP을 구축할 수 있습니다."
+            },
+            {
+                "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
+                "title": "스마트HACCP 도입 3대 구비철\n디지털 품질관리 완벽 전환!",
+                "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
+                "key_points": [
+                    "1. 스마트HACCP 시스템 운영 절차서 및 센서 매뉴얼",
+                    "2. 통신 장애 시 수기 전환 및 데이터 동기화 SOP",
+                    "3. 인증원 표준 연계 모듈 등록 확인서"
+                ],
+                "senior_tip": "스마트HACCP 구축 가이드와 서식은 큐에이플러스 오픈채팅방으로!",
+                "infographic": "steps",
+                "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
+                "narration": "이 세 가지만 준비하시면 스마트HACCP 도입과 정기 평가는 완벽히 끝납니다. 구축 자문과 서식은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
+            }
+        ]
     }
 }
 
 def generate_dynamic_scenes_for_custom_topic(topic_name):
-    """임의의 신규 주제에 대해 주제별 도메인 지식을 심층 분석하여 100% 고유 대본 생성"""
-    # 키워드 도메인 분석
-    is_allergy = any(k in topic_name for k in ["알레르기", "교차오염", "스왑", "알레르겐"])
-    is_cool = any(k in topic_name for k in ["냉각", "칠러", "식힘", "냉동", "품온"])
-    is_hygiene = any(k in topic_name for k in ["위생복", "방진복", "손세척", "ATP", "개인위생", "소독"])
-    is_capa = any(k in topic_name for k in ["CAPA", "개선조치", "이탈", "부적합", "격리", "홀드"])
-    is_hvac = any(k in topic_name for k in ["공조", "HVAC", "양압", "차압", "클린룸", "헤파필터", "환기"])
-    is_raw = any(k in topic_name for k in ["입고", "검수", "원료", "원부재료", "성적서", "COA"])
-    is_micro = any(k in topic_name for k in ["미생물", "식품공전", "세균수", "대장균", "황색포도", "살모넬라"])
-    is_calib = any(k in topic_name for k in ["검교정", "교정", "저울", "온도계", "압력계", "KOLAS"])
-    is_xray = any(k in topic_name for k in ["X-ray", "엑스레이", "이물", "유리", "돌", "플라스틱"])
-    is_smart = any(k in topic_name for k in ["스마트", "센서", "위변조", "자동기록", "모니터링"])
-
-    if is_allergy:
-        return TOPIC_TEMPLATES[4]["scenes"]
-    elif is_cool:
+    """지정되지 않은 임의의 신규 주제에 대해 도메인 키워드를 분석하여 100% 고유 대본 생성"""
+    if "금속" in topic_name or "이물" in topic_name:
+        return TOPIC_TEMPLATES[1]["scenes"]
+    elif "가열" in topic_name or "살균" in topic_name:
+        return TOPIC_TEMPLATES[2]["scenes"]
+    elif "냉각" in topic_name or "식힘" in topic_name:
         return TOPIC_TEMPLATES[3]["scenes"]
-    elif is_hygiene:
+    elif "알레르기" in topic_name or "교차" in topic_name:
+        return TOPIC_TEMPLATES[4]["scenes"]
+    elif "위생복" in topic_name or "손세척" in topic_name or "ATP" in topic_name:
         return TOPIC_TEMPLATES[5]["scenes"]
-
-    # 12대 외 기타 신규 주제 맞춤 생성
-    return [
-        {
-            "id": 1, "badge": "🚨 실무 핵심 진단", "badge_color": (239, 68, 68),
-            "title": f"식품안전 필수 점검!\n{topic_name[:16]}",
-            "subtitle": f"20년 선배가 알려주는 {topic_name[:12]} 실무 기준",
-            "key_points": [
-                f"1. {topic_name[:16]} 관련 법적 한계기준 준수",
-                f"2. 현장 작업 표준서(SOP)와 실제 기록의 일치성"
-            ],
-            "senior_tip": f"{topic_name[:14]} 이탈 시 즉시 라인 인터록 및 격리 조치!",
-            "infographic": "steps",
-            "image": os.path.join(ASSETS_DIR, "broll_metal_line.jpg"),
-            "narration": f"오늘 현장에서 챙겨야 할 핵심 주제는 바로 {topic_name}입니다. 식품안전 심사 때 지적받지 않고 100% 합격하는 3대 실무 포인트를 명쾌하게 정리해드립니다."
-        },
-        {
-            "id": 2, "badge": "💡 과학적 기준 설정", "badge_color": (245, 158, 11),
-            "title": "남의 공장 기준 베끼면 감점!\n자사 설비 실측 데이터 확보",
-            "subtitle": f"{topic_name[:14]} 유효성 평가서 작성 원칙",
-            "key_points": [
-                f"1. 생산 조건(온도, 속도, 배합비)별 실측 시험",
-                f"2. 10회 이상 반복 검증 데이터 바인더 구비"
-            ],
-            "senior_tip": "공인 시험성적서와 사내 실측 데이터를 함께 첨부하세요!",
-            "infographic": "steps",
-            "image": os.path.join(ASSETS_DIR, "broll_test_piece.jpg"),
-            "narration": f"첫째, {topic_name} 기준 설정의 과학적 근거입니다. 남의 서식을 그대로 쓰지 마시고, 우리 공장 라인에 맞는 실측 시험 데이터를 반드시 남겨두셔야 합니다."
-        },
-        {
-            "id": 3, "badge": "⏱️ 3시점 일상 점검", "badge_color": (6, 182, 212),
-            "title": "사고 범위를 줄이는 골든타임!\n작업 전·중·후 3시점 검증",
-            "subtitle": "이탈 발생 시 당일 로트 격리 방어",
-            "key_points": [
-                "1. 작업 시작 전 : 설비 정상 가동 및 영점 확인",
-                "2. 작업 중 : 주기적 모니터링 및 실시간 일지 작성",
-                "3. 작업 종료 후 : 당일 생산 로트 최종 유효성 보증"
-            ],
-            "senior_tip": "종료 후 점검을 빼먹으면 당일 생산 전량을 재검사해야 합니다!",
-            "infographic": "steps",
-            "image": os.path.join(ASSETS_DIR, "broll_smart_haccp.jpg"),
-            "narration": f"둘째, 3시점 점검 원칙입니다. 작업 시작 전, 가동 중, 그리고 작업 종료 직후에 모니터링하여 이상 발생 시 폐기 물량을 최소화해야 합니다."
-        },
-        {
-            "id": 4, "badge": "🔥 20년 선배 꿀팁", "badge_color": (139, 92, 246),
-            "title": "현장 트러블슈팅 노하우\n일지 몰아쓰기 절대 금지!",
-            "subtitle": "심사관이 현장에서 확인하는 결정적 포인트",
-            "key_points": [
-                "1. 작업 시점에 실시간으로 기록하고 서명",
-                "2. 수치 수정 시 두 줄 긋고 정정자 서명 날인"
-            ],
-            "senior_tip": "수정액(화이트) 사용은 심사 시 데이터 조작 의심 1순위!",
-            "infographic": "steps",
-            "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
-            "narration": "셋째, 선배의 실무 팁입니다. 점검 일지는 절대로 퇴근 때 몰아서 쓰지 마시고 작업 시점에 즉시 기록하세요. 수정액을 쓰면 조작으로 오해받으니 두 줄 긋고 서명하세요."
-        },
-        {
-            "id": 5, "badge": "🏆 합격 체크리스트", "badge_color": (16, 185, 129),
-            "title": "심사관이 감탄하는 3대 서식\n완벽 구비로 100% 합격!",
-            "subtitle": "큐에이플러스가 후배님들의 칼퇴를 응원합니다",
-            "key_points": [
-                f"1. {topic_name[:16]} 표준작업지침서(SOP)",
-                "2. 일일 모니터링 점검표 및 개선조치 이력철",
-                "3. 계측기 검교정 성적서 및 교육 훈련 일지"
-            ],
-            "senior_tip": "관련 실무 서식은 큐에이플러스 오픈채팅방에서 무료 다운!",
-            "infographic": "steps",
-            "image": os.path.join(ASSETS_DIR, "broll_audit.jpg"),
-            "narration": f"이 세 가지만 준비하시면 {topic_name} 관리는 완벽합니다. 관련 서식과 실무 질문은 큐에이플러스 오픈채팅방에서 편하게 받아가세요. 후배님들의 칼퇴를 응원합니다!"
-        }
-    ]
+    elif "이탈" in topic_name or "개선" in topic_name or "CAPA" in topic_name or "부적합" in topic_name:
+        return TOPIC_TEMPLATES[6]["scenes"]
+    elif "공조" in topic_name or "양압" in topic_name or "차압" in topic_name or "클린룸" in topic_name:
+        return TOPIC_TEMPLATES[7]["scenes"]
+    elif "입고" in topic_name or "원료" in topic_name or "검수" in topic_name or "COA" in topic_name:
+        return TOPIC_TEMPLATES[8]["scenes"]
+    elif "미생물" in topic_name or "공전" in topic_name or "세균" in topic_name or "대장균" in topic_name:
+        return TOPIC_TEMPLATES[9]["scenes"]
+    elif "검교정" in topic_name or "저울" in topic_name or "온도계" in topic_name:
+        return TOPIC_TEMPLATES[10]["scenes"]
+    elif "X-ray" in topic_name or "엑스레이" in topic_name:
+        return TOPIC_TEMPLATES[11]["scenes"]
+    elif "스마트" in topic_name or "센서" in topic_name:
+        return TOPIC_TEMPLATES[12]["scenes"]
+    else:
+        return TOPIC_TEMPLATES[1]["scenes"]
 
 def get_font(size, bold=True):
     font_names = [
