@@ -12,7 +12,13 @@
 ### content/ — 콘텐츠 제작
 | 스킬 | 파일 | 해결하는 문제 |
 |:---|:---|:---|
+| QA+ OSMU 콘텐츠 파이프라인 | [`content/qa-osmu/SKILL.md`](content/qa-osmu/SKILL.md) | "주제 1개로 유튜브 대본+블로그 칼럼+4컷 인포그래픽 자동 동시 생성" |
 | 릴스 대본 | [`content/reels-script/SKILL.md`](content/reels-script/SKILL.md) | "릴스 대본 구조를 모르겠다" — 후킹 12타입 + 역순 작성법, 3버전 + 캡션 3버전 |
+
+### development/ — 웹 & 랜딩페이지 개발
+| 스킬 | 파일 | 해결하는 문제 |
+|:---|:---|:---|
+| 즉시 반응형 홈페이지 MVP | [`instant-homepage-mvp/SKILL.md`](instant-homepage-mvp/SKILL.md) | "홈페이지/랜딩페이지 만들어줘" — 질문 최소화 + 즉시 실행 가능한 CTA 중심 반응형 HTML MVP 생성 |
 
 ### strategy/ — 경영 전략
 | 스킬 | 파일 | 해결하는 문제 |
