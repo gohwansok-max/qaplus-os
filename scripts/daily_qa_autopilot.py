@@ -1058,18 +1058,24 @@ def get_font(size, bold=True):
 def render_scene_frame(scene_data, frame_num_in_scene=0, total_scene_frames=300):
     width, height = 1080, 1920
     
-    # 1. 켄 번스(Ken Burns) 줌인 & 패닝 연산 (1.00x -> 1.14x)
+    # 1. B-Roll 배경: 프레임 수가 적어(초당 2~3장) 켄 번스 팬/줌을 넣으면 매끄럽지
+    # 않고 뚝뚝 끊겨 보인다는 피드백에 따라, 배경은 움직이지 않는 고정 이미지로 둔다.
     progress = frame_num_in_scene / max(1, total_scene_frames)
-    scale = 1.00 + 0.14 * (math.sin(progress * math.pi / 2.0))
-    
+
     if os.path.exists(scene_data["image"]):
         raw_bg = Image.open(scene_data["image"]).convert("RGBA")
         orig_w, orig_h = raw_bg.size
-        crop_w = int(orig_w / scale)
-        crop_h = int(orig_h / scale)
+        target_ratio = width / height
+        src_ratio = orig_w / orig_h
+        if src_ratio > target_ratio:
+            crop_h = orig_h
+            crop_w = int(orig_h * target_ratio)
+        else:
+            crop_w = orig_w
+            crop_h = int(orig_w / target_ratio)
         crop_x = int((orig_w - crop_w) * 0.5)
-        crop_y = int((orig_h - crop_h) * (0.3 + 0.2 * progress))
-        
+        crop_y = int((orig_h - crop_h) * 0.35)
+
         cropped = raw_bg.crop((crop_x, crop_y, crop_x + crop_w, crop_y + crop_h))
         bg_img = cropped.resize((width, height), Image.Resampling.BILINEAR)
     else:
