@@ -1,0 +1,54 @@
+{
+  "name": "QA+ 매일 아침 블로그 자동 생성 트리거",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "35 21 * * *"
+            }
+          ]
+        }
+      },
+      "name": "매일 06:35 KST (UTC 21:35)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/gohwansok-max/qaplus-os/dispatches",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/vnd.github+json" },
+            { "name": "Authorization", "value": "Bearer {{$credentials.githubDispatchToken}}" },
+            { "name": "X-GitHub-Api-Version", "value": "2022-11-28" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"generate_blog\"\n}"
+      },
+      "name": "GitHub Actions 블로그 파이프라인 트리거",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    }
+  ],
+  "connections": {
+    "매일 06:35 KST (UTC 21:35)": {
+      "main": [
+        [
+          { "node": "GitHub Actions 블로그 파이프라인 트리거", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

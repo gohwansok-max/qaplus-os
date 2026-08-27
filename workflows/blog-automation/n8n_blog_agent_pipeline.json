@@ -1,0 +1,146 @@
+{
+  "name": "QA+ 4-Agent Blog Automation Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "큐에이플러스(QA+) 블로그 원클릭 자동 생성기",
+        "formDescription": "작성하고 싶은 주제나 키워드를 입력하시면 4인의 AI 에이전트가 완벽한 블로그 원고를 제작합니다.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "블로그 주제 또는 키워드",
+              "fieldType": "text",
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode"
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        300
+      ],
+      "id": "form-trigger-1",
+      "name": "주제 입력 (Form Trigger)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=아래 주제에 대해 식품 품질관리/HACCP 전문 리서치 및 블로그 목차를 설계해주세요:\n\n주제: {{ $json[\"블로그 주제 또는 키워드\"] }}",
+        "options": {
+          "systemMessage": "당신은 대한민국 최고의 식품 품질관리/HACCP 전문 리서치 에이전트입니다. 사용자가 제공한 주제를 바탕으로 타겟 독자 분석, 핵심 검색 의도, 법적/공식 기준서 출처, 매력적인 H1 제목 후보 3개 및 H2 목차(서론, 본론1, 본론2, 본론3 FAQ, 결론)를 정교하게 설계하여 출력하세요."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        260,
+        300
+      ],
+      "id": "research-agent-node",
+      "name": "1단계: 리서치 & 목차 기획 에이전트"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=다음은 1단계 리서치 결과입니다:\n\n{{ $json.output }}\n\n위 내용을 바탕으로 20년 식품품질 전문가 페르소나를 적용하여 실무자가 즉시 적용할 수 있는 완성도 높은 블로그 본문 전체를 작성해주세요.",
+        "options": {
+          "systemMessage": "당신은 20년 경력의 식품 품질관리 전문가 멘토 작가입니다. 친근하고 든든한 어조(존댓말)로, 불필요한 인사말 없이 첫 문장부터 핵심 결론을 제시하고, 전문 용어 뒤에는 '쉽게 말하면...' 공식으로 해설하세요. 본문 중간에 [IMAGE_PLACEHOLDER_1], [IMAGE_PLACEHOLDER_2] 마커를 배치하세요."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        560,
+        300
+      ],
+      "id": "writer-agent-node",
+      "name": "2단계: 20년 멘토 작가 에이전트"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=다음 블로그 본문을 분석하여 대표 썸네일 및 본문 이미지 2장의 DALL-E/Flux 프롬프트와 Mermaid 차트를 생성해주세요:\n\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "당신은 블로그 시각자료 & 인포그래픽 디자인 디렉터입니다. 원고의 이미지 마커 위치에 어울리는 대표 썸네일 프롬프트, 본문 이미지 프롬프트, 그리고 본문에 들어갈 Mermaid 프로세스 차트 코드를 작성하세요."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        860,
+        300
+      ],
+      "id": "image-agent-node",
+      "name": "3단계: 썸네일 & 인포그래픽 에이전트"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=다음은 작성된 본문 원고와 이미지 기획서입니다.\n\n[본문 원고]\n{{ $('2단계: 20년 멘토 작가 에이전트').item.json.output }}\n\n[이미지 기획서]\n{{ $json.output }}\n\n두 내용을 종합하여 사실관계 및 법령을 검수하고, SEO 메타데이터(최종 제목, 요약 120자, 태그 10개)와 함께 네이버 블로그 복사용 최종 마크다운 및 웹사이트용 HTML로 완벽히 조립해주세요.",
+        "options": {
+          "systemMessage": "당신은 수석 에디터 겸 QA 엔지니어입니다. 법령과 사실관계를 철저히 검증하고, SEO 최적화 메타데이터를 생성하며, 네이버 블로그/티스토리/워드프레스에 바로 발행 가능한 최종 패키지를 마크다운과 HTML 형태로 출력하세요."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1160,
+        300
+      ],
+      "id": "editor-agent-node",
+      "name": "4단계: 최종 검수 & 패키징 에이전트"
+    }
+  ],
+  "connections": {
+    "주제 입력 (Form Trigger)": {
+      "main": [
+        [
+          {
+            "node": "1단계: 리서치 & 목차 기획 에이전트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1단계: 리서치 & 목차 기획 에이전트": {
+      "main": [
+        [
+          {
+            "node": "2단계: 20년 멘토 작가 에이전트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2단계: 20년 멘토 작가 에이전트": {
+      "main": [
+        [
+          {
+            "node": "3단계: 썸네일 & 인포그래픽 에이전트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3단계: 썸네일 & 인포그래픽 에이전트": {
+      "main": [
+        [
+          {
+            "node": "4단계: 최종 검수 & 패키징 에이전트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

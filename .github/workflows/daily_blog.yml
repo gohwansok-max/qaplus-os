@@ -1,0 +1,109 @@
+name: 큐에이플러스 일일 블로그 글 자동 생성 & 텔레그램 발송
+
+# scripts/generate_blog.py (4-Agent: 리서치→집필→디자인→편집) 기반.
+# 2026-08-27 로컬 실행으로 1회 검증 완료 (FSSC22000 V7 주제, HTML 추출/텔레그램 발송 정상 확인).
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: '만들고 싶은 블로그 글 주제 (미입력 시 큐에서 자동 선택)'
+        required: false
+        default: ''
+        type: string
+  repository_dispatch:
+    types: [generate_blog]
+  schedule:
+    # 매일 한국 시간(KST) 오전 06:35. 정각은 큐 혼잡으로 드롭이 잦고,
+    # 영상 파이프라인(06:17)과도 겹치지 않게 의도적으로 비켜둠.
+    - cron: '35 21 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  generate-daily-blog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 파이썬 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 필수 시크릿 사전 점검
+        run: |
+          if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ] || [ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]; then
+            echo "::error::TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID 시크릿이 비어 있습니다."
+            exit 1
+          fi
+
+      - name: 파이썬 라이브러리 설치
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests ddgs
+
+      - name: 큐에이플러스 블로그 오토파일럿 실행 & 텔레그램 발송
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
+          CHEAPAI_BASE_URL: https://api.cheapai.im/v1
+          OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
+          # Blogger API 자동 임시저장/발행을 쓰려면 아래 시크릿을 추가로 등록해야 합니다 (아직 미구성).
+          # BLOGGER_BLOG_ID / BLOGGER_CLIENT_ID / BLOGGER_CLIENT_SECRET / BLOGGER_REFRESH_TOKEN
+        run: |
+          if [ -n "${{ github.event.inputs.topic }}" ]; then
+            python scripts/generate_blog.py --topic "${{ github.event.inputs.topic }}"
+          elif [ -n "${{ github.event.client_payload.topic }}" ]; then
+            python scripts/generate_blog.py --topic "${{ github.event.client_payload.topic }}"
+          else
+            python scripts/generate_blog.py
+          fi
+
+      - name: 생성된 블로그 산출물 아티팩트 업로드
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-blog-output
+          path: |
+            outputs/**/[블로그최종]_*.html
+            outputs/**/blog_log.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 변경사항 Git 커밋 및 푸시
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git add outputs/ knowledge/blog_published_topics.json || true
+          if git status --porcelain | grep -q .; then
+            git commit -m "chore(auto): 일일 큐에이플러스 블로그 글 자동 생성 완료"
+            git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::git push 실패 — 발행 결과 자체에는 영향 없음"
+          else
+            echo "커밋할 새로운 파일이 없습니다."
+          fi
+
+  notify-failure:
+    name: 실패 시 텔레그램 알림
+    needs: generate-daily-blog
+    if: ${{ always() && needs.generate-daily-blog.result != 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 작업 실패 알림 전송
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MESSAGE="🚨 [QA+] 일일 블로그 자동화 실패\n\n실행 ID: ${{ github.run_id }}\n트리거: ${{ github.event_name }}\n로그: ${RUN_URL}"
+          curl --retry 2 --retry-delay 2 --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MESSAGE}" || echo "::warning::텔레그램 실패 알림 전송에 실패했습니다."
