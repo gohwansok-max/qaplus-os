@@ -1449,6 +1449,42 @@ def run_daily_autopilot(custom_topic=None):
     except Exception as e:
         print(f"  [!] YouTube 업로드 모듈 오류 (텔레그램으로는 이미 전송됨): {e}")
 
+    # 8. 페이스북 릴스 자동 업로드 (META_PAGE_* 설정된 경우에만 동작)
+    fb_caption = f"{topic_name}\n\n식품 품질관리/HACCP/FSSC22000 실무 노하우 — 큐에이플러스"
+    try:
+        from meta_reels_uploader import is_facebook_configured, upload_facebook_reel
+        if is_facebook_configured():
+            fb_result = upload_facebook_reel(master_mp4, fb_caption)
+            if fb_result.get("ok"):
+                print(f"  ✓ [Facebook 릴스 업로드 완료] {fb_result['url']}")
+            else:
+                print(f"  [!] Facebook 업로드 실패: {fb_result.get('error')}")
+        else:
+            print("  [*] Facebook 자동 업로드 미설정 — 스킵합니다.")
+    except Exception as e:
+        print(f"  [!] Facebook 업로드 모듈 오류: {e}")
+
+    # 9. 인스타그램 릴스 자동 업로드 (META_IG_* 설정된 경우에만 동작)
+    # 인스타그램 Graph API는 파일 직접 업로드가 아니라 공개 URL을 요구하므로,
+    # 영상을 먼저 GitHub에 올려 raw URL을 확보한 뒤 그 URL을 넘긴다.
+    try:
+        from meta_reels_uploader import is_instagram_configured, upload_instagram_reel
+        if is_instagram_configured():
+            from git_push_helper import push_and_get_raw_url
+            video_url = push_and_get_raw_url(BASE_DIR, master_mp4)
+            if video_url:
+                ig_result = upload_instagram_reel(video_url, fb_caption)
+                if ig_result.get("ok"):
+                    print(f"  ✓ [Instagram 릴스 업로드 완료] media_id={ig_result['media_id']}")
+                else:
+                    print(f"  [!] Instagram 업로드 실패: {ig_result.get('error')}")
+            else:
+                print("  [!] 영상을 GitHub에 공개 URL로 올리지 못해 Instagram 업로드를 건너뜁니다.")
+        else:
+            print("  [*] Instagram 자동 업로드 미설정 — 스킵합니다.")
+    except Exception as e:
+        print(f"  [!] Instagram 업로드 모듈 오류: {e}")
+
     print("\n==================================================================")
     print(f"  ✅ 100% 맞춤형 실무 숏츠 영상 제작이 성공적으로 완료되었습니다: {out_filename}")
     print("==================================================================")

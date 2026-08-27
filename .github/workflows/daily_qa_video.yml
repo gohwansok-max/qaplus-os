@@ -81,6 +81,10 @@ jobs:
           YOUTUBE_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          # 페이스북/인스타그램 릴스 자동 업로드 (Meta Graph API) — 미설정 시 조용히 스킵됨.
+          META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
           # 주제 문자열은 셸에 직접 보간하지 않고 환경변수로만 전달합니다.
           # (텔레그램에서 임의 문자열이 들어오는 경로이므로 따옴표 하나에 실행이 깨집니다.)
           INPUT_TOPIC: ${{ github.event.inputs.topic }}
