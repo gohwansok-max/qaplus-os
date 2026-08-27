@@ -101,30 +101,40 @@ def load_env():
 
 ENV = load_env()
 
-def get_llm_config():
-    """ 사용할 LLM API 키 및 엔드포인트 결정 """
-    # 1. Official OpenAI 우선 확인
-    if ENV.get("OFFICIAL_OPENAI_API_KEY") and not ENV.get("OFFICIAL_OPENAI_API_KEY", "").startswith("your_"):
-        return {
-            "api_key": ENV["OFFICIAL_OPENAI_API_KEY"],
-            "base_url": ENV.get("OFFICIAL_OPENAI_BASE_URL", "https://api.openai.com/v1"),
-            "model": ENV.get("OFFICIAL_OPENAI_STORY_MODEL", "gpt-4.1-mini")
-        }
-    # 2. CheapAI 확인
+def get_llm_configs():
+    """ 사용할 LLM 설정을 우선순위대로 리스트로 반환.
+    video 파이프라인(daily_qa_video.yml)과 동일하게 '칩섭 우선, 실패 시 공식 OpenAI 대체' 원칙을 따른다
+    (비용 절감). 블로그 전용 모델명(CHEAPAI_BLOG_MODEL 등)이 있으면 그걸 쓰고, 없으면
+    video 파이프라인과 공유하는 CHEAPAI_STORY_MODEL 값을 건드리지 않고 별도 기본값(gpt-5.6-terra)을 쓴다. """
+    configs = []
     if ENV.get("CHEAPAI_API_KEY") and not ENV.get("CHEAPAI_API_KEY", "").startswith("your_"):
-        return {
+        configs.append({
+            "name": "CheapAI",
             "api_key": ENV["CHEAPAI_API_KEY"],
             "base_url": ENV.get("CHEAPAI_BASE_URL", "https://api.cheapai.im/v1"),
-            "model": ENV.get("CHEAPAI_STORY_MODEL", "gpt-5.6-sol")
-        }
-    # 3. 일반 OPENAI_API_KEY 확인
+            "model": ENV.get("CHEAPAI_BLOG_MODEL", "gpt-5.6-terra")
+        })
+    if ENV.get("OFFICIAL_OPENAI_API_KEY") and not ENV.get("OFFICIAL_OPENAI_API_KEY", "").startswith("your_"):
+        configs.append({
+            "name": "공식 OpenAI",
+            "api_key": ENV["OFFICIAL_OPENAI_API_KEY"],
+            "base_url": ENV.get("OFFICIAL_OPENAI_BASE_URL", "https://api.openai.com/v1"),
+            "model": ENV.get("OFFICIAL_OPENAI_BLOG_MODEL", "gpt-5.6-terra")
+        })
     if ENV.get("OPENAI_API_KEY") and not ENV.get("OPENAI_API_KEY", "").startswith("your_"):
-        return {
+        configs.append({
+            "name": "OpenAI(일반)",
             "api_key": ENV["OPENAI_API_KEY"],
             "base_url": "https://api.openai.com/v1",
             "model": "gpt-4o-mini"
-        }
-    return None
+        })
+    return configs
+
+
+def get_llm_config():
+    configs = get_llm_configs()
+    return configs[0] if configs else None
+
 
 def call_llm(system_prompt, user_content, config):
     """ OpenAI-호환 REST API 호출 """
@@ -134,34 +144,45 @@ def call_llm(system_prompt, user_content, config):
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_content}
-        ],
-        "temperature": 0.7
+        ]
     }
-    
+    # gpt-5.6 계열은 temperature 커스텀 값을 지원하지 않아(기본값 1만 허용) 모델명에 따라 분기
+    if not payload["model"].startswith("gpt-5.6"):
+        payload["temperature"] = 0.7
+
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {config['api_key']}"
+        "Authorization": f"Bearer {config['api_key']}",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
     }
-    
+
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
         headers=headers,
         method="POST"
     )
-    
-    try:
-        with urllib.request.urlopen(req, timeout=90) as response:
-            res_body = response.read().decode("utf-8")
-            data = json.loads(res_body)
-            return data["choices"][0]["message"]["content"]
-    except urllib.error.HTTPError as e:
-        err_msg = e.read().decode("utf-8")
-        print(f"[API 오류] {e.code}: {err_msg}", file=sys.stderr)
-        raise
-    except Exception as e:
-        print(f"[호출 실패]: {e}", file=sys.stderr)
-        raise
+
+    with urllib.request.urlopen(req, timeout=240) as response:
+        res_body = response.read().decode("utf-8")
+        data = json.loads(res_body)
+        return data["choices"][0]["message"]["content"]
+
+
+def call_llm_with_fallback(system_prompt, user_content, configs):
+    """ configs를 순서대로 시도, 실패하면 다음 설정(공식 OpenAI 등)으로 자동 대체 """
+    last_error = None
+    for config in configs:
+        try:
+            return call_llm(system_prompt, user_content, config), config
+        except urllib.error.HTTPError as e:
+            err_msg = e.read().decode("utf-8", errors="replace")
+            print(f"[!] {config['name']} 호출 실패 ({e.code}): {err_msg[:200]} — 다음 설정으로 대체 시도")
+            last_error = e
+        except Exception as e:
+            print(f"[!] {config['name']} 호출 실패: {e} — 다음 설정으로 대체 시도")
+            last_error = e
+    raise RuntimeError(f"모든 LLM 설정이 실패했습니다: {last_error}")
 
 def read_prompt(filename):
     """ 에이전트 프롬프트 파일 읽기 """
@@ -180,39 +201,40 @@ def run_blog_pipeline(topic):
     print(f"[*] 주제: {topic}")
     print("========================================================\n")
     
-    llm_config = get_llm_config()
-    if not llm_config:
-        print("[!] .env에 유효한 API 키가 설정되지 않았습니다. (OFFICIAL_OPENAI_API_KEY 또는 CHEAPAI_API_KEY 확인)")
+    configs = get_llm_configs()
+    if not configs:
+        print("[!] .env에 유효한 API 키가 설정되지 않았습니다. (CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 확인)")
         return
-    
-    print(f"[*] LLM 모델 가동: {llm_config['model']} ({llm_config['base_url']})")
-    
+
+    print(f"[*] LLM 우선순위: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
+
     # 1단계: 리서치 에이전트
     print("\n[1/4] [리서치] 1단계: 리서치 & 목차 기획 에이전트 가동 중...")
     prompt_1 = read_prompt("01_research_agent.md")
-    research_output = call_llm(prompt_1, f"다음 주제에 대해 심층 리서치 및 목차를 설계해주세요:\n\n주제: {topic}", llm_config)
-    print("[+] 1단계 리서치 완료!")
-    
+    research_output, used_config = call_llm_with_fallback(prompt_1, f"다음 주제에 대해 심층 리서치 및 목차를 설계해주세요:\n\n주제: {topic}", configs)
+    print(f"[+] 1단계 리서치 완료! ({used_config['name']})")
+
     # 2단계: 작가 에이전트
     print("\n[2/4] [집필] 2단계: 20년 멘토 작가 에이전트 본문 집필 중...")
     prompt_2 = read_prompt("02_writer_agent.md")
     writer_input = f"다음은 리서치 결과입니다:\n\n{research_output}\n\n위 내용을 바탕으로 20년 식품품질 전문가 멘토 페르소나를 적용하여 실무자 블로그 본문 전체를 작성해주세요."
-    writer_output = call_llm(prompt_2, writer_input, llm_config)
-    print("[+] 2단계 원고 집필 완료!")
-    
+    writer_output, used_config = call_llm_with_fallback(prompt_2, writer_input, configs)
+    print(f"[+] 2단계 원고 집필 완료! ({used_config['name']})")
+
     # 3단계: 이미지/인포그래픽 디자이너 에이전트
     print("\n[3/4] [디자인] 3단계: 썸네일 및 인포그래픽 디자인 에이전트 가동 중...")
     prompt_3 = read_prompt("03_image_agent.md")
     image_input = f"다음 블로그 원고의 이미지 마커 위치에 어울리는 대표 썸네일 프롬프트, 본문 이미지 프롬프트, Mermaid 다이어그램을 생성해주세요:\n\n{writer_output}"
-    image_output = call_llm(prompt_3, image_input, llm_config)
-    print("[+] 3단계 시각자료 기획 완료!")
-    
+    image_output, used_config = call_llm_with_fallback(prompt_3, image_input, configs)
+    print(f"[+] 3단계 시각자료 기획 완료! ({used_config['name']})")
+
     # 4단계: 편집장 & QA 검수 에이전트
     print("\n[4/4] [검수/패키징] 4단계: 수석 에디터 & QA 검수 및 패키징 중...")
     prompt_4 = read_prompt("04_editor_agent.md")
     editor_input = f"[본문 원고]\n{writer_output}\n\n[시각자료 기획서]\n{image_output}\n\n위 두 내용을 종합하여 법령/사실관계를 검수하고, SEO 메타데이터와 네이버 블로그/티스토리/워드프레스용 최종 완성본을 패키징해주세요."
-    final_package = call_llm(prompt_4, editor_input, llm_config)
-    print("[+] 4단계 최종 검수 및 패키징 완료!")
+    final_package, used_config = call_llm_with_fallback(prompt_4, editor_input, configs)
+    print(f"[+] 4단계 최종 검수 및 패키징 완료! ({used_config['name']})")
+    llm_config = used_config
     
     # --- 표준 산출물 경로: outputs/{연도}/{월}/{일}/ (blog-osmu 스킬과 동일한 규칙) ---
     dated_dir = today_output_dir()
@@ -251,6 +273,24 @@ def run_blog_pipeline(topic):
         body_html = f"<pre>{final_package}</pre>"
         print("[!] HTML 코드블록을 찾지 못해 마크다운 원문을 <pre>로 감싸 저장했습니다 — 수동 정리가 필요할 수 있습니다.")
 
+    # --- 본문 이미지 실제 생성 + GitHub raw URL로 치환 (IMAGE_PLACEHOLDER_N 그대로 두면 깨진 이미지로 보임) ---
+    # 에디터 에이전트가 `[IMAGE_PLACEHOLDER_1]`처럼 대괄호를 붙이거나 안 붙이거나 둘 다 나올 수 있어
+    # 대괄호 유무에 상관없이 정규식으로 치환한다 (단순 문자열 replace는 대괄호가 붙으면 못 잡음).
+    try:
+        from blog_image_generator import generate_and_host_images
+        image_urls = generate_and_host_images(image_output, ROOT_DIR, dated_dir, safe_topic)
+    except Exception as e:
+        print(f"[!] 이미지 생성 단계 오류 (본문은 이미지 없이 진행): {e}")
+        image_urls = {}
+
+    def _replace_placeholder(m):
+        key = f"IMAGE_PLACEHOLDER_{m.group(1)}"
+        return image_urls.get(key, m.group(0))
+
+    body_html = re.sub(r'\[?IMAGE_PLACEHOLDER_(\d+)\]?', _replace_placeholder, body_html)
+    # 생성 실패해서 못 채운 placeholder는 img 태그째로 제거 (깨진 이미지 아이콘 방지)
+    body_html = re.sub(r'<img[^>]*IMAGE_PLACEHOLDER_\d+[^>]*/?>', '', body_html)
+
     html_doc = f"""<!-- QA+ 블로그 최종본 — Blogger 편집기 HTML 모드에 붙여넣기 -->
 <!-- 제목: {title} -->
 <!-- 검색 설명: {desc_match.group(1).strip() if desc_match else ''} -->
@@ -263,6 +303,7 @@ def run_blog_pipeline(topic):
     # --- Blogger 자동 발행 (BLOGGER_* 환경변수가 모두 설정된 경우에만 동작, 없으면 기존처럼 수동 안내만) ---
     publish_status = "ready_to_publish"
     publish_url = None
+    publish_post_id = None
     try:
         from blogger_publisher import is_configured, publish_post
         if is_configured():
@@ -273,7 +314,8 @@ def run_blog_pipeline(topic):
             if result.get("ok"):
                 publish_status = f"blogger_{result['status']}"
                 publish_url = result.get("url")
-                print(f"[OK] Blogger {result['status']} 완료: {publish_url}")
+                publish_post_id = result.get("post_id")
+                print(f"[OK] Blogger {result['status']} 완료: {publish_url} (post_id={publish_post_id})")
             else:
                 print(f"[!] Blogger 발행 실패 (수동 발행으로 폴백): {result.get('error')}")
         else:
@@ -291,6 +333,7 @@ def run_blog_pipeline(topic):
         "file": os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"),
         "status": publish_status,
         "blogger_url": publish_url,
+        "blogger_post_id": publish_post_id,
     })
     with open(blog_log_path, "w", encoding="utf-8") as f:
         json.dump(blog_log, f, ensure_ascii=False, indent=2)
@@ -322,10 +365,24 @@ def run_blog_pipeline(topic):
     print("========================================================\n")
     return final_html_path
 
+def already_ran_today():
+    """ 오늘 날짜 폴더에 이미 발행 완료된 글이 있는지 확인.
+    GitHub Actions 자체 cron + cron-job.org 백업 트리거를 이중으로 걸어둔 경우,
+    하나가 이미 성공했으면 나머지 하나는 조용히 스킵해서 하루에 중복 발행되지 않게 한다. """
+    dated_dir = today_output_dir()
+    blog_log = load_json(os.path.join(dated_dir, "blog_log.json"), [])
+    return any(entry.get("status", "").startswith("blogger_") for entry in blog_log)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="QA+ 4-Agent Blog Automation Generator")
     parser.add_argument("--topic", type=str, help="블로그 주제 또는 키워드 (미입력 시 큐에서 자동 선택)")
+    parser.add_argument("--force", action="store_true", help="오늘 이미 발행됐어도 강제로 한 번 더 생성")
     args = parser.parse_args()
+
+    if not args.topic and not args.force and already_ran_today():
+        print("[*] 오늘 이미 발행이 완료된 글이 있어 스킵합니다 (이중 트리거 대비 안전장치). 강제 실행하려면 --force를 붙이세요.")
+        sys.exit(0)
 
     topic_input = args.topic
     if not topic_input:

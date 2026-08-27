@@ -83,6 +83,48 @@ def publish_post(title, html_content, labels=None, is_draft=True):
     return {"ok": False, "error": f"{resp.status_code} {resp.text}"}
 
 
+def list_draft_posts():
+    """ 현재 블로그의 임시저장(draft) 글 목록을 가져온다 (제목으로 찾아 수정할 때 사용) """
+    blog_id = os.environ.get("BLOGGER_BLOG_ID")
+    access_token = get_access_token()
+    if not access_token:
+        return []
+    resp = requests.get(
+        f"{BLOGGER_API_BASE}/blogs/{blog_id}/posts",
+        params={"status": "draft", "maxResults": 50},
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=30,
+    )
+    if resp.status_code != 200:
+        print(f"[!] 임시저장 목록 조회 실패: {resp.status_code} {resp.text}")
+        return []
+    return resp.json().get("items", [])
+
+
+def update_post(post_id, title, html_content, labels=None, is_draft=True):
+    """ 기존 글(post_id)을 새 내용으로 덮어쓴다 (이미지 수정 등 재작업용) """
+    blog_id = os.environ.get("BLOGGER_BLOG_ID")
+    access_token = get_access_token()
+    if not access_token:
+        return {"ok": False, "error": "액세스 토큰 발급 실패"}
+
+    url = f"{BLOGGER_API_BASE}/blogs/{blog_id}/posts/{post_id}"
+    payload = {"kind": "blogger#post", "title": title, "content": html_content}
+    if labels:
+        payload["labels"] = labels
+
+    resp = requests.put(
+        url,
+        headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"},
+        data=json.dumps(payload),
+        timeout=60,
+    )
+    if resp.status_code == 200:
+        data = resp.json()
+        return {"ok": True, "post_id": data.get("id"), "url": data.get("url")}
+    return {"ok": False, "error": f"{resp.status_code} {resp.text}"}
+
+
 if __name__ == "__main__":
     if not is_configured():
         print("[!] BLOGGER_BLOG_ID / BLOGGER_CLIENT_ID / BLOGGER_CLIENT_SECRET / BLOGGER_REFRESH_TOKEN 환경변수가 필요합니다.")

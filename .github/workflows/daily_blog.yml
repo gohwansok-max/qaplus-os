@@ -31,6 +31,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Git 사용자 정보 설정 (generate_blog.py가 이미지 생성 중 자체 커밋함)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: 파이썬 3.11 설정
         uses: actions/setup-python@v5
         with:
@@ -85,8 +90,6 @@ jobs:
 
       - name: 변경사항 Git 커밋 및 푸시
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin "${GITHUB_REF_NAME}" || true
           git add outputs/ knowledge/blog_published_topics.json || true
           if git status --porcelain | grep -q .; then
