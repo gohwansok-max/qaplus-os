@@ -260,6 +260,27 @@ def run_blog_pipeline(topic):
     with open(final_html_path, "w", encoding="utf-8") as f:
         f.write(html_doc)
 
+    # --- Blogger 자동 발행 (BLOGGER_* 환경변수가 모두 설정된 경우에만 동작, 없으면 기존처럼 수동 안내만) ---
+    publish_status = "ready_to_publish"
+    publish_url = None
+    try:
+        from blogger_publisher import is_configured, publish_post
+        if is_configured():
+            labels_match = re.search(r"\*\*카테고리\*\*\s*[:：]\s*(.+)", final_package)
+            labels = [l.strip() for l in labels_match.group(1).split("/")] if labels_match else None
+            is_draft = os.environ.get("BLOGGER_AUTO_PUBLISH", "false").lower() != "true"
+            result = publish_post(title, body_html, labels=labels, is_draft=is_draft)
+            if result.get("ok"):
+                publish_status = f"blogger_{result['status']}"
+                publish_url = result.get("url")
+                print(f"[OK] Blogger {result['status']} 완료: {publish_url}")
+            else:
+                print(f"[!] Blogger 발행 실패 (수동 발행으로 폴백): {result.get('error')}")
+        else:
+            print("[*] Blogger 자동 발행 미설정 — HTML 파일만 생성하고 수동 발행 안내로 진행합니다.")
+    except Exception as e:
+        print(f"[!] Blogger 발행 모듈 오류 (수동 발행으로 폴백): {e}")
+
     # blog_log.json (해당 날짜 폴더) 갱신 — blog-osmu 스킬과 동일한 스키마
     blog_log_path = os.path.join(dated_dir, "blog_log.json")
     blog_log = load_json(blog_log_path, [])
@@ -268,7 +289,8 @@ def run_blog_pipeline(topic):
         "topic": topic,
         "title": title,
         "file": os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"),
-        "status": "ready_to_publish",
+        "status": publish_status,
+        "blogger_url": publish_url,
     })
     with open(blog_log_path, "w", encoding="utf-8") as f:
         json.dump(blog_log, f, ensure_ascii=False, indent=2)
@@ -277,12 +299,20 @@ def run_blog_pipeline(topic):
     mark_topic_published(topic, title, os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"))
 
     # 텔레그램 알림
-    tg_message = (
-        f"📝 <b>[QA+] 오늘의 블로그 글이 준비됐습니다</b>\n\n"
-        f"📌 <b>제목:</b> {title}\n"
-        f"📂 <b>파일:</b> {os.path.basename(final_html_path)}\n\n"
-        f"Blogger 편집기(HTML 모드)에 붙여넣고 이미지 업로드 후 직접 발행해주세요."
-    )
+    if publish_url:
+        tg_message = (
+            f"✅ <b>[QA+] 블로그 글이 Blogger에 자동 등록됐습니다</b>\n\n"
+            f"📌 <b>제목:</b> {title}\n"
+            f"🔗 <b>{'임시저장' if 'draft' not in publish_status else '임시저장'}:</b> {publish_url}\n\n"
+            f"내용 확인 후 Blogger에서 발행 버튼만 눌러주세요."
+        )
+    else:
+        tg_message = (
+            f"📝 <b>[QA+] 오늘의 블로그 글이 준비됐습니다</b>\n\n"
+            f"📌 <b>제목:</b> {title}\n"
+            f"📂 <b>파일:</b> {os.path.basename(final_html_path)}\n\n"
+            f"Blogger 편집기(HTML 모드)에 붙여넣고 이미지 업로드 후 직접 발행해주세요."
+        )
     send_message_to_telegram(tg_message)
 
     print("\n========================================================")
