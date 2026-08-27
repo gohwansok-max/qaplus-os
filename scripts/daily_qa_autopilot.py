@@ -1376,7 +1376,10 @@ def run_daily_autopilot(custom_topic=None):
         caption = f"🎬 <b>[큐에이플러스 5대 고도화 쇼츠] 완성!</b>\n\n📌 <b>주제:</b> {topic_name}\n✨ <b>적용 효과:</b> 100% 맞춤 실무 대본 + 켄 번스 줌인 모션 + BGM/SFX 믹싱 + 슬림 실사 HUD\n📁 <b>파일명:</b> {out_filename}\n\n💡 다운로드하여 유튜브 쇼츠 / 인스타 릴스에 바로 등록하세요!"
         send_video_to_telegram(master_mp4, caption)
     except Exception as e:
-        print(f"  [텔레그램 연동 알림] 텔레그램 발송 모듈 스킵: {e}")
+        # 여기서 예외를 삼키면 영상이 도착하지 않아도 워크플로가 success 로 끝납니다.
+        # 반드시 전파해서 실패 알림이 울리게 합니다.
+        print(f"  [텔레그램 발송 실패] {e}")
+        raise
     
     print("\n==================================================================")
     print(f"  ✅ 100% 맞춤형 실무 숏츠 영상 제작이 성공적으로 완료되었습니다: {out_filename}")

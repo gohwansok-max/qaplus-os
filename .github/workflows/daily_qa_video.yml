@@ -2,8 +2,9 @@ name: 큐에이플러스 일일 숏츠 영상 자동 렌더링 & 텔레그램 �
 
 on:
   schedule:
-    # 매일 한국 시간(KST) 오전 06:00 (UTC 21:00) 정기 자동 실행
-    - cron: '0 21 * * *'
+    # 매일 한국 시간(KST) 오전 06:17 (UTC 21:17)
+    # 정각(:00)은 GitHub Actions 큐가 몰려 지연·드롭이 잦으므로 의도적으로 비켜둔 시각입니다.
+    - cron: '17 21 * * *'
   workflow_dispatch:
     inputs:
       topic:
@@ -17,9 +18,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: qa-daily-shorts
+  cancel-in-progress: false
+
 jobs:
   generate-daily-shorts:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - name: 저장소 체크아웃
         uses: actions/checkout@v4
@@ -42,6 +48,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pillow edge-tts requests ddgs
 
+      - name: 텔레그램 시크릿 사전 점검
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "::error::TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID Secret이 비어 있습니다. 렌더링해도 영상이 도착하지 않으므로 중단합니다."
+            exit 1
+          fi
+          echo "텔레그램 시크릿 확인 완료."
+
       - name: 큐에이플러스 쇼츠 오토파일럿 실행 & 텔레그램 발송
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -59,19 +76,22 @@ jobs:
           OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
           OFFICIAL_OPENAI_BASE_URL: https://api.openai.com/v1
           OFFICIAL_OPENAI_STORY_MODEL: gpt-4.1-mini
+          # 주제 문자열은 셸에 직접 보간하지 않고 환경변수로만 전달합니다.
+          # (텔레그램에서 임의 문자열이 들어오는 경로이므로 따옴표 하나에 실행이 깨집니다.)
+          INPUT_TOPIC: ${{ github.event.inputs.topic }}
+          PAYLOAD_TOPIC: ${{ github.event.client_payload.topic }}
         run: |
-          if [ -n "${{ github.event.inputs.topic }}" ]; then
-            echo "사용자 지정 주제 실행: ${{ github.event.inputs.topic }}"
-            python scripts/daily_qa_autopilot.py --topic "${{ github.event.inputs.topic }}"
-          elif [ -n "${{ github.event.client_payload.topic }}" ]; then
-            echo "웹훅/텔레그램 지정 주제 실행: ${{ github.event.client_payload.topic }}"
-            python scripts/daily_qa_autopilot.py --topic "${{ github.event.client_payload.topic }}"
+          TOPIC="${INPUT_TOPIC:-$PAYLOAD_TOPIC}"
+          if [ -n "$TOPIC" ]; then
+            echo "지정 주제 실행: $TOPIC"
+            python scripts/daily_qa_autopilot.py --topic "$TOPIC"
           else
             echo "큐 기반 일일 자동 발행 실행"
             python scripts/daily_qa_autopilot.py
           fi
 
       - name: 생성된 MP4 영상 아티팩트 업로드 (다운로드용)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: daily-shorts-video
@@ -79,6 +99,7 @@ jobs:
             outputs/videos/*.mp4
             outputs/metadata/*.json
           retention-days: 30
+          if-no-files-found: warn
 
       - name: 변경사항 Git 커밋 및 푸시 (outputs/videos & 토픽 큐 갱신)
         run: |
@@ -87,7 +108,8 @@ jobs:
           git add outputs/videos/ outputs/metadata/ knowledge/qa_topics_queue.json outputs/frames/ outputs/audio/ || true
           if git status --porcelain | grep -q .; then
             git commit -m "chore(auto): 일일 큐에이플러스 숏츠 영상 자동 렌더링 완료"
-            git push origin HEAD || echo "Git push skipped or failed gracefully"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::Git push 실패 (영상 발송에는 영향 없음)"
           else
             echo "커밋할 새로운 파일이 없습니다."
           fi
@@ -95,16 +117,23 @@ jobs:
   notify-failure:
     name: 실패 시 텔레그램 알림
     needs: generate-daily-shorts
-    if: ${{ needs.generate-daily-shorts.result == 'failure' }}
+    # always()가 없으면 선행 잡이 실패했을 때 이 잡은 '스킵'됩니다.
+    # 기존 설정에는 이 함수가 없어서 실패 알림이 단 한 번도 발송되지 않았습니다.
+    if: ${{ always() && needs.generate-daily-shorts.result != 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: 작업 실패 알림 전송
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RESULT: ${{ needs.generate-daily-shorts.result }}
         run: |
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          MESSAGE="🚨 [QA+] 일일 쇼츠 자동화 실패\n\n실행 ID: ${{ github.run_id }}\n트리거: ${{ github.event_name }}\n로그: ${RUN_URL}\n\n로그에서 실패 단계를 확인한 뒤 다시 실행해 주세요."
+          MESSAGE="🚨 [QA+] 일일 쇼츠 자동화 실패
+          결과: ${RESULT}
+          트리거: ${{ github.event_name }}
+          로그: ${RUN_URL}
+          로그에서 실패 단계를 확인한 뒤 다시 실행해 주세요."
           curl --retry 2 --retry-delay 2 --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
