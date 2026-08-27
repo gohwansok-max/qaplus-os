@@ -1433,6 +1433,22 @@ def run_daily_autopilot(custom_topic=None):
         print(f"  [텔레그램 발송 실패] {e}")
         raise
     
+    # 7. YouTube Shorts 자동 업로드 (YOUTUBE_REFRESH_TOKEN 설정된 경우에만 동작, 없으면 조용히 스킵)
+    try:
+        from youtube_uploader import is_configured as yt_configured, upload_short
+        if yt_configured():
+            yt_title = f"{topic_name} | 큐에이플러스 #Shorts"
+            yt_desc = f"{topic_name}\n\n식품 품질관리/HACCP/FSSC22000 실무 노하우를 20년 경력 선배가 알려드립니다.\n오픈채팅방·블로그에서 더 많은 자료를 확인하세요."
+            yt_result = upload_short(master_mp4, yt_title, yt_desc, privacy_status="public")
+            if yt_result.get("ok"):
+                print(f"  ✓ [YouTube 업로드 완료] {yt_result['url']}")
+            else:
+                print(f"  [!] YouTube 업로드 실패 (텔레그램으로는 이미 전송됨): {yt_result.get('error')}")
+        else:
+            print("  [*] YouTube 자동 업로드 미설정 — 텔레그램 발송만 진행합니다.")
+    except Exception as e:
+        print(f"  [!] YouTube 업로드 모듈 오류 (텔레그램으로는 이미 전송됨): {e}")
+
     print("\n==================================================================")
     print(f"  ✅ 100% 맞춤형 실무 숏츠 영상 제작이 성공적으로 완료되었습니다: {out_filename}")
     print("==================================================================")

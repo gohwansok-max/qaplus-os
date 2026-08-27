@@ -76,6 +76,11 @@ jobs:
           OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
           OFFICIAL_OPENAI_BASE_URL: https://api.openai.com/v1
           OFFICIAL_OPENAI_STORY_MODEL: gpt-4.1-mini
+          # YouTube 쇼츠 자동 업로드 — Blogger와 동일한 OAuth 클라이언트(ID/보안 비밀) 재사용,
+          # 리프레시 토큰만 YouTube 업로드 스코프로 별도 발급받아 등록. 없으면 업로드 단계는 조용히 스킵됨.
+          YOUTUBE_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
           # 주제 문자열은 셸에 직접 보간하지 않고 환경변수로만 전달합니다.
           # (텔레그램에서 임의 문자열이 들어오는 경로이므로 따옴표 하나에 실행이 깨집니다.)
           INPUT_TOPIC: ${{ github.event.inputs.topic }}
