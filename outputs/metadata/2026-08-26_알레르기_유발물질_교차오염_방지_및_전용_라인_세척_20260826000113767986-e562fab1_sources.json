@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-08-26T00:01:17+09:00",
+  "story_id": "20260826000113767986-e562fab1",
+  "topic": "알레르기 유발물질 교차오염 방지 및 전용 라인 세척",
+  "story_angle": "response-window",
+  "generation_mode": "local_verified_fallback",
+  "model": null,
+  "script_fingerprint": "2c3276a37b0781464fb91312c87bc920a2052f45db401522324c91a60bc39bc4",
+  "recent_fingerprint_count": 3,
+  "official_sources": [
+    {
+      "title": "[별표 2] 소비자 안전을 위한 표시사항(제5조제1항 관련) Ⅰ. 공통사항 1. 알레르기유발물질표시",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=42533884&bylClsCd=110201",
+      "snippet": "알레르기 유발물질을 사용한 제품과 사용하지 않은 제품을 같은 제조 과정(작업자, 기구, 제조라인,"
+    },
+    {
+      "title": "식품의약품안전처>법령/자료>법령정보>제개정고시등 - 상세보기 | 식품의약품안전처",
+      "url": "https://www.mfds.go.kr/brd/m_207/view.do?seq=14028&srchFr=&srchTo=&srchWord=&srchTp=&itm_seq_1=0&itm_seq_2=0&multi_itm_seq=0&company_cd=&company_nm=&page=1",
+      "snippet": "식품의약품안전처 고시 제2018-32호 식품등의 표시기준 일부개정고시 1. 개정이유 식품 알레르기 표시대상을 확대 및 취급시 안전사고가 발생할 우려가 있는 식품첨가물에 대해 소비자를 보호하는 취급상의 주의문구를 제품에 ..."
+    },
+    {
+      "title": "식품알레르기 알면 예방할 수 있습니다!",
+      "url": "https://www.mfds.go.kr/brd/m_512/down.do?brd_id=plc0060&seq=31242&data_tp=A&file_seq=1",
+      "snippet": "AND, OR NOT, Exact Phrase(구검색), Order Preserving(순차검색)을 사용하여 검색을 한다 · 국민과 소통하는 식품의약품안전처"
+    }
+  ],
+  "source_count": 3,
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요."
+}

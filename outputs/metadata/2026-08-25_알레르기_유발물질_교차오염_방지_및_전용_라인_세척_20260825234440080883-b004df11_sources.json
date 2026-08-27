@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-08-25T23:44:45+09:00",
+  "story_id": "20260825234440080883-b004df11",
+  "topic": "알레르기 유발물질 교차오염 방지 및 전용 라인 세척",
+  "story_angle": "junior-mistake",
+  "generation_mode": "local_verified_fallback",
+  "model": null,
+  "script_fingerprint": "c60d5211bcf564d78867c228ffb2076c8d5dbb0eb14b8bfbf5ec3f55cffb6a6a",
+  "recent_fingerprint_count": 1,
+  "official_sources": [
+    {
+      "title": "식품의약품안전처>법령/자료>법령정보>고시훈령예규>고시...",
+      "url": "https://www.mfds.go.kr/brd/m_211/list.do",
+      "snippet": "화장품 사용할 때의 주의사항 및 알레르기 유발성분 표시에 관한 규정 일부개정고시 전문 (식품의약품안전처 고시 제2026-56호, 2026.8.5.).hwpx"
+    },
+    {
+      "title": "[별표 2] 소비자 안전을 위한 표시사항(제5조제1항 관련) Ⅰ. 공통사항 1. 알레르기유발물질표시",
+      "url": "https://www.law.go.kr/LSW/flDownload.do?gubun=&flSeq=42533884&bylClsCd=110201",
+      "snippet": "알레르기 유발물질을 사용한 제품과 사용하지 않은 제품을 같은 제조 과정(작업자, 기구, 제조라인,"
+    },
+    {
+      "title": "식품 알레르기(식품접객업소) 가이드라인 및 포스터 상세보기|교육홍보물 | 식품의약품안전처",
+      "url": "https://mfds.go.kr/brd/m_228/view.do?seq=22284&srchFr=&srchTo=&srchWord=&srchTp=&itm_seq_1=0&itm_seq_2=0&multi_itm_seq=0&company_cd=&company_nm=&page=9",
+      "snippet": "식품의약품안전처_식품알레르기가이드라인_B5_최종본.pdf 다운받기 미리보기 첨부파일 보기 첨부파일 닫기"
+    }
+  ],
+  "source_count": 3,
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요."
+}

@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-08-25T23:26:22+09:00",
+  "topic": "스마트HACCP 온도 센서 연동",
+  "story_angle": "audit-defense",
+  "generation_mode": "llm_verified",
+  "model": "claude-sonnet-5",
+  "official_sources": [
+    {
+      "title": "행정규칙 > 식품 및 축산물 안전관리인증기준 | 국가법령정보센터",
+      "url": "https://www.law.go.kr/admRulLsInfoP.do?admRulSeq=2100000221694",
+      "snippet": "식품 및 축산물 안전관리인증기준 [시행 2023. 4. 6.] [식품의약품안전처고시 제2023-26호, 2023."
+    },
+    {
+      "title": "식품의약품안전처>정책정보>식품 정책정보>식품안전관리인증기준(HACCP) | 식품의약품안전처",
+      "url": "https://www.mfds.go.kr/brd/m_513/list.do",
+      "snippet": "정부민원안내콜센터 국번없이 110(무료)/식품의약품안전처 종합상담실 1577-1255(9:00~18:00, 공휴일 제외, 유료)"
+    },
+    {
+      "title": "식품및축산물안전관리인증기준",
+      "url": "https://law.go.kr/행정규칙/식품및축산물안전관리인증기준",
+      "snippet": "We cannot provide a description for this page right now"
+    }
+  ],
+  "source_count": 3,
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요."
+}
