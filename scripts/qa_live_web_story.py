@@ -43,6 +43,22 @@ STOPWORDS = {
 }
 
 
+def _clean_narration(value: Any, limit: int = 260) -> str:
+    """나레이션은 TTS로 그대로 읽히므로 글자 수로 칼같이 자르면 문장이 끊긴 채로
+    낭독된다. limit 안에서 마지막 문장 종결 부호(., !, ?)를 찾아 그 지점까지만
+    쓰고, 종결 부호가 없으면 어절(공백) 단위로 잘라 최소한 단어가 끊기지 않게 한다.
+    """
+    text = re.sub(r"\s+", " ", str(value or "")).strip()
+    if len(text) <= limit:
+        return text
+    truncated = text[:limit]
+    boundary = max(truncated.rfind("."), truncated.rfind("!"), truncated.rfind("?"))
+    if boundary >= int(limit * 0.4):
+        return truncated[:boundary + 1]
+    space = truncated.rfind(" ")
+    return (truncated[:space] if space >= int(limit * 0.4) else truncated).rstrip() + "."
+
+
 def _topic(value: str) -> str:
     return _clean_text(value, 80) or "식품 품질관리 핵심 점검"
 
@@ -200,7 +216,7 @@ def _validate_scenes(candidate: Any) -> list[dict[str, Any]] | None:
             "subtitle": _clean_text(scene.get("subtitle"), 32),
             "key_points": [_clean_text(points[0], 42), _clean_text(points[1], 42)],
             "senior_tip": _clean_text(scene.get("senior_tip"), 52),
-            "narration": _clean_text(scene.get("narration"), 260),
+            "narration": _clean_narration(scene.get("narration"), 320),
         }
         if not all(normalized[key] for key in ("badge", "title", "subtitle", "senior_tip", "narration")):
             return None
@@ -301,6 +317,9 @@ def _prompt(topic_name: str, angle: dict[str, str], sources: list[dict[str, str]
 - 첫 장면은 인사말 없이 이번 앵글의 문제를 제시하세요.
 - 기존 영상과 제목, 첫 문장, 사례, 체크 순서가 겹치지 않게 작성하세요.
 - 다섯 번째 장면은 최신 공식 원문과 사업장 적용성 확인으로 마무리하세요.
+- narration은 각 장면당 3~4문장, 공백 포함 140~170자 분량으로 작성하세요
+  (TTS 실측 기준 장면당 약 21~26초, 5장면 합쳐 총 영상 약 2분 내외가 되도록 하는 기준입니다).
+  음성으로 그대로 낭독되므로 문장이 도중에 끊기면 안 됩니다.
 - JSON 객체만 반환하세요. 코드블록을 쓰지 마세요.
 
 JSON 형식:

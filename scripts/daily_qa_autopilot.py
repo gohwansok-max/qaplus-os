@@ -1005,6 +1005,39 @@ def generate_dynamic_scenes_for_custom_topic(topic_name):
             }
         ]
 
+def _infer_infographic_type(topic_name):
+    """장면 렌더러가 그릴 인포그래픽 위젯 종류를 주제 키워드로 추정한다."""
+    if any(k in topic_name for k in ["금속", "이물", "캘리퍼", "X-ray", "엑스레이"]):
+        return "metal"
+    if any(k in topic_name for k in ["가열", "살균", "냉각", "온도", "중심온도", "F0", "냉동", "칠러"]):
+        return "temp"
+    return "steps"
+
+
+def _pick_broll_image(index):
+    """실시간 생성 대본에는 사전 지정 이미지가 없으므로 보유 B-Roll을 순환 배정한다."""
+    broll_files = ["broll_audit.jpg", "broll_metal_line.jpg", "broll_smart_haccp.jpg", "broll_test_piece.jpg"]
+    return os.path.join(ASSETS_DIR, broll_files[index % len(broll_files)])
+
+
+def generate_live_web_scenes_for_custom_topic(topic_name):
+    """웹에서 최신 공식 출처를 검색하고 그 근거로만 대본을 생성한다. 사전 저장 DB 문구를 재사용하지 않는다.
+
+    출처 검색 또는 LLM 생성이 실패하면 예외를 그대로 올려서, 호출부가
+    (구) 템플릿 대본으로 대체할지 판단할 수 있게 한다. 여기서 조용히
+    삼키면 "왜 실시간 정보가 아니라 항상 같은 내용이 나오는지" 문제를
+    또 재현하게 된다.
+    """
+    from qa_live_web_story import build_live_web_story
+    scenes, metadata = build_live_web_story(topic_name)
+    infographic_type = _infer_infographic_type(topic_name)
+    for idx, scene in enumerate(scenes):
+        scene["infographic"] = infographic_type
+        scene["image"] = _pick_broll_image(idx)
+    print(f"  [실시간 웹 대본] 출처 {metadata.get('source_count', 0)}건 기반, provider={metadata.get('provider')}, model={metadata.get('model')}")
+    return scenes
+
+
 def get_font(size, bold=True):
     font_names = [
         "C:\\Windows\\Fonts\\malgunbd.ttf" if bold else "C:\\Windows\\Fonts\\malgun.ttf",
@@ -1025,18 +1058,24 @@ def get_font(size, bold=True):
 def render_scene_frame(scene_data, frame_num_in_scene=0, total_scene_frames=300):
     width, height = 1080, 1920
     
-    # 1. 켄 번스(Ken Burns) 줌인 & 패닝 연산 (1.00x -> 1.14x)
+    # 1. B-Roll 배경: 프레임 수가 적어(초당 2~3장) 켄 번스 팬/줌을 넣으면 매끄럽지
+    # 않고 뚝뚝 끊겨 보인다는 피드백에 따라, 배경은 움직이지 않는 고정 이미지로 둔다.
     progress = frame_num_in_scene / max(1, total_scene_frames)
-    scale = 1.00 + 0.14 * (math.sin(progress * math.pi / 2.0))
-    
+
     if os.path.exists(scene_data["image"]):
         raw_bg = Image.open(scene_data["image"]).convert("RGBA")
         orig_w, orig_h = raw_bg.size
-        crop_w = int(orig_w / scale)
-        crop_h = int(orig_h / scale)
+        target_ratio = width / height
+        src_ratio = orig_w / orig_h
+        if src_ratio > target_ratio:
+            crop_h = orig_h
+            crop_w = int(orig_h * target_ratio)
+        else:
+            crop_w = orig_w
+            crop_h = int(orig_w / target_ratio)
         crop_x = int((orig_w - crop_w) * 0.5)
-        crop_y = int((orig_h - crop_h) * (0.3 + 0.2 * progress))
-        
+        crop_y = int((orig_h - crop_h) * 0.35)
+
         cropped = raw_bg.crop((crop_x, crop_y, crop_x + crop_w, crop_y + crop_h))
         bg_img = cropped.resize((width, height), Image.Resampling.BILINEAR)
     else:
@@ -1250,7 +1289,13 @@ def run_daily_autopilot(custom_topic=None):
     if custom_topic:
         topic_name = custom_topic
         print(f"\n[사용자 지정 토픽 수신] {topic_name}")
-        scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
+        try:
+            scenes = generate_live_web_scenes_for_custom_topic(topic_name)
+        except Exception as e:
+            # 실시간 웹 검색/LLM 생성이 실패하면 방송을 멈추는 대신 고정 템플릿으로
+            # 대체한다. 단, 이 경우 캡션에서 바로 티가 나도록 로그를 남긴다.
+            print(f"  [실시간 웹 대본 실패] 고정 템플릿으로 대체합니다: {e}")
+            scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
     else:
         with open(QUEUE_FILE, "r", encoding="utf-8") as f:
             queue_data = json.load(f)
@@ -1267,12 +1312,19 @@ def run_daily_autopilot(custom_topic=None):
         topic_id = next_item["id"]
         topic_name = next_item["topic"]
         print(f"\n[큐에서 선택된 오늘의 토픽] ID #{topic_id}: {topic_name}")
-        
-        template_data = TOPIC_TEMPLATES.get(topic_id)
-        if template_data:
-            scenes = template_data["scenes"]
-        else:
-            scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
+
+        # 큐의 95개 토픽 중 13~95번은 TOPIC_TEMPLATES에 매핑이 없어 항상 같은
+        # 고정 문구로 나갔었다. /make와 동일하게 실시간 웹검색+LLM을 우선 시도하고,
+        # 실패할 때만 (12개짜리) 사전 제작 템플릿 → 그래도 없으면 범용 폴백 순으로 내려간다.
+        try:
+            scenes = generate_live_web_scenes_for_custom_topic(topic_name)
+        except Exception as e:
+            print(f"  [실시간 웹 대본 실패] 사전 제작 템플릿으로 대체합니다: {e}")
+            template_data = TOPIC_TEMPLATES.get(topic_id)
+            if template_data:
+                scenes = template_data["scenes"]
+            else:
+                scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
 
     # 1. TTS Voiceover
     audio_files = asyncio.run(generate_tts_for_scenes(scenes))
@@ -1376,7 +1428,10 @@ def run_daily_autopilot(custom_topic=None):
         caption = f"🎬 <b>[큐에이플러스 5대 고도화 쇼츠] 완성!</b>\n\n📌 <b>주제:</b> {topic_name}\n✨ <b>적용 효과:</b> 100% 맞춤 실무 대본 + 켄 번스 줌인 모션 + BGM/SFX 믹싱 + 슬림 실사 HUD\n📁 <b>파일명:</b> {out_filename}\n\n💡 다운로드하여 유튜브 쇼츠 / 인스타 릴스에 바로 등록하세요!"
         send_video_to_telegram(master_mp4, caption)
     except Exception as e:
-        print(f"  [텔레그램 연동 알림] 텔레그램 발송 모듈 스킵: {e}")
+        # 여기서 예외를 삼키면 영상이 도착하지 않아도 워크플로가 success 로 끝납니다.
+        # 반드시 전파해서 실패 알림이 울리게 합니다.
+        print(f"  [텔레그램 발송 실패] {e}")
+        raise
     
     print("\n==================================================================")
     print(f"  ✅ 100% 맞춤형 실무 숏츠 영상 제작이 성공적으로 완료되었습니다: {out_filename}")
