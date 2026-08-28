@@ -1307,6 +1307,8 @@ def run_daily_autopilot(custom_topic=None):
                 
         if not next_item:
             print("[!] 모든 대기 토픽이 완료되었습니다. 큐를 리셋하여 1번부터 순환합니다.")
+            for item in queue_data["topics"]:
+                item["status"] = "pending"
             next_item = queue_data["topics"][0]
 
         topic_id = next_item["id"]
@@ -1414,12 +1416,39 @@ def run_daily_autopilot(custom_topic=None):
     print(f"  🎉 [완성] 5대 고도화 마스터 쇼츠 MP4: {master_mp4}")
     
     # 5. Update Queue Status if it came from Queue
+    # 렌더링에 5~10분이 걸리는 동안 다른 실행이 큐 파일을 먼저 갱신했을 수 있으므로,
+    # 실행 시작 시점에 메모리로 읽어둔 queue_data를 그대로 덮어쓰지 않고
+    # 쓰기 직전에 디스크에서 다시 읽어 해당 항목만 갱신한다 (동시 실행 시 상태 덮어쓰기 방지).
     if next_item:
-        next_item["status"] = "completed"
-        next_item["rendered_file"] = f"outputs/videos/{out_filename}"
-        queue_data["last_run"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        topic_id_to_update = next_item["id"]
+        try:
+            subprocess.run(
+                ["git", "pull", "--rebase", "origin", "HEAD"],
+                cwd=BASE_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60,
+            )
+        except Exception:
+            pass
+        try:
+            with open(QUEUE_FILE, "r", encoding="utf-8") as f:
+                fresh_queue_data = json.load(f)
+        except Exception:
+            fresh_queue_data = queue_data
+
+        already_completed = False
+        for item in fresh_queue_data["topics"]:
+            if item["id"] == topic_id_to_update:
+                if item.get("status") == "completed":
+                    already_completed = True
+                item["status"] = "completed"
+                item["rendered_file"] = f"outputs/videos/{out_filename}"
+                break
+
+        fresh_queue_data["last_run"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open(QUEUE_FILE, "w", encoding="utf-8") as f:
-            json.dump(queue_data, f, ensure_ascii=False, indent=2)
+            json.dump(fresh_queue_data, f, ensure_ascii=False, indent=2)
+
+        if already_completed:
+            print(f"  [!] 경고: ID #{topic_id_to_update}은(는) 이미 완료 처리된 토픽이었습니다 (중복 렌더링 가능성).")
         print("  ✓ [큐 업데이트] 토픽 상태 완료 처리 완료.")
         
     # 6. Telegram Dispatch
