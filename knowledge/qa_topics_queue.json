@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-08-28 23:16:05",
+  "last_run": "2026-08-28 23:32:11",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -48,7 +48,8 @@
       "topic": "FS009 식품제조현장 기대와현실",
       "filename": "06_QA+_V2_FS009_식품제조현장_기대와현실_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\06_QA+_V2_FS009_식품제조현장_기대와현실_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-08-28_FS009_식품제조현장_기대와현실_shorts.mp4"
     },
     {
       "id": 7,
