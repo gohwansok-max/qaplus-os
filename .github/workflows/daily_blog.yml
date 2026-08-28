@@ -55,6 +55,7 @@ jobs:
 
       - name: 큐에이플러스 블로그 오토파일럿 실행 & 텔레그램 발송
         env:
+          TZ: Asia/Seoul
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}

@@ -15,6 +15,16 @@ import datetime
 import re
 import urllib.request
 import urllib.error
+from zoneinfo import ZoneInfo
+
+KST = ZoneInfo("Asia/Seoul")
+
+
+def now_kst():
+    """ GitHub Actions 러너는 UTC로 돌기 때문에 날짜 계산은 항상 KST 기준으로 통일한다.
+    (UTC 기준으로 계산하면 KST 아침 실행 시 outputs 폴더가 전날 날짜로 잡혀
+    already_ran_today()가 어제 발행 기록을 오늘 것으로 착각하는 버그가 있었음) """
+    return datetime.datetime.now(KST)
 
 # Windows 콘솔 인코딩 방어
 if sys.platform == "win32":
@@ -40,7 +50,7 @@ except Exception:
 
 
 def today_output_dir():
-    now = datetime.datetime.now()
+    now = now_kst()
     d = os.path.join(ROOT_DIR, "outputs", now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
     os.makedirs(d, exist_ok=True)
     return d
@@ -64,7 +74,7 @@ def mark_topic_published(topic, title, final_path):
         "topic": topic,
         "title": title,
         "file": final_path,
-        "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+        "date": now_kst().strftime("%Y-%m-%d"),
     })
     with open(BLOG_PUBLISHED_LOG_PATH, "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2)
@@ -243,7 +253,7 @@ def run_blog_pipeline(topic):
     # 부록/전체 원고 (검토용, md)
     raw_path = os.path.join(dated_dir, f"[블로그원본]_{safe_topic}.md")
     full_content = f"""# [QA+ 블로그 생성 결과물] {topic}
-생성일시: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+생성일시: {now_kst().strftime("%Y-%m-%d %H:%M:%S")} (KST)
 적용모델: {llm_config['model']}
 
 ================================================================================
@@ -327,7 +337,7 @@ def run_blog_pipeline(topic):
     blog_log_path = os.path.join(dated_dir, "blog_log.json")
     blog_log = load_json(blog_log_path, [])
     blog_log.append({
-        "date": datetime.datetime.now().strftime("%Y-%m-%d"),
+        "date": now_kst().strftime("%Y-%m-%d"),
         "topic": topic,
         "title": title,
         "file": os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"),
@@ -366,12 +376,15 @@ def run_blog_pipeline(topic):
     return final_html_path
 
 def already_ran_today():
-    """ 오늘 날짜 폴더에 이미 발행 완료된 글이 있는지 확인.
+    """ 오늘 날짜 폴더에 이미 '공개 발행'된 글이 있는지 확인.
     GitHub Actions 자체 cron + cron-job.org 백업 트리거를 이중으로 걸어둔 경우,
-    하나가 이미 성공했으면 나머지 하나는 조용히 스킵해서 하루에 중복 발행되지 않게 한다. """
+    하나가 이미 성공했으면 나머지 하나는 조용히 스킵해서 하루에 중복 발행되지 않게 한다.
+    임시저장(blogger_draft)은 아직 미완성 상태이므로 중복으로 치지 않고 다시 시도하게 둔다 —
+    안 그러면 사람이 발행 버튼을 안 눌러도 다음 실행이 조용히 스킵되어 그날 글이 하나도
+    안 올라가는 사각지대가 생긴다. """
     dated_dir = today_output_dir()
     blog_log = load_json(os.path.join(dated_dir, "blog_log.json"), [])
-    return any(entry.get("status", "").startswith("blogger_") for entry in blog_log)
+    return any(entry.get("status") == "blogger_발행됨" for entry in blog_log)
 
 
 if __name__ == "__main__":
