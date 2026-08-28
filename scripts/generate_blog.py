@@ -353,11 +353,12 @@ def run_blog_pipeline(topic):
 
     # 텔레그램 알림
     if publish_url:
+        status_label = "공개 발행됨" if publish_status == "blogger_발행됨" else "임시저장"
         tg_message = (
             f"✅ <b>[QA+] 블로그 글이 Blogger에 자동 등록됐습니다</b>\n\n"
             f"📌 <b>제목:</b> {title}\n"
-            f"🔗 <b>{'임시저장' if 'draft' not in publish_status else '임시저장'}:</b> {publish_url}\n\n"
-            f"내용 확인 후 Blogger에서 발행 버튼만 눌러주세요."
+            f"🔗 <b>{status_label}:</b> {publish_url}\n\n"
+            + ("내용 확인 후 Blogger에서 발행 버튼만 눌러주세요." if status_label == "임시저장" else "이미 공개 발행되었습니다.")
         )
     else:
         tg_message = (
@@ -395,6 +396,10 @@ if __name__ == "__main__":
 
     if not args.topic and not args.force and already_ran_today():
         print("[*] 오늘 이미 발행이 완료된 글이 있어 스킵합니다 (이중 트리거 대비 안전장치). 강제 실행하려면 --force를 붙이세요.")
+        send_message_to_telegram(
+            "⏭️ <b>[QA+] 블로그 자동화 — 오늘 이미 발행 완료라 스킵</b>\n\n"
+            "이중 트리거(백업 크론) 안전장치로 이번 실행은 건너뛰었습니다. 조치 불필요."
+        )
         sys.exit(0)
 
     topic_input = args.topic
@@ -404,6 +409,21 @@ if __name__ == "__main__":
             print(f"[*] 큐에서 자동 선택된 주제: {topic_input}")
         else:
             print("[!] 큐에 아직 블로그로 만들지 않은 주제가 없습니다. --topic으로 직접 지정해주세요.")
+            send_message_to_telegram(
+                "⚠️ <b>[QA+] 블로그 자동화 — 실패 (주제 없음)</b>\n\n"
+                "knowledge/qa_topics_queue.json에 아직 블로그로 안 만든 주제가 없습니다. "
+                "큐에 새 주제를 추가해주세요."
+            )
             sys.exit(1)
 
-    run_blog_pipeline(topic_input)
+    try:
+        run_blog_pipeline(topic_input)
+    except Exception as e:
+        print(f"[!] 블로그 파이프라인 실행 중 오류 발생: {e}")
+        send_message_to_telegram(
+            f"🚨 <b>[QA+] 블로그 자동화 — 파이프라인 실패</b>\n\n"
+            f"📌 <b>주제:</b> {topic_input}\n"
+            f"❌ <b>오류:</b> {str(e)[:300]}\n\n"
+            f"GitHub Actions 로그를 확인해주세요."
+        )
+        raise
