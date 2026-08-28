@@ -9,10 +9,108 @@
 
 import os
 import json
+import re
 import requests
 
 YOUTUBE_UPLOAD_URL = "https://www.googleapis.com/upload/youtube/v3/videos"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+
+
+def _clean_topic(topic):
+    """큐 ID를 제거하고 검색 결과에서 읽기 쉬운 주제명으로 정리한다."""
+    cleaned = re.sub(r"^[A-Z]{2,5}\d{3}\s+", "", str(topic or "").strip())
+    replacements = {
+        "구분과적용": "구분과 적용",
+        "기대와현실": "기대와 현실",
+        "개념과효과": "개념과 효과",
+        "도입효과": "도입 효과",
+    }
+    for before, after in replacements.items():
+        cleaned = cleaned.replace(before, after)
+    return re.sub(r"\s+", " ", cleaned).strip() or "HACCP 현장 실무"
+
+
+def _search_intent(topic):
+    """주제를 실무자가 검색할 가능성이 높은 롱테일 검색 의도로 분류한다."""
+    lowered = topic.lower()
+    if "fssc" in lowered or any(k in topic for k in ("PRP", "OPRP")):
+        return "FSSC 22000 실무", ["FSSC22000", "PRP", "OPRP"]
+    if "스마트" in topic or any(k in lowered for k in ("iot", "센서", "자동기록", "위변조")):
+        return "스마트 HACCP", ["스마트HACCP", "스마트해썹", "HACCP도입"]
+    if any(k in topic for k in ("기준서", "절차서", "SOP", "작성법", "서식")):
+        return "HACCP 기준서 작성법", ["HACCP기준서", "해썹기준서", "HACCP서식"]
+    if any(k in topic for k in ("심사", "인증", "지적", "부적합", "개선조치", "CAPA")):
+        return "HACCP 심사 대비", ["HACCP심사", "해썹인증", "HACCP인증절차"]
+    if any(k in topic for k in ("위생", "세척", "손세척", "방진복", "알레르", "교차오염", "ATP")):
+        return "식품공장 위생점검", ["식품공장위생", "위생점검", "위생관리"]
+    if any(k in topic for k in ("CCP", "한계기준", "가열", "살균", "냉각", "금속검출", "이물")):
+        return "HACCP CCP 관리", ["CCP관리", "한계기준", "HACCP모니터링"]
+    return "HACCP 실무", ["HACCP실무", "해썹", "식품품질관리"]
+
+
+def _fit_title(prefix, topic, limit=100):
+    suffix = " | 큐에이플러스"
+    available = limit - len(prefix) - len(suffix) - 1
+    if available < 10:
+        suffix = ""
+        available = limit - len(prefix) - 1
+    shortened = topic if len(topic) <= available else topic[: max(1, available - 1)].rstrip() + "…"
+    return f"{prefix} {shortened}{suffix}"[:limit]
+
+
+def build_short_metadata(topic, scenes=None):
+    """영상별 검색 의도에 맞는 제목·설명·태그를 결정론적으로 생성한다.
+
+    제목과 설명 첫 문단에는 동일한 핵심 검색어를 자연스럽게 배치하고,
+    태그는 오탈자 및 동의어 보완 용도로만 제한한다.
+    """
+    clean_topic = _clean_topic(topic)
+    primary_keyword, intent_tags = _search_intent(clean_topic)
+    title = _fit_title(f"[{primary_keyword}]", clean_topic)
+
+    highlights = []
+    for scene in scenes or []:
+        candidate = str(scene.get("subtitle") or scene.get("title") or "").replace("\n", " ").strip()
+        candidate = re.sub(r"\s+", " ", candidate)
+        if candidate and candidate not in highlights:
+            highlights.append(candidate[:80])
+        if len(highlights) == 3:
+            break
+
+    description_lines = [
+        f"{primary_keyword} 정보를 찾는 실무자를 위한 ‘{clean_topic}’ 핵심 정리입니다.",
+        "HACCP 인증·심사와 식품 품질관리 현장에서 바로 확인할 점검 포인트를 20년 QA 실무 관점으로 설명합니다.",
+    ]
+    if highlights:
+        description_lines.extend(["", "영상 핵심:"] + [f"- {item}" for item in highlights])
+    description_lines.extend([
+        "",
+        "큐에이플러스는 HACCP·FSSC 22000·식품 품질관리 실무 지식을 무료로 나눕니다.",
+        "",
+        "#HACCP #해썹 #식품품질관리 #Shorts",
+    ])
+
+    tags = [
+        "HACCP", "해썹", "HACCP인증", "HACCP심사", "식품품질관리",
+        "품질관리", "식품QA", "식품QC", "식품안전", "큐에이플러스",
+        *intent_tags, clean_topic, "Shorts",
+    ]
+    unique_tags = []
+    for tag in tags:
+        normalized = str(tag).strip()
+        if normalized and normalized.casefold() not in {t.casefold() for t in unique_tags}:
+            unique_tags.append(normalized[:100])
+
+    while len(",".join(unique_tags)) > 450:
+        unique_tags.pop()
+
+    return {
+        "title": title,
+        "description": "\n".join(description_lines)[:5000],
+        "tags": unique_tags,
+        "primary_keyword": primary_keyword,
+        "topic": clean_topic,
+    }
 
 
 def get_access_token():
@@ -49,7 +147,7 @@ def upload_short(video_path, title, description, tags=None, privacy_status="publ
     """
     쇼츠(세로형 짧은 영상)를 유튜브에 업로드한다.
     privacy_status: "public"(즉시 공개) | "unlisted"(링크 공개) | "private"(비공개, 검수 후 수동 공개)
-    제목/설명에 자동으로 #Shorts 태그를 붙여 쇼츠 피드에 노출되도록 한다.
+    설명에 #Shorts를 포함하되, 검색 적합도는 정확한 제목·설명·영상 내용으로 확보한다.
     """
     if not os.path.exists(video_path):
         return {"ok": False, "error": f"영상 파일을 찾을 수 없습니다: {video_path}"}
@@ -59,7 +157,7 @@ def upload_short(video_path, title, description, tags=None, privacy_status="publ
         return {"ok": False, "error": "액세스 토큰 발급 실패 (환경변수 미설정 또는 리프레시 토큰 만료)"}
 
     if "#shorts" not in title.lower() and "#shorts" not in description.lower():
-        description = f"{description}\n\n#Shorts #HACCP #식품안전 #QAPLUS"
+        description = f"{description}\n\n#Shorts #HACCP #해썹 #식품품질관리"
 
     metadata = {
         "snippet": {

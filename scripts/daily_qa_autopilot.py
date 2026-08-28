@@ -1464,11 +1464,18 @@ def run_daily_autopilot(custom_topic=None):
     
     # 7. YouTube Shorts 자동 업로드 (YOUTUBE_REFRESH_TOKEN 설정된 경우에만 동작, 없으면 조용히 스킵)
     try:
-        from youtube_uploader import is_configured as yt_configured, upload_short
+        from youtube_uploader import build_short_metadata, is_configured as yt_configured, upload_short
         if yt_configured():
-            yt_title = f"{topic_name} | 큐에이플러스 #Shorts"
-            yt_desc = f"{topic_name}\n\n식품 품질관리/HACCP/FSSC22000 실무 노하우를 20년 경력 선배가 알려드립니다.\n오픈채팅방·블로그에서 더 많은 자료를 확인하세요."
-            yt_result = upload_short(master_mp4, yt_title, yt_desc, privacy_status="public")
+            yt_meta = build_short_metadata(topic_name, scenes)
+            print(f"  [YouTube SEO] 핵심 검색어: {yt_meta['primary_keyword']}")
+            print(f"  [YouTube SEO] 제목: {yt_meta['title']}")
+            yt_result = upload_short(
+                master_mp4,
+                yt_meta["title"],
+                yt_meta["description"],
+                tags=yt_meta["tags"],
+                privacy_status="public",
+            )
             if yt_result.get("ok"):
                 print(f"  ✓ [YouTube 업로드 완료] {yt_result['url']}")
             else:
