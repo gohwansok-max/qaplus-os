@@ -1,0 +1,22 @@
+name: 텔레그램 연동 테스트 (1회성, 확인 후 삭제 예정)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-test-message:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: 테스트 메시지 발송
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl --retry 2 --retry-delay 2 --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=🧪 [QA+] TELEGRAM_CHAT_ID 연동 테스트 메시지입니다. 이 메시지가 보이면 정상 연결된 것입니다."
