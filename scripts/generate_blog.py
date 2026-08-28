@@ -96,7 +96,11 @@ OUTPUTS_DIR = os.path.join(ROOT_DIR, "outputs", "blog")
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
 
 def load_env():
-    """ .env 파일 파싱 """
+    """로컬 .env와 프로세스 환경변수를 병합한다.
+
+    GitHub Actions Secrets는 프로세스 환경변수로 주입되므로 반드시 포함해야 한다.
+    동일한 키가 있으면 배포 환경의 값이 로컬 .env보다 우선한다.
+    """
     env_path = os.path.join(ROOT_DIR, ".env")
     env = {}
     if os.path.exists(env_path):
@@ -107,6 +111,7 @@ def load_env():
                     continue
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
+    env.update(os.environ)
     return env
 
 ENV = load_env()
@@ -213,8 +218,10 @@ def run_blog_pipeline(topic):
     
     configs = get_llm_configs()
     if not configs:
-        print("[!] .env에 유효한 API 키가 설정되지 않았습니다. (CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 확인)")
-        return
+        raise RuntimeError(
+            "유효한 LLM API 키가 없습니다. "
+            "CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 환경변수를 확인하세요."
+        )
 
     print(f"[*] LLM 우선순위: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
 
