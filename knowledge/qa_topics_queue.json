@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-08-28 23:32:11",
+  "last_run": "2026-08-29 03:14:29",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -56,7 +56,8 @@
       "topic": "HC006 HACCP 7원칙 개념과효과",
       "filename": "07_QA+_V2_HC006_HACCP_7원칙_개념과효과_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\07_QA+_V2_HC006_HACCP_7원칙_개념과효과_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-08-29_HC006_HACCP_7원칙_개념과효과_shorts.mp4"
     },
     {
       "id": 8,
