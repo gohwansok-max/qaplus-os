@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-08-30 21:20:21",
+  "last_run": "2026-08-30 23:36:43",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -88,7 +88,8 @@
       "topic": "ALL001 한국형 알레르겐관리",
       "filename": "11_QA+_V2_ALL001_한국형_알레르겐관리_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\11_QA+_V2_ALL001_한국형_알레르겐관리_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-08-30_ALL001_한국형_알레르겐관리_shorts.mp4"
     },
     {
       "id": 12,
