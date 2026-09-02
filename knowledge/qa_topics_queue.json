@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-02 21:20:41",
+  "last_run": "2026-09-02 23:23:43",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -136,7 +136,8 @@
       "topic": "LAB002 ATP 위생검증",
       "filename": "17_QA+_V2_LAB002_ATP_위생검증_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\17_QA+_V2_LAB002_ATP_위생검증_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-02_LAB002_ATP_위생검증_shorts.mp4"
     },
     {
       "id": 18,
