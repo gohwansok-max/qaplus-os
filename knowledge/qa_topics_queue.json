@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-03 21:20:25",
+  "last_run": "2026-09-03 23:21:52",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -152,7 +152,8 @@
       "topic": "SAN002 CIP COP 비교",
       "filename": "19_QA+_V2_SAN002_CIP_COP_비교_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\19_QA+_V2_SAN002_CIP_COP_비교_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-03_SAN002_CIP_COP_비교_shorts.mp4"
     },
     {
       "id": 20,
