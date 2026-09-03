@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-02 23:23:43",
+  "last_run": "2026-09-03 21:20:25",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -144,7 +144,8 @@
       "topic": "PR002 GMP 상위10대 취약점",
       "filename": "18_QA+_V2_PR002_GMP_상위10대_취약점_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\18_QA+_V2_PR002_GMP_상위10대_취약점_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-03_PR002_GMP_상위10대_취약점_shorts.mp4"
     },
     {
       "id": 19,
