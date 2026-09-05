@@ -1,0 +1,35 @@
+name: 텔레그램 수동 알림 발송
+
+# 정기 파이프라인(daily_blog.yml 등) 밖에서 대표님께 텍스트 알림 한 건을 즉시 보낼 때 사용.
+# workflow_dispatch로 message 입력만 넣고 실행하면 기존 텔레그램 봇/채팅방으로 그대로 전달된다.
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: '텔레그램으로 보낼 메시지 (HTML 파스모드 지원: <b>, <a> 등)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 텔레그램 메시지 전송
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ]; then
+            echo "::error::TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID 시크릿이 비어 있습니다."
+            exit 1
+          fi
+          curl --retry 2 --retry-delay 2 --fail --silent --show-error \
+            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "parse_mode=HTML" \
+            --data-urlencode "text=${{ inputs.message }}"
