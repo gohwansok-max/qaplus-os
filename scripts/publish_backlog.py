@@ -13,6 +13,7 @@ import sys
 import re
 import json
 import glob
+import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from blogger_publisher import is_configured, publish_post
@@ -25,6 +26,22 @@ except Exception:
         return False
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PUBLISH_INTERVAL_SEC = 10  # Blogger API가 짧은 시간에 몰아치면 429(rateLimitExceeded)를 반환해서 글 사이 최소 간격을 둔다.
+RATE_LIMIT_RETRIES = 3
+RATE_LIMIT_BACKOFF_SEC = 30
+
+
+def publish_with_retry(title, body_html, is_draft):
+    """ 429(rateLimitExceeded)만 백오프 후 재시도하고, 그 외 오류는 즉시 실패 처리한다. """
+    for attempt in range(1, RATE_LIMIT_RETRIES + 1):
+        result = publish_post(title, body_html, is_draft=is_draft)
+        if result.get("ok") or "429" not in str(result.get("error", "")):
+            return result
+        if attempt < RATE_LIMIT_RETRIES:
+            wait = RATE_LIMIT_BACKOFF_SEC * attempt
+            print(f"[!] 429 rate limit — {wait}초 대기 후 재시도 ({attempt}/{RATE_LIMIT_RETRIES})")
+            time.sleep(wait)
+    return result
 
 
 def strip_leading_comments(html_text):
@@ -71,7 +88,9 @@ def main():
 
             title = entry["title"]
             print(f"[*] 발행 시도: {title}")
-            result = publish_post(title, body_html, is_draft=is_draft)
+            if results:
+                time.sleep(PUBLISH_INTERVAL_SEC)
+            result = publish_with_retry(title, body_html, is_draft)
 
             if result.get("ok"):
                 entry["status"] = f"blogger_{result['status']}"
