@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-06 22:58:02",
+  "last_run": "2026-09-07 00:46:15",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -208,7 +208,8 @@
       "topic": "LAB001 시료채취 추적성 8단계",
       "filename": "26_QA+_V2_LAB001_시료채취_추적성_8단계_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\26_QA+_V2_LAB001_시료채취_추적성_8단계_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-07_LAB001_시료채취_추적성_8단계_shorts.mp4"
     },
     {
       "id": 27,
