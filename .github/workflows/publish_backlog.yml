@@ -1,0 +1,63 @@
+name: Blogger 발행 백로그 정리 (수동 실행)
+
+# Blogger 리프레시 토큰이 만료돼있던 기간 동안 status가 "ready_to_publish"로
+# 밀려있던 글들을, 지금 살아있는 토큰으로 한 번에 발행 처리한다.
+# 새 글을 생성하지 않고 이미 만들어진 [블로그최종]_*.html만 그대로 올린다.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-backlog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Git 사용자 정보 설정
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 파이썬 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 필수 시크릿 사전 점검
+        run: |
+          if [ -z "${{ secrets.BLOGGER_BLOG_ID }}" ] || [ -z "${{ secrets.BLOGGER_CLIENT_ID }}" ] || \
+             [ -z "${{ secrets.BLOGGER_CLIENT_SECRET }}" ] || [ -z "${{ secrets.BLOGGER_REFRESH_TOKEN }}" ]; then
+            echo "::error::BLOGGER_* 시크릿이 비어 있습니다."
+            exit 1
+          fi
+
+      - name: 파이썬 라이브러리 설치
+        run: pip install requests
+
+      - name: 발행 백로그 처리
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          BLOGGER_AUTO_PUBLISH: ${{ vars.BLOGGER_AUTO_PUBLISH || 'false' }}
+        run: python scripts/publish_backlog.py
+
+      - name: 변경사항 Git 커밋 및 푸시
+        if: always()
+        run: |
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git add outputs/ || true
+          if git status --porcelain | grep -q .; then
+            git commit -m "chore(auto): Blogger 발행 백로그 정리"
+            git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::git push 실패"
+          else
+            echo "커밋할 새로운 파일이 없습니다."
+          fi
