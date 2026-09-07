@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-07 21:21:39",
+  "last_run": "2026-09-07 21:27:34",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -224,7 +224,8 @@
       "topic": "MIC001 주요식중독균 5종",
       "filename": "28_QA+_V2_MIC001_주요식중독균_5종_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\28_QA+_V2_MIC001_주요식중독균_5종_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-07_MIC001_주요식중독균_5종_shorts.mp4"
     },
     {
       "id": 29,
