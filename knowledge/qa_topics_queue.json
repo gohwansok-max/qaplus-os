@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-08 21:20:18",
+  "last_run": "2026-09-08 21:26:11",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -240,7 +240,8 @@
       "topic": "SAN001 바이오필름 예방제거",
       "filename": "30_QA+_V2_SAN001_바이오필름_예방제거_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\30_QA+_V2_SAN001_바이오필름_예방제거_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-08_SAN001_바이오필름_예방제거_shorts.mp4"
     },
     {
       "id": 31,
