@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-09 21:20:27",
+  "last_run": "2026-09-09 21:27:21",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -256,7 +256,8 @@
       "topic": "EQ003 리본블렌더 패들믹서 비교",
       "filename": "32_QA+_V2_EQ003_리본블렌더_패들믹서_비교_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\32_QA+_V2_EQ003_리본블렌더_패들믹서_비교_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-09_EQ003_리본블렌더_패들믹서_비교_shorts.mp4"
     },
     {
       "id": 33,
