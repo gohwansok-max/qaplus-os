@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-12 21:27:43",
+  "last_run": "2026-09-13 21:20:28",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -312,7 +312,8 @@
       "topic": "QM001 QM QA QC 단계별 이해",
       "filename": "39_QA+_V2_QM001_QM_QA_QC_단계별_이해_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\39_QA+_V2_QM001_QM_QA_QC_단계별_이해_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-13_QM001_QM_QA_QC_단계별_이해_shorts.mp4"
     },
     {
       "id": 40,
