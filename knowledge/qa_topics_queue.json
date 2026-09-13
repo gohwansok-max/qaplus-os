@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-13 21:20:28",
+  "last_run": "2026-09-13 21:26:36",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -320,7 +320,8 @@
       "topic": "QM002 3현주의 현장 현물 현상",
       "filename": "40_QA+_V2_QM002_3현주의_현장_현물_현상_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\40_QA+_V2_QM002_3현주의_현장_현물_현상_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-13_QM002_3현주의_현장_현물_현상_shorts.mp4"
     },
     {
       "id": 41,
