@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-13 21:26:36",
+  "last_run": "2026-09-13 23:55:00",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -328,7 +328,8 @@
       "topic": "QM003 SQM QCM 연계 품질향상",
       "filename": "41_QA+_V2_QM003_SQM_QCM_연계_품질향상_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\41_QA+_V2_QM003_SQM_QCM_연계_품질향상_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-13_QM003_SQM_QCM_연계_품질향상_shorts.mp4"
     },
     {
       "id": 42,
