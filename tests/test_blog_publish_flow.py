@@ -15,10 +15,30 @@ class BlogPublishFlowTests(unittest.TestCase):
         response.json.return_value = {"id": "123", "url": "https://example.blogspot.com/post", "title": "검토 완료 글"}
         with mock.patch.dict(os.environ, {"BLOGGER_BLOG_ID": "blog-9"}), \
              mock.patch.object(blogger_publisher, "get_access_token", return_value="token"), \
+             mock.patch.object(blogger_publisher.requests, "get", return_value=mock.Mock(status_code=200, json=lambda: {"status": "DRAFT"})), \
              mock.patch.object(blogger_publisher.requests, "post", return_value=response) as post:
             result = blogger_publisher.publish_draft("123")
         self.assertTrue(result["ok"])
         self.assertEqual(post.call_args.args[0], "https://www.googleapis.com/blogger/v3/blogs/blog-9/posts/123/publish")
+
+    def test_already_live_post_is_not_published_again(self):
+        with mock.patch.dict(os.environ, {"BLOGGER_BLOG_ID": "blog-9"}), \
+             mock.patch.object(blogger_publisher, "get_access_token", return_value="token"), \
+             mock.patch.object(blogger_publisher.requests, "get", return_value=mock.Mock(
+                 status_code=200, json=lambda: {"status": "LIVE", "id": "123", "url": "https://example.com/post"})), \
+             mock.patch.object(blogger_publisher.requests, "post") as post:
+            result = blogger_publisher.publish_draft("123")
+        self.assertTrue(result["already_live"])
+        post.assert_not_called()
+
+    def test_unreadable_state_fails_closed(self):
+        with mock.patch.dict(os.environ, {"BLOGGER_BLOG_ID": "blog-9"}), \
+             mock.patch.object(blogger_publisher, "get_access_token", return_value="token"), \
+             mock.patch.object(blogger_publisher.requests, "get", return_value=mock.Mock(status_code=403)), \
+             mock.patch.object(blogger_publisher.requests, "post") as post:
+            result = blogger_publisher.publish_draft("123")
+        self.assertFalse(result["ok"])
+        post.assert_not_called()
 
     def test_authorized_telegram_button_publishes_selected_draft(self):
         callback = {

@@ -54,6 +54,8 @@ node_modules/
 __pycache__/
 *.pyc
 .tmp/
+.wrangler/
+.dev.vars*
 
 # OS Files
 .DS_Store

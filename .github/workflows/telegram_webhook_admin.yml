@@ -1,0 +1,43 @@
+name: Telegram webhook 운영 도구 (수동)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 운영 작업
+        type: choice
+        required: true
+        options: [status, sync_secrets, smoke, prepare_test, verify_post, revert_test, enable, rollback]
+      test_post_id:
+        description: 검증 전용 글 번호
+        type: string
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: telegram-webhook-admin
+  cancel-in-progress: false
+jobs:
+  admin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install --quiet requests
+      - name: 요청한 운영 작업 실행
+        env:
+          ADMIN_MODE: ${{ inputs.mode }}
+          TEST_POST_ID: ${{ inputs.test_post_id }}
+          WEBHOOK_BASE_URL: ${{ vars.WEBHOOK_BASE_URL }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+          CF_BOOTSTRAP_TOKEN: ${{ secrets.CF_BOOTSTRAP_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          QA_DISPATCH_TOKEN: ${{ secrets.QA_DISPATCH_TOKEN }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: python scripts/telegram_webhook_admin.py

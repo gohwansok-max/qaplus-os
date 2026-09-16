@@ -31,7 +31,7 @@ def get_access_token():
     }, timeout=30)
 
     if resp.status_code != 200:
-        print(f"[!] Blogger 액세스 토큰 발급 실패: {resp.status_code} {resp.text}")
+        print(f"[!] Blogger 액세스 토큰 발급 실패: HTTP {resp.status_code}")
         return None
 
     return resp.json().get("access_token")
@@ -90,6 +90,20 @@ def publish_draft(post_id):
     if not blog_id or not access_token:
         return {"ok": False, "error": "Blogger 설정 또는 액세스 토큰이 없습니다."}
 
+    # 같은 글에 대한 중복 승인/재시도는 공개 상태 확인 후 성공으로 반환한다.
+    current = requests.get(
+        f"{BLOGGER_API_BASE}/blogs/{blog_id}/posts/{post_id}",
+        params={"view": "ADMIN"},
+        headers={"Authorization": f"Bearer {access_token}"}, timeout=30,
+    )
+    if current.status_code != 200:
+        return {"ok": False, "error": f"글 상태 확인 실패: HTTP {current.status_code}"}
+    data = current.json()
+    if data.get("status") == "LIVE":
+        return {"ok": True, "post_id": data.get("id"), "url": data.get("url"),
+                "title": data.get("title"), "already_live": True}
+    if data.get("status") != "DRAFT":
+        return {"ok": False, "error": "임시저장 상태의 글만 발행할 수 있습니다."}
     resp = requests.post(
         f"{BLOGGER_API_BASE}/blogs/{blog_id}/posts/{post_id}/publish",
         headers={"Authorization": f"Bearer {access_token}"},
