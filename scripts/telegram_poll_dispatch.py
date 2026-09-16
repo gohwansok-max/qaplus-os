@@ -67,10 +67,13 @@ def fetch_updates():
         timeout=30,
     )
     if res.status_code == 409:
-        # 웹훅이 걸려 있으면 getUpdates 를 쓸 수 없다.
-        print("[!] 409 Conflict — 이 봇에 웹훅이 설정되어 있어 폴링이 불가능합니다.")
-        print("    해제: https://api.telegram.org/bot<TOKEN>/deleteWebhook")
-        sys.exit(1)
+        # 전환 검증 중에는 schedule을 유지한다. 실제 webhook 충돌만 정상 SKIP한다.
+        info = requests.get(f"{API}/getWebhookInfo", timeout=15)
+        info.raise_for_status()
+        if info.json().get("result", {}).get("url"):
+            print("Webhook 수신 중 — 기존 polling은 업데이트를 소비하지 않고 종료합니다.")
+            return [], None
+        raise RuntimeError("다른 polling 실행과 충돌했습니다.")
     res.raise_for_status()
 
     updates = res.json().get("result", [])
