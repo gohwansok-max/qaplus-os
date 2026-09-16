@@ -1,7 +1,15 @@
 name: 큐에이플러스 일일 블로그 글 자동 생성 & 텔레그램 발송
 
-# scripts/generate_blog.py (4-Agent: 리서치→집필→디자인→편집) 기반.
-# 2026-08-27 로컬 실행으로 1회 검증 완료 (FSSC22000 V7 주제, HTML 추출/텔레그램 발송 정상 확인).
+# QA PLUS 일일 블로그 자동화
+#
+# 운영 원칙
+# 1. 하루 자동 생성은 최대 1건
+# 2. GitHub schedule은 06:35 KST 백업 트리거
+# 3. cron-job.org repository_dispatch는 07:10 KST 주 트리거
+# 4. 먼저 실행된 쪽에서 글이 생성되면 나중 실행은 자동 SKIP
+# 5. workflow_dispatch는 수동 실행용
+# 6. 수동 실행 시 force=true를 선택하면 당일 재생성 가능
+# 7. 공개 발행은 생성 단계에서 하지 않고 Telegram 승인 후 수행
 
 on:
   workflow_dispatch:
@@ -11,113 +19,397 @@ on:
         required: false
         default: ''
         type: string
+
+      force:
+        description: '오늘 글이 이미 있어도 강제로 새 글 생성'
+        required: false
+        default: false
+        type: boolean
+
   repository_dispatch:
-    types: [generate_blog]
+    types:
+      - generate_blog
+
+  # GitHub 자체 예약은 백업용
+  # UTC 21:35 = 한국시간(KST) 다음날 06:35
   schedule:
-    # [2026-08-27/28 점검 결론] GitHub 자체 schedule은 부하 상황에 따라 지연·드롭될 수 있고
-    # 100% 보장되지 않는다 (공식 문서 명시 사항). 실제로 이 워크플로는 생성 이후 schedule
-    # 이벤트로 실행된 이력이 0건이었고, 지금까지는 아래 repository_dispatch(cron-job.org 외부
-    # 예약)가 사실상 유일하게 작동하는 트리거였다. → 실행 신뢰성은 cron-job.org 쪽에 의존하고,
-    # 이 schedule은 "공짜로 되면 좋고 안 되도 그만"인 백업으로만 취급한다(수정 없이 유지).
-    # 매일 한국 시간(KST) 오전 06:35. 정각은 큐 혼잡으로 드롭이 잦고,
-    # 영상 파이프라인(06:17)과도 겹치지 않게 의도적으로 비켜둠.
     - cron: '35 21 * * *'
+
+
+# 동시에 여러 실행이 들어와도 한 번씩 순차 처리
+concurrency:
+  group: qaplus-daily-blog-${{ github.ref }}
+  cancel-in-progress: false
+
 
 permissions:
   contents: write
 
+
 jobs:
   generate-daily-blog:
+    name: QA PLUS 일일 블로그 생성
     runs-on: ubuntu-latest
     timeout-minutes: 40
+
     steps:
+      # ------------------------------------------------------------
+      # 1. 저장소 준비
+      # ------------------------------------------------------------
+
       - name: 저장소 체크아웃
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Git 사용자 정보 설정 (generate_blog.py가 이미지 생성 중 자체 커밋함)
+
+      - name: 최신 main 상태 동기화
+        shell: bash
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+          git fetch origin "${GITHUB_REF_NAME}"
+
+          git checkout "${GITHUB_REF_NAME}"
+
+          git pull --ff-only origin "${GITHUB_REF_NAME}" || {
+            echo "::warning::최신 브랜치 동기화에 실패했습니다."
+          }
+
+
+      # ------------------------------------------------------------
+      # 2. 하루 1개 생성 강제 제한
+      # ------------------------------------------------------------
+
+      - name: 오늘 블로그 글 생성 여부 확인
+        id: daily_guard
+        shell: bash
+        run: |
+          TODAY="$(TZ=Asia/Seoul date +'%Y/%m/%d')"
+          DAY_DIR="outputs/${TODAY}"
+
+          echo "today=${TODAY}"
+          echo "day_dir=${DAY_DIR}"
+          echo "day_dir=${DAY_DIR}" >> "$GITHUB_OUTPUT"
+
+          # --------------------------------------------------------
+          # 수동 실행 + force=true이면 당일 중복 생성 허용
+          # --------------------------------------------------------
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && \
+             [[ "${{ inputs.force }}" == "true" ]]; then
+
+            echo "수동 강제 실행(force=true)입니다."
+            echo "오늘 기존 글 유무와 관계없이 실행합니다."
+
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            echo "reason=manual_force" >> "$GITHUB_OUTPUT"
+
+            exit 0
+          fi
+
+
+          # --------------------------------------------------------
+          # 오늘 날짜 폴더에 최종 HTML이 이미 존재하는지 확인
+          # --------------------------------------------------------
+
+          if [[ -d "${DAY_DIR}" ]]; then
+
+            EXISTING_FILE="$(
+              find "${DAY_DIR}" \
+                -maxdepth 1 \
+                -type f \
+                -name '*블로그최종*.html' \
+                -print \
+                -quit
+            )"
+
+            if [[ -n "${EXISTING_FILE}" ]]; then
+
+              echo "================================================"
+              echo "오늘 블로그 글이 이미 생성되어 있습니다."
+              echo "파일: ${EXISTING_FILE}"
+              echo "두 번째 자동 생성은 실행하지 않습니다."
+              echo "================================================"
+
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+              echo "reason=already_generated" >> "$GITHUB_OUTPUT"
+
+              exit 0
+            fi
+          fi
+
+
+          echo "오늘 생성된 블로그 글이 없습니다."
+          echo "신규 글 1건을 생성합니다."
+
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+          echo "reason=new_daily_post" >> "$GITHUB_OUTPUT"
+
+
+      - name: 중복 실행 SKIP 안내
+        if: steps.daily_guard.outputs.should_run != 'true'
+        run: |
+          echo "============================================="
+          echo "QA PLUS 일일 블로그 생성 SKIP"
+          echo ""
+          echo "사유:"
+          echo "${{ steps.daily_guard.outputs.reason }}"
+          echo ""
+          echo "오늘 자동 생성은 이미 완료되었습니다."
+          echo "추가 글을 생성하지 않습니다."
+          echo "============================================="
+
+
+      # ------------------------------------------------------------
+      # 3. Python 환경
+      # ------------------------------------------------------------
+
       - name: 파이썬 3.11 설정
+        if: steps.daily_guard.outputs.should_run == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+
       - name: 필수 시크릿 사전 점검
+        if: steps.daily_guard.outputs.should_run == 'true'
+        shell: bash
         run: |
-          if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ] || [ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]; then
-            echo "::error::TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID 시크릿이 비어 있습니다."
+          ERROR=0
+
+          if [[ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]]; then
+            echo "::error::TELEGRAM_BOT_TOKEN 시크릿이 없습니다."
+            ERROR=1
+          fi
+
+          if [[ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]]; then
+            echo "::error::TELEGRAM_CHAT_ID 시크릿이 없습니다."
+            ERROR=1
+          fi
+
+          if [[ "${ERROR}" -ne 0 ]]; then
             exit 1
           fi
 
+
       - name: 파이썬 라이브러리 설치
+        if: steps.daily_guard.outputs.should_run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install requests ddgs
 
-      - name: 큐에이플러스 블로그 오토파일럿 실행 & 텔레그램 발송
+
+      # ------------------------------------------------------------
+      # 4. 블로그 생성
+      # ------------------------------------------------------------
+
+      - name: 큐에이플러스 블로그 오토파일럿 실행
+        if: steps.daily_guard.outputs.should_run == 'true'
         env:
           TZ: Asia/Seoul
+
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
           CHEAPAI_BASE_URL: https://api.cheapai.im/v1
+
           OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
-          # Blogger 자동 발행 — 4개 시크릿이 모두 등록되어 있어야 동작한다. 하나라도 없으면
-          # generate_blog.py가 자동으로 "HTML만 생성 + 수동 발행 안내" 방식으로 폴백한다.
+
+          # Blogger API
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-          # 공개 발행은 생성 단계에서 하지 않는다. 텔레그램의 "발행하기" 버튼으로만 승인한다.
+
+          # 생성 단계에서는 Blogger 공개 발행 금지
+          # 최종 공개는 Telegram "발행하기" 승인 후 수행
+
+        shell: bash
         run: |
-          if [ -n "${{ github.event.inputs.topic }}" ]; then
-            python scripts/generate_blog.py --topic "${{ github.event.inputs.topic }}"
-          elif [ -n "${{ github.event.client_payload.topic }}" ]; then
-            python scripts/generate_blog.py --topic "${{ github.event.client_payload.topic }}"
-          else
-            python scripts/generate_blog.py
+          TOPIC=""
+
+          # --------------------------------------------------------
+          # GitHub 수동 실행에서 전달한 주제
+          # --------------------------------------------------------
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TOPIC="${{ inputs.topic }}"
           fi
 
+
+          # --------------------------------------------------------
+          # repository_dispatch에서 전달한 주제
+          # --------------------------------------------------------
+
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            TOPIC="${{ github.event.client_payload.topic }}"
+          fi
+
+
+          if [[ -n "${TOPIC}" ]]; then
+
+            echo "지정 주제로 블로그 생성"
+            echo "주제: ${TOPIC}"
+
+            python scripts/generate_blog.py \
+              --topic "${TOPIC}"
+
+          else
+
+            echo "주제 큐에서 자동 선택하여 블로그 생성"
+
+            python scripts/generate_blog.py
+
+          fi
+
+
+      # ------------------------------------------------------------
+      # 5. 결과 검증
+      # ------------------------------------------------------------
+
+      - name: 오늘 생성 결과 확인
+        if: steps.daily_guard.outputs.should_run == 'true'
+        shell: bash
+        run: |
+          TODAY="$(TZ=Asia/Seoul date +'%Y/%m/%d')"
+          DAY_DIR="outputs/${TODAY}"
+
+          echo "생성 결과 확인:"
+          echo "${DAY_DIR}"
+
+          if [[ ! -d "${DAY_DIR}" ]]; then
+            echo "::error::오늘 날짜 출력 폴더가 생성되지 않았습니다."
+            exit 1
+          fi
+
+          FINAL_HTML="$(
+            find "${DAY_DIR}" \
+              -maxdepth 1 \
+              -type f \
+              -name '*블로그최종*.html' \
+              -print \
+              -quit
+          )"
+
+          if [[ -z "${FINAL_HTML}" ]]; then
+            echo "::error::최종 블로그 HTML을 찾지 못했습니다."
+            exit 1
+          fi
+
+          echo "최종 HTML 생성 확인:"
+          echo "${FINAL_HTML}"
+
+
+      # ------------------------------------------------------------
+      # 6. GitHub Artifact 보관
+      # ------------------------------------------------------------
+
       - name: 생성된 블로그 산출물 아티팩트 업로드
-        if: always()
+        if: steps.daily_guard.outputs.should_run == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: daily-blog-output
+          name: daily-blog-output-${{ github.run_id }}
           path: |
-            outputs/**/[블로그최종]_*.html
+            outputs/**/*.html
             outputs/**/blog_log.json
+
           if-no-files-found: warn
           retention-days: 30
 
+
+      # ------------------------------------------------------------
+      # 7. Git 저장
+      # ------------------------------------------------------------
+
       - name: 변경사항 Git 커밋 및 푸시
+        if: steps.daily_guard.outputs.should_run == 'true'
+        shell: bash
         run: |
-          git pull --rebase origin "${GITHUB_REF_NAME}" || true
-          git add outputs/ knowledge/blog_published_topics.json || true
-          if git status --porcelain | grep -q .; then
-            git commit -m "chore(auto): 일일 큐에이플러스 블로그 글 자동 생성 완료"
-            git push origin "HEAD:${GITHUB_REF_NAME}" || echo "::warning::git push 실패 — 발행 결과 자체에는 영향 없음"
+          git add outputs/ || true
+          git add knowledge/blog_published_topics.json || true
+
+          if git diff --cached --quiet; then
+
+            echo "새로 커밋할 변경사항이 없습니다."
+
           else
-            echo "커밋할 새로운 파일이 없습니다."
+
+            git commit \
+              -m "chore(auto): 일일 큐에이플러스 블로그 글 자동 생성 완료"
+
+            # generate_blog.py 내부 커밋이나
+            # 다른 Action 실행과 충돌 가능성을 줄이기 위해 재동기화
+            git pull --rebase origin "${GITHUB_REF_NAME}" || {
+              echo "::warning::git pull --rebase 실패"
+            }
+
+            git push origin "HEAD:${GITHUB_REF_NAME}" || {
+              echo "::warning::git push 실패"
+              echo "블로그 생성 결과는 Artifact에서 확인할 수 있습니다."
+            }
+
           fi
+
+
+      # ------------------------------------------------------------
+      # 8. 완료 로그
+      # ------------------------------------------------------------
+
+      - name: 작업 완료 로그
+        if: steps.daily_guard.outputs.should_run == 'true'
+        run: |
+          echo "============================================="
+          echo "QA PLUS 일일 블로그 자동화 완료"
+          echo ""
+          echo "오늘 신규 글: 1건"
+          echo "추가 자동 생성: 차단"
+          echo "============================================="
+
+
+  # ==============================================================
+  # 실패 알림
+  # ==============================================================
 
   notify-failure:
     name: 실패 시 텔레그램 알림
-    needs: generate-daily-blog
-    if: ${{ always() && needs.generate-daily-blog.result != 'success' }}
+
+    needs:
+      - generate-daily-blog
+
+    if: ${{ always() && needs.generate-daily-blog.result == 'failure' }}
+
     runs-on: ubuntu-latest
+
     steps:
       - name: 작업 실패 알림 전송
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+        shell: bash
+
         run: |
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          MESSAGE="🚨 [QA+] 일일 블로그 자동화 실패\n\n실행 ID: ${{ github.run_id }}\n트리거: ${{ github.event_name }}\n로그: ${RUN_URL}"
-          curl --retry 2 --retry-delay 2 --fail --silent --show-error \
-            -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+
+          MESSAGE="🚨 [QA+] 일일 블로그 자동화 실패
+
+          실행 ID: ${{ github.run_id }}
+          트리거: ${{ github.event_name }}
+
+          GitHub Actions 로그:
+          ${RUN_URL}"
+
+          curl \
+            --retry 2 \
+            --retry-delay 2 \
+            --fail \
+            --silent \
+            --show-error \
+            -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
-            --data-urlencode "text=${MESSAGE}" || echo "::warning::텔레그램 실패 알림 전송에 실패했습니다."
+            --data-urlencode "text=${MESSAGE}" \
+            || echo "::warning::텔레그램 실패 알림 전송에 실패했습니다."
