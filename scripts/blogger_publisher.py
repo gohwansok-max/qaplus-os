@@ -83,6 +83,24 @@ def publish_post(title, html_content, labels=None, is_draft=True):
     return {"ok": False, "error": f"{resp.status_code} {resp.text}"}
 
 
+def publish_draft(post_id):
+    """Blogger 임시저장 글을 공개 발행한다."""
+    blog_id = os.environ.get("BLOGGER_BLOG_ID")
+    access_token = get_access_token()
+    if not blog_id or not access_token:
+        return {"ok": False, "error": "Blogger 설정 또는 액세스 토큰이 없습니다."}
+
+    resp = requests.post(
+        f"{BLOGGER_API_BASE}/blogs/{blog_id}/posts/{post_id}/publish",
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=60,
+    )
+    if resp.status_code == 200:
+        data = resp.json()
+        return {"ok": True, "post_id": data.get("id"), "url": data.get("url"), "title": data.get("title")}
+    return {"ok": False, "error": f"{resp.status_code} {resp.text}"}
+
+
 def list_draft_posts():
     """ 현재 블로그의 임시저장(draft) 글 목록을 가져온다 (제목으로 찾아 수정할 때 사용) """
     blog_id = os.environ.get("BLOGGER_BLOG_ID")

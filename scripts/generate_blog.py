@@ -42,11 +42,17 @@ BLOG_PUBLISHED_LOG_PATH = os.path.join(ROOT_DIR, "knowledge", "blog_published_to
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 try:
-    from telegram_sender import send_message_to_telegram
+    from telegram_sender import send_blog_review_to_telegram, send_document_to_telegram, send_message_to_telegram
 except Exception:
     def send_message_to_telegram(message):
         print("[!] telegram_sender 모듈을 불러오지 못해 텔레그램 발송을 건너뜁니다.")
         return False
+    def send_document_to_telegram(file_path, caption=None):
+        return False
+    def send_blog_review_to_telegram(title, post_id, blog_id, html_path):
+        return False
+
+from blog_publish_rules import extract_internal_topic_code, strip_internal_topic_code, validate_blog_post
 
 
 def today_output_dir():
@@ -211,6 +217,11 @@ def sanitize_filename(name):
     return re.sub(r'[\\/*?:"<>| ]', '_', name)[:50]
 
 def run_blog_pipeline(topic):
+    raw_topic = topic
+    source_code = extract_internal_topic_code(raw_topic)
+    topic = strip_internal_topic_code(raw_topic)
+    if source_code:
+        print(f"[*] 내부 파일 구분코드 제거: {source_code} → 순수 주제만 사용")
     print("\n========================================================")
     print(f"[*] [QA+ 4-Agent Blog Pipeline] 시작")
     print(f"[*] 주제: {topic}")
@@ -308,6 +319,14 @@ def run_blog_pipeline(topic):
     # 생성 실패해서 못 채운 placeholder는 img 태그째로 제거 (깨진 이미지 아이콘 방지)
     body_html = re.sub(r'<img[^>]*IMAGE_PLACEHOLDER_\d+[^>]*/?>', '', body_html)
 
+    labels_match = re.search(r"\*\*카테고리\*\*\s*[:：]\s*(.+)", final_package)
+    labels = [l.strip() for l in labels_match.group(1).split("/")] if labels_match else None
+
+    # 최종 안전장치: 규칙 위반 글은 파일만 남기지 않고 즉시 실패 처리하여
+    # Blogger 임시저장·공개 발행 단계로 절대 넘어가지 않는다.
+    validation = validate_blog_post(title, body_html, labels=labels, source_code=source_code, minimum_images=3)
+    print(f"[OK] 발행 전 규칙 검사 통과: 고유 이미지 {validation['image_count']}장, 내부코드 0건")
+
     html_doc = f"""<!-- QA+ 블로그 최종본 — Blogger 편집기 HTML 모드에 붙여넣기 -->
 <!-- 제목: {title} -->
 <!-- 검색 설명: {desc_match.group(1).strip() if desc_match else ''} -->
@@ -317,17 +336,14 @@ def run_blog_pipeline(topic):
     with open(final_html_path, "w", encoding="utf-8") as f:
         f.write(html_doc)
 
-    # --- Blogger 자동 발행 (BLOGGER_* 환경변수가 모두 설정된 경우에만 동작, 없으면 기존처럼 수동 안내만) ---
+    # --- Blogger에는 항상 임시저장한다. 공개 발행은 텔레그램 버튼을 누른 뒤에만 실행한다. ---
     publish_status = "ready_to_publish"
     publish_url = None
     publish_post_id = None
     try:
         from blogger_publisher import is_configured, publish_post
         if is_configured():
-            labels_match = re.search(r"\*\*카테고리\*\*\s*[:：]\s*(.+)", final_package)
-            labels = [l.strip() for l in labels_match.group(1).split("/")] if labels_match else None
-            is_draft = os.environ.get("BLOGGER_AUTO_PUBLISH", "false").lower() != "true"
-            result = publish_post(title, body_html, labels=labels, is_draft=is_draft)
+            result = publish_post(title, body_html, labels=labels, is_draft=True)
             if result.get("ok"):
                 publish_status = f"blogger_{result['status']}"
                 publish_url = result.get("url")
@@ -351,30 +367,32 @@ def run_blog_pipeline(topic):
         "status": publish_status,
         "blogger_url": publish_url,
         "blogger_post_id": publish_post_id,
+        "validation": validation,
     })
     with open(blog_log_path, "w", encoding="utf-8") as f:
         json.dump(blog_log, f, ensure_ascii=False, indent=2)
 
     # 전역 발행 이력 (다음 실행 시 중복 주제 자동 회피용)
-    mark_topic_published(topic, title, os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"))
+    # 중복 방지는 큐의 원본 키로 기록하되, 공개되는 제목·본문·파일명에는 코드를 쓰지 않는다.
+    mark_topic_published(raw_topic, title, os.path.relpath(final_html_path, ROOT_DIR).replace("\\", "/"))
 
-    # 텔레그램 알림
-    if publish_url:
-        status_label = "공개 발행됨" if publish_status == "blogger_발행됨" else "임시저장"
-        tg_message = (
-            f"✅ <b>[QA+] 블로그 글이 Blogger에 자동 등록됐습니다</b>\n\n"
-            f"📌 <b>제목:</b> {title}\n"
-            f"🔗 <b>{status_label}:</b> {publish_url}\n\n"
-            + ("내용 확인 후 Blogger에서 발행 버튼만 눌러주세요." if status_label == "임시저장" else "이미 공개 발행되었습니다.")
+    # 텔레그램 알림: 임시저장 성공 시 미리보기·공개 발행 버튼 제공.
+    if publish_post_id:
+        send_blog_review_to_telegram(
+            title,
+            publish_post_id,
+            os.environ.get("BLOGGER_BLOG_ID"),
+            final_html_path,
         )
     else:
         tg_message = (
-            f"📝 <b>[QA+] 오늘의 블로그 글이 준비됐습니다</b>\n\n"
+            f"⚠️ <b>[QA+] 글은 완성됐지만 Blogger 연결이 필요합니다</b>\n\n"
             f"📌 <b>제목:</b> {title}\n"
             f"📂 <b>파일:</b> {os.path.basename(final_html_path)}\n\n"
-            f"Blogger 편집기(HTML 모드)에 붙여넣고 이미지 업로드 후 직접 발행해주세요."
+            f"Blogger 시크릿 4개를 설정하면 다음 글부터 미리보기·발행 버튼이 활성화됩니다."
         )
-    send_message_to_telegram(tg_message)
+        send_message_to_telegram(tg_message)
+        send_document_to_telegram(final_html_path, "QA+ 블로그 최종 HTML — 파일을 눌러 내려받을 수 있습니다.")
 
     print("\n========================================================")
     print(f"[OK] 블로그 원고 생성이 성공적으로 완료되었습니다!")

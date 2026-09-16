@@ -35,7 +35,10 @@ allowed-tools: Read, Write, Grep, Glob, Bash
 1. `blog-researcher` 소집 → 리서치 산출물 생성
 2. `blog-writer` 소집 (리서치 산출물을 입력으로 전달) → 본문 산출물 생성
 3. `blog-image` 소집 (본문의 `image_captions` 전달) → 이미지 산출물 생성
-4. `blog-assembler` 소집 (본문 + 이미지 전달) → 최종 HTML + `blog_log.json` 갱신
+4. `blog-assembler` 소집 (본문 + 이미지 전달) → 최종 HTML 조립
+5. 강제 규칙 검사 통과 → Blogger 임시저장 → 텔레그램 미리보기·발행 버튼과 HTML 파일 전송
+6. 사용자가 텔레그램의 `발행하기`를 누른 경우에만 Blogger 공개 발행
+7. 산출물은 PC의 Google Drive 동기화 폴더에 날짜별 아카이브
 
 ## 완료 후 보고
 
@@ -44,7 +47,7 @@ allowed-tools: Read, Write, Grep, Glob, Bash
 
 - 최종본: outputs/{연도}/{월}/{일}/[블로그최종]_{주제}.html
 - 검수 결과: [전항목 합격 | N건 플래그]
-- 다음 행동: 이 HTML을 Blogger 편집기(HTML 모드)에 붙여넣고 이미지 업로드 후 직접 발행해주세요.
+- 다음 행동: 텔레그램에서 내용을 확인한 뒤 `발행하기` 버튼을 누르세요.
 ```
 
 ## 검수 기준
@@ -53,10 +56,17 @@ allowed-tools: Read, Write, Grep, Glob, Bash
 | P1 | 4단계 전부 실행 | 리서치→글쓰기→이미지→조립 산출물 모두 존재 |
 | P2 | blog-assembler 검수(A1~A5) 통과 | 필수 항목 전체 합격 |
 | P3 | 주제 중복 없음 | 같은 날짜에 동일 topic으로 blog_log.json 중복 기록 없음 |
+| P4 | 내부 파일 구분코드 비노출 | `EQ003`, `MIC001-5` 등 코드가 제목·본문·태그·카테고리에 0건 |
+| P5 | 이미지 완전성 | 서로 다른 유효한 HTTP(S) 이미지 3장 이상, 전부 한글 alt 포함 |
+| P6 | 사람 승인 | 생성 단계는 Blogger 임시저장까지만, 공개는 텔레그램 버튼 클릭 후 실행 |
 
-## 향후 확장 (미구성 — 별도 승인 필요)
-- n8n을 통한 Blogger 임시저장 자동 업로드 (Blogger API 연동 + 계정 인증 필요, 사용자 직접 설정)
-- 매일 아침 자동 실행 스케줄 (`scheduled-tasks` MCP 또는 GitHub Actions cron — 기존 `daily_qa_video.yml` 패턴 참고 가능)
+P4~P5를 하나라도 위반하면 임시저장과 공개 발행을 모두 중단한다. 파일명 앞 구분코드는 주제 입력 즉시 제거하고, 순수 제목·내용만 생성 에이전트에 전달한다.
+
+## 운영 구성
+- GitHub Actions가 매일 글 생성과 Blogger 임시저장을 수행한다.
+- 텔레그램 폴링 작업이 미리보기·보류·발행 버튼을 처리한다.
+- `scripts/sync_blog_archive_to_gdrive.py`가 HTML, 원본 MD, 이미지, 로그를 Google Drive에 보관한다.
+- Blogger OAuth 시크릿 4개가 없으면 공개 버튼은 만들지 않고 HTML 파일을 텔레그램에 첨부한다.
 
 ## 호출 방법
 ```

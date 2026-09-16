@@ -1,4 +1,4 @@
-name: 텔레그램 명령 수신 (/make · /daily) 5분 폴링
+name: 텔레그램 명령·블로그 발행 버튼 수신 5분 폴링
 
 on:
   schedule:
@@ -36,4 +36,8 @@ jobs:
           # 기본 GITHUB_TOKEN 으로 만든 이벤트는 다른 워크플로를 트리거하지 않습니다.
           # 반드시 별도 PAT(Contents: write)를 QA_DISPATCH_TOKEN Secret 으로 등록하세요.
           QA_DISPATCH_TOKEN: ${{ secrets.QA_DISPATCH_TOKEN }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
         run: python scripts/telegram_poll_dispatch.py

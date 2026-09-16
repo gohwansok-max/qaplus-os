@@ -7,6 +7,7 @@
 
 import os
 import sys
+import html
 import requests
 
 if sys.platform == "win32":
@@ -100,16 +101,59 @@ def send_video_to_telegram(video_path, caption=None):
     raise RuntimeError(f"텔레그램 영상 전송에 실패했습니다: {last_error}")
 
 
-def send_message_to_telegram(message):
+def send_message_to_telegram(message, reply_markup=None):
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not bot_token or not chat_id:
         return False
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    try:
-        requests.post(url, json={"chat_id": chat_id, "text": message, "parse_mode": "HTML"}, timeout=10)
-    except Exception:
-        pass
+    payload = {"chat_id": chat_id, "text": message, "parse_mode": "HTML"}
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
+    response = requests.post(url, json=payload, timeout=20)
+    response.raise_for_status()
+    return True
+
+
+def send_document_to_telegram(file_path, caption=None):
+    """HTML 등 결과 파일을 텔레그램에서 직접 내려받을 수 있게 첨부한다."""
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    if not bot_token or not chat_id:
+        return False
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(file_path)
+    with open(file_path, "rb") as file_handle:
+        response = requests.post(
+            f"https://api.telegram.org/bot{bot_token}/sendDocument",
+            files={"document": file_handle},
+            data={"chat_id": chat_id, "caption": caption or "QA+ 블로그 최종 HTML"},
+            timeout=60,
+        )
+    response.raise_for_status()
+    return True
+
+
+def send_blog_review_to_telegram(title, post_id, blog_id, html_path):
+    """미리보기·발행 버튼과 내려받을 수 있는 HTML 원본을 함께 보낸다."""
+    editor_url = f"https://www.blogger.com/blog/post/edit/{blog_id}/{post_id}"
+    keyboard = {
+        "inline_keyboard": [
+            [{"text": "👀 내용 보기", "url": editor_url}],
+            [
+                {"text": "🚀 발행하기", "callback_data": f"blog_publish:{post_id}"},
+                {"text": "⏸ 보류", "callback_data": f"blog_hold:{post_id}"},
+            ],
+        ]
+    }
+    send_message_to_telegram(
+        "📝 <b>[QA+] 블로그 검토본이 준비됐습니다</b>\n\n"
+        f"📌 <b>제목:</b> {html.escape(title)}\n"
+        "✅ 내부코드 제거·이미지 3장 이상 규칙 검사 통과\n\n"
+        "내용을 확인한 뒤 아래 <b>발행하기</b>를 누르면 공개됩니다.",
+        reply_markup=keyboard,
+    )
+    send_document_to_telegram(html_path, "QA+ 블로그 최종 HTML — 텔레그램에서도 직접 확인·보관할 수 있습니다.")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

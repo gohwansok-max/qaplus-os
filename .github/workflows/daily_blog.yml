@@ -72,8 +72,7 @@ jobs:
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
           BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
-          # "true"면 검수 없이 즉시 공개 발행, 기본(미설정/false)이면 Blogger에 임시저장만 하고 사람이 발행 버튼을 누른다.
-          BLOGGER_AUTO_PUBLISH: ${{ vars.BLOGGER_AUTO_PUBLISH || 'false' }}
+          # 공개 발행은 생성 단계에서 하지 않는다. 텔레그램의 "발행하기" 버튼으로만 승인한다.
         run: |
           if [ -n "${{ github.event.inputs.topic }}" ]; then
             python scripts/generate_blog.py --topic "${{ github.event.inputs.topic }}"

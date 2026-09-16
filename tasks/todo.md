@@ -42,3 +42,12 @@
 - [ ] 스크립트 완성 후: daily_blog.yml의 스크립트 경로 확정 + cron 주석 해제
 - [ ] n8n 크레덴셜 설정 필요: GitHub PAT(`QA_DISPATCH_TOKEN`과 동일한 값)를 n8n의 `githubDispatchToken` 크레덴셜로 등록 — **사용자 본인이 직접** (Secret 값은 재조회 불가)
 - [ ] Blogger API 자동 발행을 쓰려면 `BLOGGER_BLOG_ID` / `BLOGGER_CLIENT_ID` / `BLOGGER_CLIENT_SECRET` / `BLOGGER_REFRESH_TOKEN` GitHub Secret 등록 필요 (Google OAuth 동의 절차 — 사용자 직접)
+
+## 🆕 2026-09-16 — 블로그 텔레그램 승인 발행·Drive 아카이브
+
+- [x] 제목·본문·태그의 내부 파일 구분코드 발행 차단
+- [x] 서로 다른 유효 이미지 3장 이상·한글 alt 강제 검사
+- [x] Blogger 임시저장 후 텔레그램 `내용 보기 / 발행하기 / 보류` 버튼 처리
+- [x] 텔레그램에 최종 HTML 파일 직접 첨부
+- [x] Google Drive 날짜별 아카이브 동기화 스크립트·30분 예약 등록기 추가
+- [ ] 운영 활성화: Blogger OAuth 시크릿 4개 등록 후 실제 임시저장→버튼 발행 1회 검증

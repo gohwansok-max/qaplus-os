@@ -61,14 +61,15 @@ def generate_image_png(prompt, size="1024x1024"):
 
 
 def extract_image_prompts(image_output_text):
-    """ 03_image_agent.md 출력 규격에서 본문 이미지 1/2의 AI 프롬프트를 추출 """
+    """03_image_agent.md 출력 규격에서 본문 이미지 1~3의 AI 프롬프트를 추출."""
     prompts = {}
-    m1 = re.search(r"본문 이미지 1[\s\S]*?AI 이미지 프롬프트[^\n`]*[:：]\s*`([^`]+)`", image_output_text)
-    m2 = re.search(r"본문 이미지 2[\s\S]*?AI 이미지 프롬프트[^\n`]*[:：]\s*`([^`]+)`", image_output_text)
-    if m1:
-        prompts["IMAGE_PLACEHOLDER_1"] = m1.group(1).strip()
-    if m2:
-        prompts["IMAGE_PLACEHOLDER_2"] = m2.group(1).strip()
+    for number in range(1, 4):
+        match = re.search(
+            rf"본문 이미지 {number}[\s\S]*?AI 이미지 프롬프트[^\n`]*[:：]\s*`([^`]+)`",
+            image_output_text,
+        )
+        if match:
+            prompts[f"IMAGE_PLACEHOLDER_{number}"] = match.group(1).strip()
     return prompts
 
 
