@@ -263,12 +263,93 @@ def run_blog_pipeline(topic):
     final_package, used_config = call_llm_with_fallback(prompt_4, editor_input, configs)
     print(f"[+] 4단계 최종 검수 및 패키징 완료! ({used_config['name']})")
     llm_config = used_config
-    
+
+    def _extract_html_block(package):
+        match = re.search(r"```html\s*(.*?)```", package, re.DOTALL | re.IGNORECASE)
+        return match.group(1).strip() if match else None
+
+    def _has_required_image_slots(html):
+        if not html:
+            return False
+
+        for idx in (1, 2, 3):
+            # 각 placeholder가 실제 <img> 태그의 src 속성 안에 있어야
+            # 이미지 URL로 치환된 뒤 최종 검증에서 이미지로 인식된다.
+            pattern = rf'<img\b[^>]*\bsrc\s*=\s*["\'][^"\']*IMAGE_PLACEHOLDER_{idx}[^"\']*["\'][^>]*>'
+            if not re.search(pattern, html, re.IGNORECASE):
+                return False
+
+        return True
+
+    body_html = _extract_html_block(final_package)
+
+    # HTML 코드블록 누락 또는 이미지 슬롯 누락 시 편집 단계를 1회 자동 재시도한다.
+    if not body_html or not _has_required_image_slots(body_html):
+        retry_reasons = []
+        if not body_html:
+            retry_reasons.append("HTML 코드블록 누락")
+        if body_html and not _has_required_image_slots(body_html):
+            retry_reasons.append("IMAGE_PLACEHOLDER_1~3 이미지 슬롯 누락")
+
+        print(f"[!] {' / '.join(retry_reasons)} — 에디터 패키징을 1회 재시도합니다.")
+
+        retry_input = f"""
+아래 원고와 시각자료 기획서를 Blogger 발행용 최종 패키지로 다시 작성하세요.
+
+반드시 아래 조건을 모두 지키세요.
+
+1. 최종 결과에 반드시 ```html 코드블록을 포함하세요.
+2. ```html 코드블록 안에는 Blogger HTML 모드에 그대로 붙여넣을 수 있는 완성된 HTML 본문만 넣으세요.
+3. 아래 3개의 이미지 슬롯을 본문의 서로 다른 자연스러운 위치에 반드시 포함하세요.
+   - <img src="IMAGE_PLACEHOLDER_1" alt="주제와 관련된 대표 이미지 설명">
+   - <img src="IMAGE_PLACEHOLDER_2" alt="주제와 관련된 본문 이미지 설명">
+   - <img src="IMAGE_PLACEHOLDER_3" alt="주제와 관련된 본문 이미지 설명">
+4. IMAGE_PLACEHOLDER_1, IMAGE_PLACEHOLDER_2, IMAGE_PLACEHOLDER_3는 반드시 각각 <img> 태그의 src 속성 안에 있어야 합니다.
+5. 세 placeholder를 삭제하거나 한 위치에 몰아넣거나 텍스트로만 출력하지 마세요.
+6. 마크다운 원문만 반환하지 마세요.
+7. 기존 최종 패키징 규격의 최종 포스팅 제목, 메타 디스크립션, 카테고리 정보도 유지하세요.
+8. 내부 관리코드(EQ003, FS001 같은 코드)는 제목과 공개 본문에 노출하지 마세요.
+9. 설명을 덧붙이지 말고 최종 패키지만 반환하세요.
+
+[본문 원고]
+{writer_output}
+
+[시각자료 기획서]
+{image_output}
+"""
+
+        final_package, used_config = call_llm_with_fallback(prompt_4, retry_input, configs)
+        llm_config = used_config
+        body_html = _extract_html_block(final_package)
+
+        if body_html:
+            print(f"[+] 에디터 패키징 재시도 완료! ({used_config['name']})")
+
+    # 재시도 후에도 발행 가능한 HTML 구조가 아니면 이미지 생성/API 비용을 더 쓰기 전에 즉시 실패한다.
+    if not body_html:
+        raise RuntimeError(
+            "에디터가 2회 연속 Blogger용 ```html 코드블록을 생성하지 못했습니다."
+        )
+
+    if not _has_required_image_slots(body_html):
+        raise RuntimeError(
+            "에디터가 재시도 후에도 IMAGE_PLACEHOLDER_1~3을 "
+            "각각 <img> 태그의 src 속성에 배치하지 못했습니다."
+        )
+
     # --- 표준 산출물 경로: outputs/{연도}/{월}/{일}/ (blog-osmu 스킬과 동일한 규칙) ---
     dated_dir = today_output_dir()
     safe_topic = sanitize_filename(topic).replace(" ", "_")
 
+    # 최종 재시도 결과를 기준으로 메타데이터를 다시 추출한다.
+    title_match = re.search(r"\*\*최종 포스팅 제목\*\*\s*[:：]\s*(.+)", final_package)
+    desc_match = re.search(r"\*\*메타 디스크립션[^*]*\*\*\s*[:：]\s*(.+)", final_package)
+    title = title_match.group(1).strip() if title_match else topic
+
+    final_html_path = os.path.join(dated_dir, f"[블로그최종]_{safe_topic}.html")
+
     # 부록/전체 원고 (검토용, md)
+    # 재시도가 있었다면 재시도된 최종 패키지를 기록한다.
     raw_path = os.path.join(dated_dir, f"[블로그원본]_{safe_topic}.md")
     full_content = f"""# [QA+ 블로그 생성 결과물] {topic}
 생성일시: {now_kst().strftime("%Y-%m-%d %H:%M:%S")} (KST)
@@ -286,20 +367,6 @@ def run_blog_pipeline(topic):
 """
     with open(raw_path, "w", encoding="utf-8") as f:
         f.write(full_content)
-
-    # 04_editor_agent.md 규격의 ```html ... ``` 블록을 추출해 Blogger 붙여넣기용 최종 HTML로 저장
-    html_match = re.search(r"```html\s*(.*?)```", final_package, re.DOTALL)
-    title_match = re.search(r"\*\*최종 포스팅 제목\*\*\s*[:：]\s*(.+)", final_package)
-    desc_match = re.search(r"\*\*메타 디스크립션[^*]*\*\*\s*[:：]\s*(.+)", final_package)
-    title = title_match.group(1).strip() if title_match else topic
-
-    final_html_path = os.path.join(dated_dir, f"[블로그최종]_{safe_topic}.html")
-    if html_match:
-        body_html = html_match.group(1).strip()
-    else:
-        # 에디터 에이전트가 HTML 블록을 안 만들었으면 마크다운 전체를 <pre>로 감싸 최소한 발행 가능하게 둔다.
-        body_html = f"<pre>{final_package}</pre>"
-        print("[!] HTML 코드블록을 찾지 못해 마크다운 원문을 <pre>로 감싸 저장했습니다 — 수동 정리가 필요할 수 있습니다.")
 
     # --- 본문 이미지 실제 생성 + GitHub raw URL로 치환 (IMAGE_PLACEHOLDER_N 그대로 두면 깨진 이미지로 보임) ---
     # 에디터 에이전트가 `[IMAGE_PLACEHOLDER_1]`처럼 대괄호를 붙이거나 안 붙이거나 둘 다 나올 수 있어
