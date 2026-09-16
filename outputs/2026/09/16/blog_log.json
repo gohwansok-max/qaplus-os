@@ -16,5 +16,19 @@
     "status": "ready_to_publish",
     "blogger_url": null,
     "blogger_post_id": null
+  },
+  {
+    "date": "2026-09-16",
+    "topic": "식품안전 기대와현실",
+    "title": "HACCP 인증인데도 식품안전 사고가 생기는 이유: 기대와 현실, 현장 대응법",
+    "file": "outputs/2026/09/16/[블로그최종]_식품안전_기대와현실.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8802899771833973878",
+    "validation": {
+      "image_count": 3,
+      "internal_code_count": 0,
+      "passed": true
+    }
   }
 ]
