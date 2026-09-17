@@ -1,9 +1,8 @@
-name: 텔레그램 명령·블로그 발행 버튼 수신 5분 폴링
+name: Telegram 기존 polling (롤백용 수동 실행)
 
 on:
-  schedule:
-    # GitHub Actions 스케줄의 최소 간격은 5분입니다. 혼잡 시 더 늦어질 수 있습니다.
-    - cron: '*/5 * * * *'
+  # 2026-09-17: webhook 실제 발행·회신·중복 방지 검증 후 schedule 제거.
+  # 롤백: 운영 도구에서 deleteWebhook 후 수동 실행. 필요 시 5분 schedule 복원.
   workflow_dispatch:
 
 permissions:
