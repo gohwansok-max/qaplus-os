@@ -16,7 +16,6 @@ from blogger_publisher import publish_draft
 
 def telegram_api(method, payload):
     """Telegram Bot API를 호출한다."""
-
     token = os.environ["TELEGRAM_BOT_TOKEN"]
 
     try:
@@ -26,7 +25,12 @@ def telegram_api(method, payload):
             timeout=20,
         )
 
-        data = response.json()
+        try:
+            data = response.json()
+        except ValueError:
+            raise RuntimeError(
+                f"Telegram API 응답 형식 오류: {method}"
+            ) from None
 
         if not response.ok or not data.get("ok"):
             raise RuntimeError(
@@ -43,31 +47,22 @@ def telegram_api(method, payload):
 
 def send(text):
     """Telegram으로 결과 메시지를 보낸다."""
-
     return telegram_api(
         "sendMessage",
         {
-            "chat_id":
-                os.environ["TELEGRAM_CHAT_ID"],
-
-            "text":
-                text,
+            "chat_id": os.environ["TELEGRAM_CHAT_ID"],
+            "text": text,
         },
     )
 
 
 def remove_inline_keyboard(message_id):
     """기존 Telegram 메시지의 Inline Keyboard를 제거한다."""
-
     return telegram_api(
         "editMessageReplyMarkup",
         {
-            "chat_id":
-                os.environ["TELEGRAM_CHAT_ID"],
-
-            "message_id":
-                message_id,
-
+            "chat_id": os.environ["TELEGRAM_CHAT_ID"],
+            "message_id": message_id,
             "reply_markup": {
                 "inline_keyboard": []
             },
@@ -77,7 +72,6 @@ def remove_inline_keyboard(message_id):
 
 def main():
     """GitHub repository_dispatch 이벤트를 처리한다."""
-
     with open(
         os.environ["GITHUB_EVENT_PATH"],
         encoding="utf-8",
@@ -109,6 +103,7 @@ def main():
             "잘못된 Blogger 글 번호"
         )
 
+    # Cloudflare Worker에서 전달한 Telegram 원본 메시지 번호
     message_id_raw = payload.get(
         "message_id"
     )
@@ -122,16 +117,12 @@ def main():
             )
 
             if parsed_message_id > 0:
-                message_id = (
-                    parsed_message_id
-                )
+                message_id = parsed_message_id
 
-        except (
-            TypeError,
-            ValueError,
-        ):
+        except (TypeError, ValueError):
             message_id = None
 
+    # Blogger 공개 발행
     result = publish_draft(
         post_id
     )
@@ -164,17 +155,20 @@ def main():
         )
     )
 
-    /*
-    # 발행이 성공하거나 이미 공개 상태인 경우에만
-    # Telegram 버튼을 제거한다.
-    # 버튼 제거 실패가 Blogger 발행 성공 자체를
-    # 실패 처리하게 만들지는 않는다.
-    */
+    # 발행에 성공했거나 이미 공개된 글인 경우
+    # 원본 Telegram 메시지의 발행/보류 버튼을 제거한다.
+    #
+    # 버튼 제거 실패는 Blogger 발행 성공 자체를
+    # 실패 처리하지 않는다.
+    keyboard_removed = False
+
     if message_id is not None:
         try:
             remove_inline_keyboard(
                 message_id
             )
+
+            keyboard_removed = True
 
         except Exception:
             print(
@@ -183,6 +177,7 @@ def main():
                 "Telegram 버튼 제거에는 실패했습니다."
             )
 
+    # 이미 공개된 글
     if already_live:
         send(
             "ℹ️ [QA+] 이미 공개된 글입니다.\n\n"
@@ -190,6 +185,7 @@ def main():
             f"🔗 {url}"
         )
 
+    # 이번 실행에서 새로 공개된 글
     else:
         send(
             "✅ [QA+] 공개 발행 완료\n\n"
@@ -197,16 +193,16 @@ def main():
             f"🔗 {url}"
         )
 
+    # GitHub Actions 로그용 결과
     print(
         json.dumps(
             {
                 "ok": True,
                 "post_id": post_id,
                 "url": url,
-                "already_live":
-                    already_live,
-                "message_id":
-                    message_id,
+                "already_live": already_live,
+                "message_id": message_id,
+                "keyboard_removed": keyboard_removed,
             },
             ensure_ascii=False,
         )
