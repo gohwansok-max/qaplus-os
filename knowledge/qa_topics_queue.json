@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-18 21:20:35",
+  "last_run": "2026-09-18 21:28:39",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -392,7 +392,8 @@
       "topic": "MIC002 FATTOM 미생물증식조건",
       "filename": "49_QA+_V2_MIC002_FATTOM_미생물증식조건_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\49_QA+_V2_MIC002_FATTOM_미생물증식조건_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-18_MIC002_FATTOM_미생물증식조건_shorts.mp4"
     },
     {
       "id": 50,
