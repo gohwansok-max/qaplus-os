@@ -385,9 +385,16 @@ AI 이미지 프롬프트: `{topic} 식품 제조·품질관리 현장의 실사
     publish_url = None
     publish_post_id = None
     try:
-        from blogger_publisher import is_configured, publish_post
+        from blogger_publisher import is_configured, publish_post, update_post
         if is_configured():
-            result = publish_post(title, body_html, labels=labels, is_draft=True)
+            update_id = os.environ.get("BLOG_UPDATE_POST_ID")
+            if update_id:
+                print(f"[*] 기존 Blogger 임시글 업데이트: {update_id}")
+                result = update_post(update_id, title, body_html, labels=labels, is_draft=True)
+                if result.get("ok"):
+                    result["status"] = "임시저장 업데이트"
+            else:
+                result = publish_post(title, body_html, labels=labels, is_draft=True)
             if result.get("ok"):
                 publish_status = f"blogger_{result['status']}"
                 publish_url = result.get("url")
