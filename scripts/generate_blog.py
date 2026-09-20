@@ -123,42 +123,15 @@ def load_env():
 ENV = load_env()
 
 def get_llm_configs():
-    """ 사용할 LLM 설정을 우선순위대로 리스트로 반환.
-    video 파이프라인(daily_qa_video.yml)과 동일하게 '칩섭 우선, 실패 시 공식 OpenAI 대체' 원칙을 따른다
-    (비용 절감). 블로그 전용 모델명(CHEAPAI_BLOG_MODEL 등)이 있으면 그걸 쓰고, 없으면
-    video 파이프라인과 공유하는 CHEAPAI_STORY_MODEL 값을 건드리지 않고 별도 기본값(gpt-5.6-terra)을 쓴다. """
-    configs = []
-    if ENV.get("CHEAPAI_API_KEY") and not ENV.get("CHEAPAI_API_KEY", "").startswith("your_"):
-        configs.append({
-            "name": "CheapAI",
-            "api_key": ENV["CHEAPAI_API_KEY"],
-            "base_url": ENV.get("CHEAPAI_BASE_URL", "https://api.cheapai.im/v1"),
-            "model": ENV.get("CHEAPAI_BLOG_MODEL", "gpt-5.6-terra")
-        })
+    """DeepSeek 단일 공급자 사용. 유료 폴백은 의도적으로 차단한다."""
     if ENV.get("DEEPSEEK_API_KEY") and not ENV.get("DEEPSEEK_API_KEY", "").startswith("your_"):
-        configs.append({
+        return [{
             "name": "DeepSeek",
             "api_key": ENV["DEEPSEEK_API_KEY"],
             "base_url": ENV.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
-            "model": ENV.get("DEEPSEEK_BLOG_MODEL", "deepseek-chat")
-        })
-    if ENV.get("OFFICIAL_OPENAI_API_KEY") and not ENV.get("OFFICIAL_OPENAI_API_KEY", "").startswith("your_"):
-        configs.append({
-            "name": "공식 OpenAI",
-            "api_key": ENV["OFFICIAL_OPENAI_API_KEY"],
-            "base_url": ENV.get("OFFICIAL_OPENAI_BASE_URL", "https://api.openai.com/v1"),
-            "model": ENV.get("OFFICIAL_OPENAI_BLOG_MODEL", "gpt-5.6-terra")
-        })
-    if ENV.get("OPENAI_API_KEY") and not ENV.get("OPENAI_API_KEY", "").startswith("your_"):
-        configs.append({
-            "name": "OpenAI(일반)",
-            "api_key": ENV["OPENAI_API_KEY"],
-            "base_url": "https://api.openai.com/v1",
-            "model": "gpt-4o-mini"
-        })
-    return configs
-
-
+            "model": ENV.get("DEEPSEEK_BLOG_MODEL", "deepseek-flash")
+        }]
+    return []
 def get_llm_config():
     configs = get_llm_configs()
     return configs[0] if configs else None
@@ -238,33 +211,39 @@ def run_blog_pipeline(topic):
     if not configs:
         raise RuntimeError(
             "유효한 LLM API 키가 없습니다. "
-            "CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 환경변수를 확인하세요."
+            "DEEPSEEK_API_KEY 환경변수를 확인하세요."
         )
 
     print(f"[*] LLM 우선순위: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
 
     # 1단계: 리서치 에이전트
-    print("\n[1/4] [리서치] 1단계: 리서치 & 목차 기획 에이전트 가동 중...")
+    print("\n[1/3] [리서치] 1단계: 리서치 & 목차 기획 에이전트 가동 중...")
     prompt_1 = read_prompt("01_research_agent.md")
     research_output, research_config = call_llm_with_fallback(prompt_1, f"다음 주제에 대해 심층 리서치 및 목차를 설계해주세요:\n\n주제: {topic}", configs)
     print(f"[+] 1단계 리서치 완료! ({research_config['name']})")
 
     # 2단계: 작가 에이전트
-    print("\n[2/4] [집필] 2단계: 20년 멘토 작가 에이전트 본문 집필 중...")
+    print("\n[2/3] [집필] 2단계: 20년 멘토 작가 에이전트 본문 집필 중...")
     prompt_2 = read_prompt("02_writer_agent.md")
     writer_input = f"다음은 리서치 결과입니다:\n\n{research_output}\n\n위 내용을 바탕으로 20년 식품품질 전문가 멘토 페르소나를 적용하여 실무자 블로그 본문 전체를 작성해주세요."
     writer_output, writer_config = call_llm_with_fallback(prompt_2, writer_input, configs)
     print(f"[+] 2단계 원고 집필 완료! ({writer_config['name']})")
 
-    # 3단계: 이미지/인포그래픽 디자이너 에이전트
-    print("\n[3/4] [디자인] 3단계: 썸네일 및 인포그래픽 디자인 에이전트 가동 중...")
-    prompt_3 = read_prompt("03_image_agent.md")
-    image_input = f"다음 블로그 원고의 이미지 마커 위치에 어울리는 대표 썸네일 프롬프트, 본문 이미지 프롬프트, Mermaid 다이어그램을 생성해주세요:\n\n{writer_output}"
-    image_output, image_prompt_config = call_llm_with_fallback(prompt_3, image_input, configs)
-    print(f"[+] 3단계 시각자료 기획 완료! ({image_prompt_config['name']})")
+    # 3단계: 이미지 기획은 고정 템플릿으로 처리하여 LLM 호출을 제거한다.
+    print("\n[3/3] [디자인] 무료 이미지 템플릿 적용 중...")
+    image_output = f"""
+본문 이미지 1
+AI 이미지 프롬프트: `{topic} 식품 품질관리 교육용 대표 이미지, 깔끔한 인포그래픽`
+본문 이미지 2
+AI 이미지 프롬프트: `{topic} 공정 흐름도와 체크리스트, 실무 교육용 인포그래픽`
+본문 이미지 3
+AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔끔한 교육용 인포그래픽`
+"""
+    image_prompt_config = {"name": "local-template"}
+    print("[+] 3단계 시각자료 기획 완료! (local-template, LLM 호출 없음)")
 
     # 4단계: 편집장 & QA 검수 에이전트
-    print("\n[4/4] [검수/패키징] 4단계: 수석 에디터 & QA 검수 및 패키징 중...")
+    print("\n[3/3] [검수/패키징] 4단계: 수석 에디터 & QA 검수 및 패키징 중...")
     prompt_4 = read_prompt("04_editor_agent.md")
     editor_input = f"[본문 원고]\n{writer_output}\n\n[시각자료 기획서]\n{image_output}\n\n위 두 내용을 종합하여 법령/사실관계를 검수하고, SEO 메타데이터와 네이버 블로그/티스토리/워드프레스용 최종 완성본을 패키징해주세요."
     final_package, editor_config = call_llm_with_fallback(prompt_4, editor_input, configs)
@@ -501,7 +480,7 @@ def run_check_only(topic_arg):
     if configs:
         print(f"[OK] LLM 설정: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
     else:
-        print("[FAIL] LLM 설정 없음 — CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 환경변수를 확인하세요.")
+        print("[FAIL] LLM 설정 없음 — DEEPSEEK_API_KEY 환경변수를 확인하세요.")
         ok = False
 
     topic = topic_arg or pick_topic_from_queue()
