@@ -480,11 +480,51 @@ def already_ran_today():
     return any(entry.get("status") == "blogger_발행됨" for entry in blog_log)
 
 
+def run_check_only(topic_arg):
+    """ AI 호출 없이 발행 파이프라인이 돌아갈 준비가 됐는지만 점검한다 (LLM/Blogger/텔레그램 설정, 큐 주제 존재 여부). """
+    ok = True
+
+    configs = get_llm_configs()
+    if configs:
+        print(f"[OK] LLM 설정: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
+    else:
+        print("[FAIL] LLM 설정 없음 — CHEAPAI_API_KEY 또는 OFFICIAL_OPENAI_API_KEY 환경변수를 확인하세요.")
+        ok = False
+
+    topic = topic_arg or pick_topic_from_queue()
+    if topic:
+        print(f"[OK] 사용할 주제: {topic}")
+    else:
+        print("[FAIL] 큐에 아직 블로그로 만들지 않은 주제가 없고 --topic도 지정되지 않았습니다.")
+        ok = False
+
+    from blogger_publisher import is_configured as blogger_is_configured
+    if blogger_is_configured():
+        print("[OK] Blogger 자동 발행 설정됨")
+    else:
+        print("[!] Blogger 자동 발행 미설정 — HTML 파일만 생성되고 자동 임시저장/발행은 건너뜁니다.")
+
+    if os.environ.get("TELEGRAM_BOT_TOKEN") and os.environ.get("TELEGRAM_CHAT_ID"):
+        print("[OK] 텔레그램 알림 설정됨")
+    else:
+        print("[!] 텔레그램 알림 미설정 — TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID 확인 필요")
+
+    if already_ran_today():
+        print("[!] 오늘 이미 공개 발행된 글이 있습니다 (--force 없이 실행하면 스킵됨)")
+
+    print("\n[*] --check-only: AI 호출 0회, 텔레그램/Blogger 호출 0회로 점검만 수행했습니다.")
+    return ok
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="QA+ 4-Agent Blog Automation Generator")
     parser.add_argument("--topic", type=str, help="블로그 주제 또는 키워드 (미입력 시 큐에서 자동 선택)")
     parser.add_argument("--force", action="store_true", help="오늘 이미 발행됐어도 강제로 한 번 더 생성")
+    parser.add_argument("--check-only", action="store_true", help="AI/텔레그램/Blogger 호출 없이 설정과 큐 상태만 점검하고 종료")
     args = parser.parse_args()
+
+    if args.check_only:
+        sys.exit(0 if run_check_only(args.topic) else 1)
 
     if not args.topic and not args.force and already_ran_today():
         print("[*] 오늘 이미 발행이 완료된 글이 있어 스킵합니다 (이중 트리거 대비 안전장치). 강제 실행하려면 --force를 붙이세요.")
