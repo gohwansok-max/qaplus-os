@@ -229,23 +229,20 @@ def run_blog_pipeline(topic):
     writer_output, writer_config = call_llm_with_fallback(prompt_2, writer_input, configs)
     print(f"[+] 2단계 원고 집필 완료! ({writer_config['name']})")
 
-    # 3단계: 이미지 기획은 고정 템플릿으로 처리하여 LLM 호출을 제거한다.
-    print("\n[3/3] [디자인] 무료 이미지 템플릿 적용 중...")
+    # 3단계: 대표 이미지 1장만 사용하고 본문 설명은 일반 HTML로 처리한다.
+    print("\n[3/3] [디자인] 대표 실사 이미지 1장 적용 중...")
     image_output = f"""
 본문 이미지 1
-AI 이미지 프롬프트: `{topic} 식품 품질관리 교육용 대표 이미지, 깔끔한 인포그래픽`
-본문 이미지 2
-AI 이미지 프롬프트: `{topic} 공정 흐름도와 체크리스트, 실무 교육용 인포그래픽`
-본문 이미지 3
-AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔끔한 교육용 인포그래픽`
+AI 이미지 프롬프트: `{topic} 식품 제조·품질관리 현장의 실사형 대표 사진`
+본문 이미지 2와 3은 사용하지 않습니다. 본문은 텍스트와 HTML 정보 박스로 구성합니다.
 """
-    image_prompt_config = {"name": "local-template"}
-    print("[+] 3단계 시각자료 기획 완료! (local-template, LLM 호출 없음)")
+    image_prompt_config = {"name": "realistic-cover-only"}
+    print("[+] 3단계 시각자료 기획 완료! (대표 이미지 1장, LLM 호출 없음)\n")
 
     # 4단계: 편집장 & QA 검수 에이전트
     print("\n[3/3] [검수/패키징] 4단계: 수석 에디터 & QA 검수 및 패키징 중...")
     prompt_4 = read_prompt("04_editor_agent.md")
-    editor_input = f"[본문 원고]\n{writer_output}\n\n[시각자료 기획서]\n{image_output}\n\n위 두 내용을 종합하여 법령/사실관계를 검수하고, SEO 메타데이터와 네이버 블로그/티스토리/워드프레스용 최종 완성본을 패키징해주세요."
+    editor_input = f"[본문 원고]\n{writer_output}\n\n[시각자료 기획서]\n{image_output}\n\n대표 이미지 1장만 사용하세요. 이미지 안에 제목이나 설명 문구를 넣지 말고, 본문에는 이미지 2장과 3장을 만들지 마세요. 긴 글도 마지막 문장까지 완성한 뒤 닫는 HTML 태그와 결론을 반드시 포함하세요. 위 두 내용을 종합하여 법령/사실관계를 검수하고, SEO 메타데이터와 네이버 블로그/티스토리/워드프레스용 최종 완성본을 패키징해주세요."
     final_package, editor_config = call_llm_with_fallback(prompt_4, editor_input, configs)
     print(f"[+] 4단계 최종 검수 및 패키징 완료! ({editor_config['name']})")
     llm_config = editor_config
@@ -258,7 +255,7 @@ AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔
         if not html:
             return False
 
-        for idx in (1, 2, 3):
+        for idx in (1,):
             # 각 placeholder가 실제 <img> 태그의 src 속성 안에 있어야
             # 이미지 URL로 치환된 뒤 최종 검증에서 이미지로 인식된다.
             pattern = rf'<img\b[^>]*\bsrc\s*=\s*["\'][^"\']*IMAGE_PLACEHOLDER_{idx}[^"\']*["\'][^>]*>'
@@ -275,7 +272,7 @@ AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔
         if not body_html:
             retry_reasons.append("HTML 코드블록 누락")
         if body_html and not _has_required_image_slots(body_html):
-            retry_reasons.append("IMAGE_PLACEHOLDER_1~3 이미지 슬롯 누락")
+            retry_reasons.append("대표 이미지 슬롯 누락")
 
         print(f"[!] {' / '.join(retry_reasons)} — 에디터 패키징을 1회 재시도합니다.")
 
@@ -286,16 +283,10 @@ AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔
 
 1. 최종 결과에 반드시 ```html 코드블록을 포함하세요.
 2. ```html 코드블록 안에는 Blogger HTML 모드에 그대로 붙여넣을 수 있는 완성된 HTML 본문만 넣으세요.
-3. 아래 3개의 이미지 슬롯을 본문의 서로 다른 자연스러운 위치에 반드시 포함하세요.
-   - <img src="IMAGE_PLACEHOLDER_1" alt="주제와 관련된 대표 이미지 설명">
-   - <img src="IMAGE_PLACEHOLDER_2" alt="주제와 관련된 본문 이미지 설명">
-   - <img src="IMAGE_PLACEHOLDER_3" alt="주제와 관련된 본문 이미지 설명">
-4. IMAGE_PLACEHOLDER_1, IMAGE_PLACEHOLDER_2, IMAGE_PLACEHOLDER_3는 반드시 각각 <img> 태그의 src 속성 안에 있어야 합니다.
-5. 세 placeholder를 삭제하거나 한 위치에 몰아넣거나 텍스트로만 출력하지 마세요.
-6. 마크다운 원문만 반환하지 마세요.
-7. 기존 최종 패키징 규격의 최종 포스팅 제목, 메타 디스크립션, 카테고리 정보도 유지하세요.
-8. 내부 관리코드(EQ003, FS001 같은 코드)는 제목과 공개 본문에 노출하지 마세요.
-9. 설명을 덧붙이지 말고 최종 패키지만 반환하세요.
+3. 대표 이미지 슬롯은 정확히 1개만 포함하세요.
+   - <img src="IMAGE_PLACEHOLDER_1" alt="주제와 관련된 대표 실사 이미지 설명">
+4. IMAGE_PLACEHOLDER_1은 반드시 <img> 태그의 src 속성 안에 있어야 합니다.
+5. IMAGE_PLACEHOLDER_2와 IMAGE_PLACEHOLDER_3은 사용하지 마세요. 본문은 정보 박스와 표를 HTML로 작성하세요.
 
 [본문 원고]
 {writer_output}
@@ -319,7 +310,7 @@ AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔
 
     if not _has_required_image_slots(body_html):
         raise RuntimeError(
-            "에디터가 재시도 후에도 IMAGE_PLACEHOLDER_1~3을 "
+            "에디터가 재시도 후에도 대표 IMAGE_PLACEHOLDER_1을 "
             "각각 <img> 태그의 src 속성에 배치하지 못했습니다."
         )
 
@@ -370,14 +361,14 @@ AI 이미지 프롬프트: `{topic} HACCP 및 품질관리 핵심 포인트, 깔
 
     body_html = re.sub(r'\[?IMAGE_PLACEHOLDER_(\d+)\]?', _replace_placeholder, body_html)
     # 생성 실패해서 못 채운 placeholder는 img 태그째로 제거 (깨진 이미지 아이콘 방지)
-    body_html = re.sub(r'<img[^>]*IMAGE_PLACEHOLDER_\d+[^>]*/?>', '', body_html)
+    body_html = re.sub(r'<img[^>]*IMAGE_PLACEHOLDER_[23][^>]*/?>', '', body_html)
 
     labels_match = re.search(r"\*\*카테고리\*\*\s*[:：]\s*(.+)", final_package)
     labels = [l.strip() for l in labels_match.group(1).split("/")] if labels_match else None
 
     # 최종 안전장치: 규칙 위반 글은 파일만 남기지 않고 즉시 실패 처리하여
     # Blogger 임시저장·공개 발행 단계로 절대 넘어가지 않는다.
-    validation = validate_blog_post(title, body_html, labels=labels, source_code=source_code, minimum_images=3)
+    validation = validate_blog_post(title, body_html, labels=labels, source_code=source_code, minimum_images=1)
     print(f"[OK] 발행 전 규칙 검사 통과: 고유 이미지 {validation['image_count']}장, 내부코드 0건")
 
     html_doc = f"""<!-- QA+ 블로그 최종본 — Blogger 편집기 HTML 모드에 붙여넣기 -->

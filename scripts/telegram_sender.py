@@ -149,7 +149,7 @@ def send_blog_review_to_telegram(title, post_id, blog_id, html_path):
     send_message_to_telegram(
         "📝 <b>[QA+] 블로그 검토본이 준비됐습니다</b>\n\n"
         f"📌 <b>제목:</b> {html.escape(title)}\n"
-        "✅ 내부코드 제거·이미지 3장 이상 규칙 검사 통과\n\n"
+        "✅ 내부코드 제거·대표 실사 이미지 1장 규칙 검사 통과\n\n"
         "내용을 확인한 뒤 아래 <b>발행하기</b>를 누르면 공개됩니다.",
         reply_markup=keyboard,
     )
