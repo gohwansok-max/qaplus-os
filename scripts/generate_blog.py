@@ -135,6 +135,13 @@ def get_llm_configs():
             "base_url": ENV.get("CHEAPAI_BASE_URL", "https://api.cheapai.im/v1"),
             "model": ENV.get("CHEAPAI_BLOG_MODEL", "gpt-5.6-terra")
         })
+    if ENV.get("DEEPSEEK_API_KEY") and not ENV.get("DEEPSEEK_API_KEY", "").startswith("your_"):
+        configs.append({
+            "name": "DeepSeek",
+            "api_key": ENV["DEEPSEEK_API_KEY"],
+            "base_url": ENV.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
+            "model": ENV.get("DEEPSEEK_BLOG_MODEL", "deepseek-chat")
+        })
     if ENV.get("OFFICIAL_OPENAI_API_KEY") and not ENV.get("OFFICIAL_OPENAI_API_KEY", "").startswith("your_"):
         configs.append({
             "name": "공식 OpenAI",
@@ -239,30 +246,30 @@ def run_blog_pipeline(topic):
     # 1단계: 리서치 에이전트
     print("\n[1/4] [리서치] 1단계: 리서치 & 목차 기획 에이전트 가동 중...")
     prompt_1 = read_prompt("01_research_agent.md")
-    research_output, used_config = call_llm_with_fallback(prompt_1, f"다음 주제에 대해 심층 리서치 및 목차를 설계해주세요:\n\n주제: {topic}", configs)
-    print(f"[+] 1단계 리서치 완료! ({used_config['name']})")
+    research_output, research_config = call_llm_with_fallback(prompt_1, f"다음 주제에 대해 심층 리서치 및 목차를 설계해주세요:\n\n주제: {topic}", configs)
+    print(f"[+] 1단계 리서치 완료! ({research_config['name']})")
 
     # 2단계: 작가 에이전트
     print("\n[2/4] [집필] 2단계: 20년 멘토 작가 에이전트 본문 집필 중...")
     prompt_2 = read_prompt("02_writer_agent.md")
     writer_input = f"다음은 리서치 결과입니다:\n\n{research_output}\n\n위 내용을 바탕으로 20년 식품품질 전문가 멘토 페르소나를 적용하여 실무자 블로그 본문 전체를 작성해주세요."
-    writer_output, used_config = call_llm_with_fallback(prompt_2, writer_input, configs)
-    print(f"[+] 2단계 원고 집필 완료! ({used_config['name']})")
+    writer_output, writer_config = call_llm_with_fallback(prompt_2, writer_input, configs)
+    print(f"[+] 2단계 원고 집필 완료! ({writer_config['name']})")
 
     # 3단계: 이미지/인포그래픽 디자이너 에이전트
     print("\n[3/4] [디자인] 3단계: 썸네일 및 인포그래픽 디자인 에이전트 가동 중...")
     prompt_3 = read_prompt("03_image_agent.md")
     image_input = f"다음 블로그 원고의 이미지 마커 위치에 어울리는 대표 썸네일 프롬프트, 본문 이미지 프롬프트, Mermaid 다이어그램을 생성해주세요:\n\n{writer_output}"
-    image_output, used_config = call_llm_with_fallback(prompt_3, image_input, configs)
-    print(f"[+] 3단계 시각자료 기획 완료! ({used_config['name']})")
+    image_output, image_prompt_config = call_llm_with_fallback(prompt_3, image_input, configs)
+    print(f"[+] 3단계 시각자료 기획 완료! ({image_prompt_config['name']})")
 
     # 4단계: 편집장 & QA 검수 에이전트
     print("\n[4/4] [검수/패키징] 4단계: 수석 에디터 & QA 검수 및 패키징 중...")
     prompt_4 = read_prompt("04_editor_agent.md")
     editor_input = f"[본문 원고]\n{writer_output}\n\n[시각자료 기획서]\n{image_output}\n\n위 두 내용을 종합하여 법령/사실관계를 검수하고, SEO 메타데이터와 네이버 블로그/티스토리/워드프레스용 최종 완성본을 패키징해주세요."
-    final_package, used_config = call_llm_with_fallback(prompt_4, editor_input, configs)
-    print(f"[+] 4단계 최종 검수 및 패키징 완료! ({used_config['name']})")
-    llm_config = used_config
+    final_package, editor_config = call_llm_with_fallback(prompt_4, editor_input, configs)
+    print(f"[+] 4단계 최종 검수 및 패키징 완료! ({editor_config['name']})")
+    llm_config = editor_config
 
     def _extract_html_block(package):
         match = re.search(r"```html\s*(.*?)```", package, re.DOTALL | re.IGNORECASE)
@@ -318,12 +325,12 @@ def run_blog_pipeline(topic):
 {image_output}
 """
 
-        final_package, used_config = call_llm_with_fallback(prompt_4, retry_input, configs)
-        llm_config = used_config
+        final_package, editor_config = call_llm_with_fallback(prompt_4, retry_input, configs)
+        llm_config = editor_config
         body_html = _extract_html_block(final_package)
 
         if body_html:
-            print(f"[+] 에디터 패키징 재시도 완료! ({used_config['name']})")
+            print(f"[+] 에디터 패키징 재시도 완료! ({editor_config['name']})")
 
     # 재시도 후에도 발행 가능한 HTML 구조가 아니면 이미지 생성/API 비용을 더 쓰기 전에 즉시 실패한다.
     if not body_html:
@@ -435,6 +442,12 @@ def run_blog_pipeline(topic):
         "blogger_url": publish_url,
         "blogger_post_id": publish_post_id,
         "validation": validation,
+        "llm_providers": {
+            "research": research_config["name"],
+            "writer": writer_config["name"],
+            "image_prompt": image_prompt_config["name"],
+            "editor": editor_config["name"],
+        },
     })
     with open(blog_log_path, "w", encoding="utf-8") as f:
         json.dump(blog_log, f, ensure_ascii=False, indent=2)
