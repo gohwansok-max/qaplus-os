@@ -26,6 +26,12 @@ on:
         default: false
         type: boolean
 
+      check_only:
+        description: 'AI/Blogger/텔레그램 호출 없이 설정 상태만 점검 (--check-only)'
+        required: false
+        default: false
+        type: boolean
+
   repository_dispatch:
     types:
       - generate_blog
@@ -49,6 +55,7 @@ permissions:
 jobs:
   generate-daily-blog:
     name: QA PLUS 일일 블로그 생성
+    if: github.event_name != 'workflow_dispatch' || inputs.check_only != true
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
@@ -367,6 +374,50 @@ jobs:
           echo "오늘 신규 글: 1건"
           echo "추가 자동 생성: 차단"
           echo "============================================="
+
+
+  # ==============================================================
+  # 점검 전용 (AI/Blogger/텔레그램 호출 없음)
+  # ==============================================================
+
+  check-only:
+    name: 배포 전 설정 점검 (--check-only)
+    if: github.event_name == 'workflow_dispatch' && inputs.check_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 파이썬 3.11 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 파이썬 라이브러리 설치
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests ddgs
+
+      - name: generate_blog.py --check-only 실행
+        env:
+          TZ: Asia/Seoul
+
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+          CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
+          CHEAPAI_BASE_URL: https://api.cheapai.im/v1
+
+          OFFICIAL_OPENAI_API_KEY: ${{ secrets.OFFICIAL_OPENAI_API_KEY }}
+
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+
+        run: python scripts/generate_blog.py --check-only
 
 
   # ==============================================================
