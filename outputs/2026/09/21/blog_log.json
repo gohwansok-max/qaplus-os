@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-21",
+    "topic": "3현주의 현장 현물 현상",
+    "title": "칼퇴 보장! 식품 품질관리, '3현주의'로 재발 없는 문제 근본 원인 찾기",
+    "file": "outputs/2026/09/21/[블로그최종]_3현주의_현장_현물_현상.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "7607180767160653160",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini",
+      "writer": "Gemini",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini"
+    }
+  }
+]
