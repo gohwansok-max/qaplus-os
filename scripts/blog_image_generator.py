@@ -39,6 +39,7 @@ def generate_image_png(prompt, size="1024x1024"):
         "prompt": prompt[:4000],
         "n": 1,
         "size": size,
+        "quality": "low",
     }
     req = urllib.request.Request(
         "https://api.openai.com/v1/images/generations",
