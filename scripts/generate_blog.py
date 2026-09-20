@@ -123,13 +123,13 @@ def load_env():
 ENV = load_env()
 
 def get_llm_configs():
-    """DeepSeek 단일 공급자 사용. 유료 폴백은 의도적으로 차단한다."""
-    if ENV.get("DEEPSEEK_API_KEY") and not ENV.get("DEEPSEEK_API_KEY", "").startswith("your_"):
+    """Gemini 무료 모델 단일 공급자 사용. 유료 폴백은 의도적으로 차단한다."""
+    if ENV.get("GEMINI_API_KEY") and not ENV.get("GEMINI_API_KEY", "").startswith("your_"):
         return [{
-            "name": "DeepSeek",
-            "api_key": ENV["DEEPSEEK_API_KEY"],
-            "base_url": ENV.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1"),
-            "model": ENV.get("DEEPSEEK_BLOG_MODEL", "deepseek-flash")
+            "name": "Gemini",
+            "api_key": ENV["GEMINI_API_KEY"],
+            "base_url": ENV.get("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai"),
+            "model": ENV.get("GEMINI_BLOG_MODEL", "gemini-2.5-flash")
         }]
     return []
 def get_llm_config():
@@ -211,7 +211,7 @@ def run_blog_pipeline(topic):
     if not configs:
         raise RuntimeError(
             "유효한 LLM API 키가 없습니다. "
-            "DEEPSEEK_API_KEY 환경변수를 확인하세요."
+            "GEMINI_API_KEY 환경변수를 확인하세요."
         )
 
     print(f"[*] LLM 우선순위: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
@@ -480,7 +480,7 @@ def run_check_only(topic_arg):
     if configs:
         print(f"[OK] LLM 설정: {' → '.join(c['name'] + '(' + c['model'] + ')' for c in configs)}")
     else:
-        print("[FAIL] LLM 설정 없음 — DEEPSEEK_API_KEY 환경변수를 확인하세요.")
+        print("[FAIL] LLM 설정 없음 — GEMINI_API_KEY 환경변수를 확인하세요.")
         ok = False
 
     topic = topic_arg or pick_topic_from_queue()
