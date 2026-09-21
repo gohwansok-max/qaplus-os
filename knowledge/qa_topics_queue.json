@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-21 21:21:06",
+  "last_run": "2026-09-21 21:29:58",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -440,7 +440,8 @@
       "topic": "SAN007 Sanitizer Disinfectant 비교",
       "filename": "55_QA+_V2_SAN007_Sanitizer_Disinfectant_비교_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\55_QA+_V2_SAN007_Sanitizer_Disinfectant_비교_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-21_SAN007_Sanitizer_Disinfectant__shorts.mp4"
     },
     {
       "id": 56,
