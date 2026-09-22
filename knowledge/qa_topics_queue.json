@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-21 21:29:58",
+  "last_run": "2026-09-22 21:28:09",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -448,7 +448,8 @@
       "topic": "FSC005 FSMS 심사실패 5대원인",
       "filename": "56_QA+_V2_FSC005_FSMS_심사실패_5대원인_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\56_QA+_V2_FSC005_FSMS_심사실패_5대원인_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-22_FSC005_FSMS_심사실패_5대원인_shorts.mp4"
     },
     {
       "id": 57,
