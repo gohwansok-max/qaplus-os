@@ -1,0 +1,40 @@
+name: 대표 이미지 누락 글 일괄 반영
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --quiet requests
+      - name: 대표 이미지 반영
+        env:
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: python scripts/backfill_blog_covers.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
