@@ -1,3 +1,10 @@
+> ## 최우선 용어 기준: SQM·QCM
+> 주제에 SQM과 QCM이 포함되면 아래 정의만 사용한다. 외부 검색·일반적 약어 해석보다 이 기준이 우선한다.
+> - SQM = Standard Quality Management = **QA 활동의 표준화**.
+> - QCM = Quality Chain Management = **QC 활동**을 원료·공정·제품의 검사·측정·판정·이상조치 흐름으로 연결하는 관리.
+> - QCM을 공급망 품질, 공급업체 품질, Supply Quality Management 또는 외부 품질관리로 표현하지 않는다. 공급업체 관리는 QCM의 일부 활동 사례일 수 있으나 QCM의 정의가 아니다.
+> - 제목·메타설명·목차·본문 팩트 모두 위 정의와 일치해야 한다.
+
 # 01_research_agent.md — 블로그 리서치 & 기획 전문 에이전트
 
 ## 1. 역할 정의 (Role & Objective)
