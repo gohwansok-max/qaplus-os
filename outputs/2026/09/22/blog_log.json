@@ -38,5 +38,25 @@
       "image_prompt": "realistic-cover-only",
       "editor": "Gemini"
     }
+  },
+  {
+    "date": "2026-09-22",
+    "topic": "SQM은 QA 표준화, QCM은 QC 활동: 식품 품질향상 연계 방법",
+    "title": "20년 선배의 비법: SQM과 QCM으로 식품 품질관리 시스템을 고도화하는 전략",
+    "file": "outputs/2026/09/22/[블로그최종]_SQM은_QA_표준화,_QCM은_QC_활동__식품_품질향상_연계_방법.html",
+    "status": "blogger_임시저장 업데이트",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/2026/09/sqm-qcm.html",
+    "blogger_post_id": "8210192632378781756",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini",
+      "writer": "Gemini",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini"
+    }
   }
 ]
