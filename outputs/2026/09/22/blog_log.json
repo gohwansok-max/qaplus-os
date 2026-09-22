@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-22",
+    "topic": "SQM QCM 연계 품질향상",
+    "title": "선배들의 비법: SQM QCM 통합 품질관리, 원료부터 고객까지 완벽 컨트롤 (식품안전)",
+    "file": "outputs/2026/09/22/[블로그최종]_SQM_QCM_연계_품질향상.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8210192632378781756",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini",
+      "writer": "Gemini",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini"
+    }
+  }
+]
