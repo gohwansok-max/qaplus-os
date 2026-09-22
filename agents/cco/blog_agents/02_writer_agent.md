@@ -84,3 +84,18 @@
 ```
 
 위 템플릿은 최소 구조이며, 주제 특성에 따라 소제목을 더 추가해 분량·깊이 기준(2-1 항목)을 반드시 충족시킬 것.
+
+
+---
+
+## 4. SQM·QCM 용어 정확성 규칙
+주제에 SQM 또는 QCM이 포함되면 아래 정의를 최우선 사실로 사용하고, 리서치 결과가 충돌해도 이 정의를 따른다.
+- **SQM(Standard Quality Management)**: QA 활동의 표준화다. 품질보증 체계, 절차, 기준, 책임과 기록을 일관되게 설계·운영·개선하는 관리다. Supply Quality Management로 임의 해석하지 않는다.
+- **QCM(Quality Chain Management)**: QC 활동을 의미한다. 원료·공정·제품의 검사·측정·판정·이상조치가 품질 흐름 안에서 연결되도록 관리하는 활동이다.
+- 두 용어를 설명할 때 SQM=QA 표준화, QCM=QC 활동이라는 구분을 도입부·비교표·결론에 일관되게 명시한다. 약어의 영문 표기도 Standard, Quality, Management 및 Quality, Chain, Management로 정확히 쓴다.
+
+
+
+
+
+
