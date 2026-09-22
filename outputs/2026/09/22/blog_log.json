@@ -58,5 +58,25 @@
       "image_prompt": "realistic-cover-only",
       "editor": "Gemini"
     }
+  },
+  {
+    "date": "2026-09-22",
+    "topic": "환경모니터링 핵심검사항목",
+    "title": "식품공장 환경모니터링 핵심 가이드: 20년 선배의 관리 노하우 (HACCP/FSSC 22000)",
+    "file": "outputs/2026/09/22/[블로그최종]_환경모니터링_핵심검사항목.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "9022183270800881678",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini",
+      "writer": "Gemini",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini"
+    }
   }
 ]
