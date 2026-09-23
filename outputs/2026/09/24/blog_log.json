@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-24",
+    "topic": "식품제조현장 세척과소독",
+    "title": "식품제조현장 세척과 소독 핵심 가이드: HACCP 심사 완벽 대비 (20년 전문가 비법)",
+    "file": "outputs/2026/09/24/[블로그최종]_식품제조현장_세척과소독.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4445366902023510554",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini",
+      "writer": "Gemini",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini"
+    }
+  }
+]
