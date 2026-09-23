@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-22 21:28:09",
+  "last_run": "2026-09-23 21:36:27",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -456,7 +456,8 @@
       "topic": "LAB004 식품안전 상위10대 신속검사",
       "filename": "57_QA+_V2_LAB004_식품안전_상위10대_신속검사_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\57_QA+_V2_LAB004_식품안전_상위10대_신속검사_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-23_LAB004_식품안전_상위10대_신속검사_shorts.mp4"
     },
     {
       "id": 58,
