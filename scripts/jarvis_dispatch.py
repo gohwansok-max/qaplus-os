@@ -176,8 +176,10 @@ def main(argv: list[str] | None = None) -> int:
         run_action(action, payload, gmail, ai, telegram, callback_secret)
         print(json.dumps({"ok": True, "action": action}, ensure_ascii=False))
         return 0
-    except Exception:
-        print("::error::Jarvis 작업 처리에 실패했습니다. 민감정보 보호를 위해 상세 예외는 출력하지 않습니다.")
+    except Exception as err:
+        import traceback
+        traceback.print_exc()
+        print(f"::error::Jarvis 작업 처리에 실패했습니다: {err}")
         if telegram is not None:
             try:
                 telegram.send_message("Jarvis 작업 처리에 실패했습니다. GitHub Actions 실행 상태를 확인해주세요.")

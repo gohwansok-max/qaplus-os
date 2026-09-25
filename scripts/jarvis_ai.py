@@ -71,8 +71,8 @@ class OpenAIClient:
         if not self.api_key:
             raise RuntimeError("OPENAI_API_KEY가 비어 있습니다.")
         self.session = session or requests.Session()
-        self.chat_model = os.environ.get("JARVIS_OPENAI_MODEL", "gpt-4.1-mini")
-        self.transcription_model = os.environ.get("JARVIS_TRANSCRIPTION_MODEL", "gpt-4o-mini-transcribe")
+        self.chat_model = os.environ.get("JARVIS_OPENAI_MODEL", "gpt-4o-mini")
+        self.transcription_model = os.environ.get("JARVIS_TRANSCRIPTION_MODEL", "whisper-1")
 
     def _post(self, path: str, **kwargs: Any) -> dict[str, Any]:
         headers = kwargs.pop("headers", {})
@@ -81,8 +81,15 @@ class OpenAIClient:
             response = self.session.post(f"{OPENAI_BASE}{path}", headers=headers, timeout=90, **kwargs)
             response.raise_for_status()
             return response.json()
-        except (requests.RequestException, ValueError, TypeError):
-            raise RuntimeError("AI 처리 요청에 실패했습니다.") from None
+        except requests.HTTPError as err:
+            err_text = ""
+            try:
+                err_text = response.text
+            except Exception:
+                pass
+            raise RuntimeError(f"OpenAI HTTP {response.status_code}: {err_text[:300]}") from None
+        except (requests.RequestException, ValueError, TypeError) as err:
+            raise RuntimeError(f"OpenAI 요청 오류: {err}") from None
 
     def _chat_json(self, system: str, user_payload: dict[str, Any]) -> Any:
         data = self._post(
