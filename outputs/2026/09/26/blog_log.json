@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-26",
+    "topic": "PDCA 지속적개선",
+    "title": "식품공장 실무를 바꾸는 진짜 지속적 개선 가이드: 서류에 갇힌 PDCA 탈출법",
+    "file": "outputs/2026/09/26/[블로그최종]_PDCA_지속적개선.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1491360424173388578",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.5-flash-lite)",
+      "writer": "Gemini(gemini-3.5-flash-lite)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.5-flash-lite)"
+    }
+  }
+]
