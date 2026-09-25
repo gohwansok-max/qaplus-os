@@ -227,7 +227,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
-          GEMINI_BLOG_MODEL: gemini-3.5-flash-lite
+          GEMINI_BLOG_MODEL: gemini-3.8-flash
           GEMINI_IMAGE_MODEL: gemini-3.1-flash-image
           BLOG_UPDATE_POST_ID: ${{ inputs.update_post_id }}
 

@@ -123,14 +123,25 @@ def load_env():
 ENV = load_env()
 
 def get_llm_configs():
-    """Gemini 무료 모델 단일 공급자 사용. 유료 폴백은 의도적으로 차단한다."""
+    """Gemini 최신 무료 모델 사용. 503 과부하 시 자동 폴백."""
     if ENV.get("GEMINI_API_KEY") and not ENV.get("GEMINI_API_KEY", "").startswith("your_"):
-        return [{
-            "name": "Gemini",
+        base_url = ENV.get("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai")
+        primary_model = ENV.get("GEMINI_BLOG_MODEL", "gemini-3.8-flash")
+        configs = [{
+            "name": f"Gemini({primary_model})",
             "api_key": ENV["GEMINI_API_KEY"],
-            "base_url": ENV.get("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai"),
-            "model": ENV.get("GEMINI_BLOG_MODEL", "gemini-2.5-flash")
+            "base_url": base_url,
+            "model": primary_model,
         }]
+        # 주 모델이 gemini-3.8-flash이고 503 과부하 대비 자동 폴백
+        if primary_model == "gemini-3.8-flash":
+            configs.append({
+                "name": "Gemini(gemini-3.5-flash-lite)",
+                "api_key": ENV["GEMINI_API_KEY"],
+                "base_url": base_url,
+                "model": "gemini-3.5-flash-lite",
+            })
+        return configs
     return []
 def get_llm_config():
     configs = get_llm_configs()
