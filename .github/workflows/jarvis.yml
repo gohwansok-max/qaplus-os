@@ -1,0 +1,90 @@
+name: Jarvis 개인 비서
+
+on:
+  schedule:
+    # GitHub cron은 UTC. 일~목 22:30 UTC = 월~금 07:30 KST.
+    - cron: '30 22 * * 0-4'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 실행할 Jarvis 작업
+        required: true
+        default: briefing
+        type: choice
+        options:
+          - briefing
+          - today_tasks
+  repository_dispatch:
+    types:
+      - jarvis_command
+      - jarvis_voice_command
+      - jarvis_create_draft
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jarvis-${{ github.event.action || inputs.mode || 'scheduled-briefing' }}-${{ github.event.client_payload.approval_id || github.event.client_payload.telegram_update_id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 의존성 설치
+        run: pip install --quiet requests
+
+      - name: Jarvis Secrets 확인
+        env:
+          JARVIS_TELEGRAM_BOT_TOKEN: ${{ secrets.JARVIS_TELEGRAM_BOT_TOKEN }}
+          JARVIS_TELEGRAM_CHAT_ID: ${{ secrets.JARVIS_TELEGRAM_CHAT_ID }}
+          JARVIS_WEBHOOK_SECRET: ${{ secrets.JARVIS_WEBHOOK_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+        shell: bash
+        run: |
+          set +x
+          for name in JARVIS_TELEGRAM_BOT_TOKEN JARVIS_TELEGRAM_CHAT_ID JARVIS_WEBHOOK_SECRET OPENAI_API_KEY GMAIL_CLIENT_ID GMAIL_CLIENT_SECRET GMAIL_REFRESH_TOKEN; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::필수 Jarvis Secret이 비어 있습니다: ${name}"
+              exit 1
+            fi
+          done
+
+      - name: Jarvis 작업 실행
+        env:
+          JARVIS_TELEGRAM_BOT_TOKEN: ${{ secrets.JARVIS_TELEGRAM_BOT_TOKEN }}
+          JARVIS_TELEGRAM_CHAT_ID: ${{ secrets.JARVIS_TELEGRAM_CHAT_ID }}
+          JARVIS_WEBHOOK_SECRET: ${{ secrets.JARVIS_WEBHOOK_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          MANUAL_MODE: ${{ inputs.mode }}
+        shell: bash
+        run: |
+          set +x
+          case "$GITHUB_EVENT_NAME" in
+            schedule)
+              python scripts/jarvis_dispatch.py --mode briefing
+              ;;
+            workflow_dispatch)
+              python scripts/jarvis_dispatch.py --mode "$MANUAL_MODE"
+              ;;
+            repository_dispatch)
+              python scripts/jarvis_dispatch.py --mode event
+              ;;
+            *)
+              echo "::error::지원하지 않는 GitHub 이벤트입니다."
+              exit 1
+              ;;
+          esac

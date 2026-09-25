@@ -1,0 +1,11 @@
+{
+  "name": "qaplus-jarvis-webhook",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-16",
+  "account_id": "ff60de4c6d6aa9e84aa7c07a72a7d057",
+  "workers_dev": true,
+  "vars": {"GITHUB_REPOSITORY": "gohwansok-max/qaplus-os"},
+  "durable_objects": {"bindings": [{"name": "JARVIS_UPDATES", "class_name": "JarvisUpdate"}]},
+  "migrations": [{"tag": "v1", "new_sqlite_classes": ["JarvisUpdate"]}],
+  "observability": {"enabled": true, "logs": {"enabled": true, "invocation_logs": false}}
+}
