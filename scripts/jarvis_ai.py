@@ -99,7 +99,7 @@ class OpenAIClient:
                 "temperature": 0.1,
                 "response_format": {"type": "json_object"},
                 "messages": [
-                    {"role": "system", "content": f"{UNTRUSTED_EMAIL_NOTICE}\n{system}"},
+                    {"role": "system", "content": f"{UNTRUSTED_EMAIL_NOTICE}\n{system}\n반드시 유효한 JSON 형식으로만 응답하세요."},
                     {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
                 ],
             },
@@ -139,7 +139,7 @@ class OpenAIClient:
         if not messages:
             return []
         result = self._chat_json(
-            "오늘 처리해야 할 업무만 추린다. 출력은 {\"tasks\":[...]}. 각 항목은 task, source_index, "
+            "오늘 처리해야 할 업무만 추려 JSON으로 반환한다. 출력은 {\"tasks\":[...]}. 각 항목은 task, source_index, "
             "deadline, reason을 가진다. 오늘 할 일이라고 근거 있게 판단되는 것만 포함하고 추측하지 않는다.",
             {"today_kst": today_kst, "messages": self._mail_payload(messages)},
         )
@@ -148,7 +148,7 @@ class OpenAIClient:
 
     def create_reply_text(self, original: MailMessage) -> str:
         result = self._chat_json(
-            "사용자가 Gmail에서 직접 검토할 정중하고 간결한 한국어 답장 초안을 작성한다. "
+            "사용자가 Gmail에서 직접 검토할 정중하고 간결한 한국어 답장 초안을 JSON으로 작성한다. "
             "메일을 보냈다고 표현하지 말고, 사실이나 약속을 만들지 말며 불명확한 값은 [확인 필요]로 둔다. "
             "출력은 {\"draft\":\"...\"} 형식이다.",
             {
