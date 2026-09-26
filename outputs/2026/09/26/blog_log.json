@@ -18,5 +18,25 @@
       "image_prompt": "realistic-cover-only",
       "editor": "Gemini(gemini-3.5-flash-lite)"
     }
+  },
+  {
+    "date": "2026-09-26",
+    "topic": "식품제조현장 3정5S",
+    "title": "식품공장 3정5S는 청소가 아닙니다: HACCP 심사를 단번에 통과하는 위생 기반 현장 관리 실무 가이드",
+    "file": "outputs/2026/09/26/[블로그최종]_식품제조현장_3정5S.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1046162359122441291",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
   }
 ]
