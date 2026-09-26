@@ -8,6 +8,9 @@ const AGENT_FRESH_MS = 20 * 1000;
 // 에이전트가 이 시간 안에 가져가지 않거나 끝내지 못하면 GitHub Actions(API)로 넘긴다.
 const AGENT_CLAIM_TIMEOUT_MS = 60 * 1000;
 const AGENT_WORK_TIMEOUT_MS = 6 * 60 * 1000;
+const PAIR_TTL_MS = 10 * 60 * 1000;
+const MAX_PENDING_PAIRS = 3;
+const MAX_DEVICES = 5;
 const MAX_MEMORY_BYTES = 256 * 1024;
 const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 const MEMORY_LABELS = {
@@ -78,6 +81,10 @@ export function classify(update, chatId) {
     if (typeof callback.id !== 'string' || callback.id.length > 200) return {kind: 'invalid'};
     const data = typeof callback.data === 'string' ? callback.data : '';
     if (new TextEncoder().encode(data).length > 64) return {kind: 'invalid'};
+    const pair = /^pair(no)?:([0-9a-f]{8})$/.exec(data);
+    if (pair) return {kind: 'pair_callback', callback_id: callback.id, approve: !pair[1], pair_id: pair[2]};
+    const unpair = /^unpair:([0-9a-f]{12})$/.exec(data);
+    if (unpair) return {kind: 'unpair_callback', callback_id: callback.id, device: unpair[1]};
     const match = /^d:([A-Za-z0-9_-]{5,32}):([0-9a-z]{1,10}):([A-Za-z0-9_-]{16})$/.exec(data);
     return {
       kind: match ? 'draft_callback' : 'unknown_callback',
@@ -105,6 +112,7 @@ export function classify(update, chatId) {
   if (/^\/today_tasks(?:@\w+)?$/i.test(text)) return {kind: 'command', command: 'today_tasks'};
   if (/^\/memory(?:@\w+)?$/i.test(text)) return {kind: 'memory_show'};
   if (/^\/forget_all(?:@\w+)?$/i.test(text)) return {kind: 'memory_reset'};
+  if (/^\/devices(?:@\w+)?$/i.test(text)) return {kind: 'devices_show'};
 
   const note = /^(?:\/remember(?:@\w+)?|기억해(?:줘|둬)?|기억\s*수정)\s*[:：]?\s*([\s\S]+)$/i.exec(text);
   if (note) {
@@ -279,12 +287,52 @@ function emptyMemory() {
   return {version: 1, rev: 0, profile: {}, turns: [], stats: {conversations: 0, learned_items: 0}};
 }
 
+export async function sha256Hex(text) {
+  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(text)));
+  return Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// 반환: {role:'agent'}(기본 PC 토큰) | {role:'actions'} | {role:'device', hash}(페어링 기기 후보, 저장소에서 검증) | null
 async function callerOf(request, env) {
   const provided = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
   if (!provided) return null;
-  if (env.JARVIS_AGENT_TOKEN && env.JARVIS_AGENT_TOKEN.length >= 32 && safeEqual(provided, env.JARVIS_AGENT_TOKEN)) return 'agent';
-  if (safeEqual(provided, await memoryToken(env.JARVIS_WEBHOOK_SECRET))) return 'actions';
+  if (env.JARVIS_AGENT_TOKEN && env.JARVIS_AGENT_TOKEN.length >= 32 && safeEqual(provided, env.JARVIS_AGENT_TOKEN)) return {role: 'agent'};
+  if (safeEqual(provided, await memoryToken(env.JARVIS_WEBHOOK_SECRET))) return {role: 'actions'};
+  if (provided.length >= 32 && provided.length <= 128) return {role: 'device', hash: await sha256Hex(provided)};
   return null;
+}
+
+const PAIR_NAME = /^[\w가-힣 .()-]{1,40}$/;
+
+async function handlePairing(request, env, path) {
+  if (request.method !== 'POST') return new Response('Method not allowed', {status: 405});
+  let parsed = {};
+  try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
+  const hash = typeof parsed.token_hash === 'string' ? parsed.token_hash : '';
+  if (!/^[0-9a-f]{64}$/.test(hash)) return new Response('Invalid hash', {status: 400});
+  if (path === '/agent/pair/status') {
+    const {data} = await memoryCall(env, 'pair-status', {hash});
+    return Response.json({approved: Boolean(data.approved)});
+  }
+  const name = typeof parsed.name === 'string' ? parsed.name.trim() : '';
+  if (!PAIR_NAME.test(name)) return new Response('Invalid name', {status: 400});
+  const {status, data} = await memoryCall(env, 'pair-request', {hash, name});
+  if (status !== 200) return Response.json(data, {status});
+  await telegram(env, 'sendMessage', {
+    chat_id: env.JARVIS_TELEGRAM_CHAT_ID,
+    text: [
+      `새 PC 연결 요청: "${name}"`,
+      `확인 코드: ${data.code}`,
+      '',
+      '그 PC 화면에 나온 코드와 같고 본인이 요청한 것이 맞을 때만 승인하세요.',
+      '승인하면 그 PC가 Jarvis 질문을 받아 답하고 기억을 읽고 쓸 수 있습니다. (10분 후 만료)',
+    ].join('\n'),
+    reply_markup: {inline_keyboard: [[
+      {text: '승인', callback_data: `pair:${data.id}`},
+      {text: '거절', callback_data: `pairno:${data.id}`},
+    ]]},
+  });
+  return Response.json({code: data.code});
 }
 
 async function sendChunks(env, text) {
@@ -295,30 +343,41 @@ async function sendChunks(env, text) {
 }
 
 async function handleAgentApi(request, env, path) {
-  if (await callerOf(request, env) !== 'agent') return new Response('Forbidden', {status: 403});
+  if (path === '/agent/pair' || path === '/agent/pair/status') return handlePairing(request, env, path);
+  const caller = await callerOf(request, env);
+  if (!caller || caller.role === 'actions') return new Response('Forbidden', {status: 403});
+  // 기본 토큰은 Worker가 검증했다. 페어링 기기는 저장소가 같은 호출 안에서 해시를 검증한다.
+  const device = caller.role === 'device' ? caller.hash : null;
   if (request.method !== 'POST') return new Response('Method not allowed', {status: 405});
   let parsed = {};
   try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
   if (path === '/agent/poll') {
-    const {data} = await memoryCall(env, 'agent-poll', {capabilities: parsed.capabilities});
-    return Response.json(data);
+    const {status, data} = await memoryCall(env, 'agent-poll', {capabilities: parsed.capabilities, device});
+    return Response.json(data, {status});
   }
   if (path === '/agent/reply') {
     const text = typeof parsed.text === 'string' ? parsed.text.trim() : '';
     if (!Number.isSafeInteger(parsed.update_id) || (!text && !parsed.done)) {
       return new Response('Invalid reply', {status: 400});
     }
-    const {status} = await memoryCall(env, 'agent-check', {update_id: parsed.update_id});
+    const {status} = await memoryCall(env, 'agent-check', {update_id: parsed.update_id, device});
+    if (status === 403) return new Response('Forbidden', {status: 403});
     if (status !== 200) return Response.json({error: 'not_claimed'}, {status: 409});
     if (text) await sendChunks(env, text);  // text 없이 done만 오면 완료 처리만 한다
-    if (parsed.done) await memoryCall(env, 'agent-done', {update_id: parsed.update_id});
+    if (parsed.done) await memoryCall(env, 'agent-done', {update_id: parsed.update_id, device});
     return Response.json({ok: true});
   }
   return new Response('Not found', {status: 404});
 }
 
 async function handleMemoryApi(request, env, path) {
-  if (!await callerOf(request, env)) return new Response('Forbidden', {status: 403});
+  const caller = await callerOf(request, env);
+  if (!caller) return new Response('Forbidden', {status: 403});
+  // 페어링 기기는 기억 API에도 접근하므로, 기본 PC 토큰과 달리 저장소의 승인 기록을 확인한다.
+  if (caller.role === 'device') {
+    const {status} = await memoryCall(env, 'device-check', {hash: caller.hash});
+    if (status !== 200) return new Response('Forbidden', {status: 403});
+  }
 
   if (path === '/memory' && request.method === 'GET') {
     const {data} = await memoryCall(env, 'get');
@@ -451,6 +510,29 @@ export class JarvisUpdate {
           await say(`질문은 ${MAX_QUERY_CHARS}자 이내로 보내주세요.`);
         } else if (action.kind === 'voice_too_large') {
           await say('음성 메시지는 5분, 20MB 이하만 처리합니다. 짧게 다시 보내주세요.');
+        } else if (action.kind === 'pair_callback') {
+          const {status, data} = await memoryCall(this.env, action.approve ? 'pair-approve' : 'pair-reject', {id: action.pair_id});
+          if (status !== 200) {
+            try { await answer('만료되었거나 이미 처리된 요청입니다.'); } catch {}
+          } else {
+            try { await answer(action.approve ? '승인했습니다.' : '거절했습니다.'); } catch {}
+            await say(action.approve
+              ? `PC "${data.name}" 연결을 승인했습니다. /devices 로 연결된 기기를 확인·해제할 수 있습니다.`
+              : `PC "${data.name}" 연결 요청을 거절했습니다.`);
+          }
+        } else if (action.kind === 'devices_show') {
+          const {data} = await memoryCall(this.env, 'devices-list');
+          const devices = Array.isArray(data.devices) ? data.devices : [];
+          const lines = ['연결된 PC', '- 기본 PC(최초 설치, Worker 비밀값 토큰)', ...devices.map(d => `- ${d.name} (승인 ${String(d.addedAt).slice(0, 10)})`)];
+          const keyboard = devices.map(d => [{text: `${d.name} 연결 해제`, callback_data: `unpair:${d.prefix}`}]);
+          await telegram(this.env, 'sendMessage', {
+            chat_id: this.env.JARVIS_TELEGRAM_CHAT_ID, text: lines.join('\n'),
+            ...(keyboard.length ? {reply_markup: {inline_keyboard: keyboard}} : {}),
+          });
+        } else if (action.kind === 'unpair_callback') {
+          const {status, data} = await memoryCall(this.env, 'device-remove', {prefix: action.device});
+          try { await answer(status === 200 ? '해제했습니다.' : '이미 해제된 기기입니다.'); } catch {}
+          if (status === 200) await say(`PC "${data.name}" 연결을 해제했습니다. 그 PC는 더 이상 질문을 받거나 기억에 접근할 수 없습니다.`);
         } else if (action.kind === 'unknown_callback' || action.kind === 'invalid_callback') {
           try { await answer('유효하지 않거나 만료된 승인 버튼입니다. 새 브리핑을 요청해주세요.'); } catch {}
         } else {
@@ -526,6 +608,58 @@ export class JarvisMemory {
         if (!value || value.mode === 'agent') return Response.json({error: 'not_found'}, {status: 404});
         await storage.delete(key);
         return Response.json({text: value.text});
+      }
+      if (op.startsWith('agent-') && body.device) {
+        const devices = (await storage.get('devices')) || {};
+        if (!devices[body.device]) return Response.json({error: 'forbidden'}, {status: 403});
+      }
+      if (op === 'device-check') {
+        const devices = (await storage.get('devices')) || {};
+        return devices[body.hash] ? Response.json({ok: true}) : Response.json({error: 'forbidden'}, {status: 403});
+      }
+      if (op === 'pair-request') {
+        const now = Date.now();
+        const pairs = [...await storage.list({prefix: 'pair:'})];
+        for (const [key, value] of pairs) if (now - value.at > PAIR_TTL_MS) await storage.delete(key);
+        const live = pairs.filter(([, value]) => now - value.at <= PAIR_TTL_MS);
+        const devices = (await storage.get('devices')) || {};
+        if (devices[body.hash]) return Response.json({error: 'already_paired'}, {status: 409});
+        if (Object.keys(devices).length >= MAX_DEVICES) return Response.json({error: 'too_many_devices'}, {status: 409});
+        if (live.length >= MAX_PENDING_PAIRS) return Response.json({error: 'too_many_requests'}, {status: 429});
+        const random = crypto.getRandomValues(new Uint32Array(2));
+        const id = random[0].toString(16).padStart(8, '0');
+        const code = String(random[1] % 1000000).padStart(6, '0');
+        await storage.put(`pair:${id}`, {hash: body.hash, name: body.name, code, at: now});
+        return Response.json({id, code});
+      }
+      if (op === 'pair-approve' || op === 'pair-reject') {
+        const key = `pair:${body.id}`;
+        const value = await storage.get(key);
+        if (!value || Date.now() - value.at > PAIR_TTL_MS) { await storage.delete(key); return Response.json({error: 'expired'}, {status: 404}); }
+        await storage.delete(key);
+        if (op === 'pair-approve') {
+          const devices = (await storage.get('devices')) || {};
+          devices[value.hash] = {name: value.name, addedAt: new Date().toISOString()};
+          await storage.put('devices', devices);
+        }
+        return Response.json({name: value.name});
+      }
+      if (op === 'pair-status') {
+        const devices = (await storage.get('devices')) || {};
+        return Response.json({approved: Boolean(devices[body.hash])});
+      }
+      if (op === 'devices-list') {
+        const devices = (await storage.get('devices')) || {};
+        return Response.json({devices: Object.entries(devices).map(([hash, d]) => ({name: d.name, addedAt: d.addedAt, prefix: hash.slice(0, 12)}))});
+      }
+      if (op === 'device-remove') {
+        const devices = (await storage.get('devices')) || {};
+        const hash = Object.keys(devices).find(key => key.startsWith(String(body.prefix)));
+        if (!hash) return Response.json({error: 'not_found'}, {status: 404});
+        const {name} = devices[hash];
+        delete devices[hash];
+        await storage.put('devices', devices);
+        return Response.json({name});
       }
       if (op === 'agent-poll') {
         const now = Date.now();
