@@ -51,7 +51,8 @@ async function answerWith(providers, order, doc, query, log) {
       return {...result, provider: id, errors};
     } catch (error) {
       const limit = isLimitError(error.message);
-      log({event: 'provider_failed', provider: id, limit, ms: Date.now() - started});
+      const kind = /too long/i.test(error.message) ? 'prompt_too_long' : /timeout/.test(error.message) ? 'timeout' : /login|auth/i.test(error.message) ? 'auth' : 'other';
+      log({event: 'provider_failed', provider: id, limit, kind, ms: Date.now() - started});
       errors.push(`${PROVIDER_LABELS[id]}: ${limit ? '사용 한도 도달' : '실패'}`);
     }
   }
@@ -93,7 +94,11 @@ export async function processJob(job, {api, providers, log = () => {}, learnMode
       const learner = providers.claude ? 'claude' : 'codex';
       const out = await providers[learner]({system: LEARNING_INSTRUCTIONS, prompt: learningPrompt(doc, plan.query, learnedFrom), model: learnModel, timeoutMs: 120000});
       learning = parseLearning(out.text);
-    } catch { log({event: 'learning_failed'}); }
+    } catch (error) {
+      // 원문 대신 실패 유형만 기록한다.
+      const kind = /too long/i.test(error.message) ? 'prompt_too_long' : isLimitError(error.message) ? 'limit' : /timeout/.test(error.message) ? 'timeout' : 'other';
+      log({event: 'learning_failed', kind});
+    }
   }
 
   let added = [];

@@ -66,6 +66,9 @@ export function makeProviders({commands = resolveCommands(), runner = runCli, wo
         // 사용자 전역 설정(~/.claude/settings.json)의 모델 별칭 재지정·훅을 적용하지 않는다.
         // 전역 설정은 sonnet→opus, haiku→크레딧 필요 모델로 바꿔 Pro 한도를 빨리 소모하거나 429를 낸다.
         '--setting-sources', 'project,local',
+        // PC에 연결된 MCP 도구 정의·스킬 목록이 요청마다 약 29만 토큰씩 붙어 한도를 낭비하거나 실패한다.
+        // (--bare는 구독 로그인을 쓰지 못해 사용하지 않는다.)
+        '--strict-mcp-config', '--disable-slash-commands',
       ];
       const {stdout} = await runner({command: commands.claude.command, args, input: prompt, timeoutMs, cwd});
       const data = JSON.parse(stdout.slice(stdout.indexOf('{')));
