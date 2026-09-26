@@ -44,6 +44,11 @@ $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoi
 $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
 Register-ScheduledTask -TaskName 'JarvisAgent' -Action $action -Trigger $trigger -Settings $settings -Principal $principal -Force | Out-Null
 Stop-ScheduledTask -TaskName 'JarvisAgent' -ErrorAction SilentlyContinue
+# 작업을 멈춰도 런처의 자식 node는 남는다. 이전 버전이 질문을 가로채지 않도록 모두 종료한다.
+Get-CimInstance Win32_Process |
+  Where-Object { $_.CommandLine -and $_.CommandLine.Contains((Join-Path $app 'agent.mjs')) } |
+  ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+Start-Sleep -Seconds 1
 Start-ScheduledTask -TaskName 'JarvisAgent'
 Write-Output "설치 완료: $agentHome (작업 스케줄러 'JarvisAgent')"
 Write-Output "Cloudflare에 같은 토큰 등록 필요: config.json의 agentToken -> wrangler secret put JARVIS_AGENT_TOKEN"
