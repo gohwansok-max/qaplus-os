@@ -28,6 +28,20 @@ UNTRUSTED_MEMORY_NOTICE = (
 )
 
 
+def clean_for_telegram(text: str) -> str:
+    """텔레그램 일반 텍스트에서 그대로 보이는 마크다운 기호를 정리한다(코드 블록은 유지)."""
+    parts = re.split(r"(```[\s\S]*?```)", text)
+    cleaned = []
+    for part in parts:
+        if not part.startswith("```"):
+            part = re.sub(r"\*\*(.+?)\*\*", r"\1", part)
+            part = re.sub(r"__(.+?)__", r"\1", part)
+            part = re.sub(r"(?m)^#{1,6}\s+", "", part)
+            part = re.sub(r"(?m)^\s*[-*]\s+", "- ", part)
+        cleaned.append(part)
+    return re.sub(r"\n{3,}", "\n\n", "".join(cleaned)).strip()
+
+
 def redact_secrets(value: Any) -> str:
     """사용자 본인과의 대화에서 비밀값과 고위험 식별번호만 숨긴다(링크·이름은 유지)."""
     text = str(value or "").replace("\x00", " ")
@@ -137,7 +151,7 @@ class OpenAIClient:
             messages.append({"role": "user", "content": str(turn.get("q", ""))})
             messages.append({"role": "assistant", "content": str(turn.get("a", ""))})
         messages.append({"role": "user", "content": question})
-        return redact_secrets(self._chat_text(messages))[:3800]
+        return clean_for_telegram(redact_secrets(self._chat_text(messages)))[:3800]
 
     def extract_learning(self, query: str, answer: str, known_profile: str) -> dict[str, Any]:
         """이번 대화에서 사용자에 대해 새로 알게 된 점만 추출한다."""

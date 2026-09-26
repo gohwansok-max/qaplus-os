@@ -103,7 +103,8 @@ function fakeStorage() {
     put: async (key, value) => { data.set(key, structuredClone(value)); },
     delete: async key => data.delete(key),
     list: async ({prefix}) => new Map([...data].filter(([key]) => key.startsWith(prefix))),
-    setAlarm: async () => {},
+    setAlarm: async at => { data.set('__alarm', at); },
+    getAlarm: async () => data.get('__alarm') ?? null,
     deleteAll: async () => data.clear(),
   };
 }
@@ -120,16 +121,16 @@ function serialCtx(storage) {
   };
 }
 
-function memoryNamespace() {
-  const object = new JarvisMemory(serialCtx(fakeStorage()), baseEnv);
-  return {getByName: () => ({fetch: (url, options) => object.fetch(new Request(url, options))})};
+function memoryNamespace(env = baseEnv) {
+  const object = new JarvisMemory(serialCtx(fakeStorage()), env);
+  return {object, getByName: () => ({fetch: (url, options) => object.fetch(new Request(url, options))})};
 }
 
-function fullEnv() {
+function fullEnv(extra = {}) {
   const objects = new Map();
   const env = {
     ...baseEnv,
-    JARVIS_MEMORY: memoryNamespace(),
+    ...extra,
     JARVIS_UPDATES: {
       getByName: key => {
         if (!objects.has(key)) {
@@ -140,8 +141,89 @@ function fullEnv() {
       },
     },
   };
+  env.JARVIS_MEMORY = memoryNamespace(env);
   return env;
 }
+
+const AGENT_TOKEN = 'a'.repeat(48);
+
+async function agentApi(env, path, body, token = AGENT_TOKEN) {
+  return worker.fetch(new Request(`https://test${path}`, {
+    method: 'POST', headers: {Authorization: `Bearer ${token}`}, body: JSON.stringify(body ?? {}),
+  }), env);
+}
+
+function captureFetch() {
+  const calls = {github: [], telegram: []};
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('api.github.com')) { calls.github.push(JSON.parse(options.body)); return new Response(null, {status: 204}); }
+    if (String(url).includes('api.telegram.org')) calls.telegram.push(JSON.parse(options.body).text);
+    return Response.json({ok: true});
+  };
+  calls.restore = () => { globalThis.fetch = original; };
+  return calls;
+}
+
+test('PC 에이전트가 켜져 있으면 질문을 구독 모델 에이전트가 처리하고 GitHub Actions는 부르지 않는다', async () => {
+  const calls = captureFetch();
+  try {
+    const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    assert.deepEqual(await (await agentApi(env, '/agent/poll')).json(), {job: null});
+    await worker.fetch(telegramRequest(701, 'HACCP 검증 주기 알려줘'), env);
+    assert.equal(calls.github.length, 0);
+
+    const job = (await (await agentApi(env, '/agent/poll')).json()).job;
+    assert.deepEqual(job, {update_id: 701, text: 'HACCP 검증 주기 알려줘'});
+    assert.deepEqual(await (await agentApi(env, '/agent/poll')).json(), {job: null});
+
+    const take = await memoryApi(env, '/memory/pending/take', {method: 'POST', body: JSON.stringify({update_id: 701})});
+    assert.equal(take.status, 404);
+
+    assert.equal((await agentApi(env, '/agent/reply', {update_id: 701, text: '연 1회 이상입니다.', done: true})).status, 200);
+    assert.equal(calls.telegram.at(-1), '연 1회 이상입니다.');
+    assert.equal((await agentApi(env, '/agent/reply', {update_id: 701, text: '중복'})).status, 409);
+  } finally {
+    calls.restore();
+  }
+});
+
+test('에이전트가 꺼져 있거나 제한 시간 안에 가져가지 않으면 GitHub Actions(API)로 넘긴다', async () => {
+  const calls = captureFetch();
+  const realNow = Date.now;
+  try {
+    const offline = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    await worker.fetch(telegramRequest(801, '질문 하나'), offline);
+    assert.equal(calls.github.length, 1);
+
+    const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    await agentApi(env, '/agent/poll');
+    await worker.fetch(telegramRequest(802, '질문 둘'), env);
+    assert.equal(calls.github.length, 1);
+
+    const start = realNow();
+    Date.now = () => start + 61 * 1000;
+    await env.JARVIS_MEMORY.object.alarm();
+    assert.equal(calls.github.length, 2);
+    assert.deepEqual(calls.github.at(-1).client_payload, {telegram_update_id: 802});
+    Date.now = realNow;
+
+    const take = await memoryApi(env, '/memory/pending/take', {method: 'POST', body: JSON.stringify({update_id: 802})});
+    assert.equal((await take.json()).text, '질문 둘');
+  } finally {
+    Date.now = realNow;
+    calls.restore();
+  }
+});
+
+test('에이전트 API는 에이전트 토큰만 허용한다', async () => {
+  const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+  assert.equal((await agentApi(env, '/agent/poll', {}, 'b'.repeat(48))).status, 403);
+  assert.equal((await agentApi(env, '/agent/poll', {}, await memoryToken(baseEnv.JARVIS_WEBHOOK_SECRET))).status, 403);
+  assert.equal((await memoryApi(env, '/memory', {}, AGENT_TOKEN)).status, 200);
+  const noToken = fullEnv();
+  assert.equal((await agentApi(noToken, '/agent/poll')).status, 403);
+});
 
 function telegramRequest(updateId, text) {
   return new Request('https://test/telegram', {
