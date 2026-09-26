@@ -16,7 +16,7 @@ from typing import Any
 
 from jarvis_ai import OpenAIClient, redact_external_text
 from jarvis_gmail import GmailClient, MailMessage, MESSAGE_ID_RE
-from jarvis_memory import MemoryClient, apply_update, empty_memory, persona_system_prompt, profile_summary
+from jarvis_memory import MemoryClient, apply_update, empty_memory, match_standards, persona_system_prompt, profile_summary
 from jarvis_telegram import TelegramClient, draft_keyboard, masked_sender, verify_draft_callback
 
 KST = timezone(timedelta(hours=9), name="KST")
@@ -130,7 +130,16 @@ def run_general_query(payload: dict[str, Any], ai: OpenAIClient, telegram: Teleg
         except Exception:
             print("::warning::Jarvis 기억을 불러오지 못해 기본 페르소나로 답합니다.")
 
-    answer = ai.answer_general_query(query, persona_system_prompt(doc), doc["turns"])
+    standards: list[dict[str, Any]] = []
+    if memory is not None:
+        try:
+            standards = match_standards(memory.load_standards(), query)
+        except Exception:
+            print("::warning::Jarvis 작업 기준을 불러오지 못해 기준 없이 답합니다.")
+
+    answer = ai.answer_general_query(query, persona_system_prompt(doc, standards), doc["turns"])
+    if standards:
+        answer = f"{answer}\n\n— 기준: {', '.join(s['name'] for s in standards)}"
     telegram.send_message(answer)
 
     if memory is None:

@@ -13,6 +13,10 @@ const MAX_PENDING_PAIRS = 3;
 const MAX_DEVICES = 5;
 const MAX_MEMORY_BYTES = 256 * 1024;
 const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
+// 작업 기준(이름 붙인 답변 규칙). 학습 기억(doc)과 별도 키에 저장해 /forget_all, 구버전 에이전트 저장에 영향받지 않는다.
+const MAX_STANDARDS = 30;
+const MAX_STANDARD_BODY = 1500;
+const STANDARD_NAME = /^[\w가-힣 .·()+&-]{1,30}$/;
 const MEMORY_LABELS = {
   identity: '정체성·역할', personality: '성격·성향', tone_manner: '말투·톤앤매너',
   preferences: '선호 형식·작업 방식', direction: '목표·방향성', personal_history: '개인사',
@@ -29,7 +33,13 @@ export const HELP = [
   '• /memory Jarvis가 기억하는 내용 보기',
   '• 기억해: (내용)  직접 기억시키기',
   '• 기억 수정: (내용)  잘못 기억한 것 바로잡기',
-  '• /forget_all 학습한 기억 전체 삭제',
+  '• /forget_all 학습한 기억 전체 삭제 (작업 기준은 유지)',
+  '',
+  '작업 기준 (반복 업무의 답변 규칙)',
+  '• 기준 저장: 이름 (다음 줄부터 본문)  같은 이름이면 덮어씀',
+  '• /standards 기준 목록  • 기준 보기: 이름  • 기준 삭제: 이름',
+  '• 질문에 기준 이름이나 #이름을 넣으면 그 기준을 적용해 답합니다.',
+  '',
   '• 위 내용을 음성 메시지로 말해도 됩니다.',
   '',
   '메일 발송, 삭제, 일정 확정은 하지 않습니다.',
@@ -69,6 +79,27 @@ export function parseNoteLines(body, correction = false) {
     items.push({section, text: correction ? `정정: ${text}` : text});
   }
   return items;
+}
+
+// "기준 저장: 이름\n본문" 또는 "기준 저장: 이름 / 본문". 이름 1~30자, 본문 2~1500자.
+export function parseStandard(body) {
+  const raw = String(body).trim();
+  const newline = raw.indexOf('\n');
+  let name;
+  let text;
+  if (newline >= 0) {
+    name = raw.slice(0, newline);
+    text = raw.slice(newline + 1);
+  } else {
+    const slash = raw.indexOf(' / ');
+    if (slash < 0) return null;
+    name = raw.slice(0, slash);
+    text = raw.slice(slash + 3);
+  }
+  name = name.replace(/^#/, '').trim();
+  text = text.trim();
+  if (!STANDARD_NAME.test(name) || text.length < 2 || text.length > MAX_STANDARD_BODY) return null;
+  return {name, body: text};
 }
 
 export function classify(update, chatId) {
@@ -113,6 +144,18 @@ export function classify(update, chatId) {
   if (/^\/memory(?:@\w+)?$/i.test(text)) return {kind: 'memory_show'};
   if (/^\/forget_all(?:@\w+)?$/i.test(text)) return {kind: 'memory_reset'};
   if (/^\/devices(?:@\w+)?$/i.test(text)) return {kind: 'devices_show'};
+  if (/^\/standards(?:@\w+)?$/i.test(text) || /^기준\s*목록$/.test(text)) return {kind: 'standard_list'};
+
+  const standard = /^기준\s*(저장|보기|삭제)\s*[:：]\s*([\s\S]+)$/.exec(text);
+  if (standard) {
+    if (standard[1] === '저장') {
+      const parsed = parseStandard(standard[2]);
+      return parsed ? {kind: 'standard_save', ...parsed} : {kind: 'standard_invalid'};
+    }
+    const name = standard[2].replace(/^#/, '').trim();
+    if (!STANDARD_NAME.test(name)) return {kind: 'standard_invalid'};
+    return {kind: standard[1] === '보기' ? 'standard_show' : 'standard_delete', name};
+  }
 
   const note = /^(?:\/remember(?:@\w+)?|기억해(?:줘|둬)?|기억\s*수정)\s*[:：]?\s*([\s\S]+)$/i.exec(text);
   if (note) {
@@ -394,6 +437,10 @@ async function handleMemoryApi(request, env, path) {
     const {status, data} = await memoryCall(env, 'put', parsed);
     return Response.json(data, {status});
   }
+  if (path === '/memory/standards' && request.method === 'GET') {
+    const {data} = await memoryCall(env, 'standards-list');
+    return Response.json({standards: data.standards || []});
+  }
   if (path === '/memory/pending/take' && request.method === 'POST') {
     let parsed;
     try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
@@ -506,6 +553,37 @@ export class JarvisUpdate {
         } else if (action.kind === 'memory_reset') {
           await memoryCall(this.env, 'reset');
           await say('학습한 기억을 모두 삭제했습니다.');
+        } else if (action.kind === 'standard_save') {
+          const {status, data} = await memoryCall(this.env, 'standard-put', {name: action.name, body: action.body});
+          if (status === 409) {
+            await say(`작업 기준은 최대 ${MAX_STANDARDS}개까지 저장합니다. "기준 삭제: 이름"으로 정리한 뒤 다시 저장해주세요.`);
+          } else if (status !== 200) {
+            throw new Error('standard_put_failed');
+          } else {
+            await say([
+              `작업 기준 "${action.name}"을 ${data.replaced ? '덮어썼습니다' : '저장했습니다'} (${action.body.length}자).`,
+              `질문에 "${action.name}" 또는 #${action.name.replace(/\s+/g, '')} 를 넣으면 이 기준을 적용해 답합니다.`,
+            ].join('\n'));
+          }
+        } else if (action.kind === 'standard_list') {
+          const {data} = await memoryCall(this.env, 'standards-list');
+          const list = Array.isArray(data.standards) ? data.standards : [];
+          await say(list.length
+            ? [`저장된 작업 기준 ${list.length}개`, ...list.map(s => `- ${s.name} (${s.body.length}자, ${String(s.updated).slice(0, 10)})`), '', '"기준 보기: 이름"으로 본문 확인'].join('\n')
+            : '저장된 작업 기준이 없습니다.\n예)\n기준 저장: 협찬 거절\n감사 인사 → 어려운 이유 → 다음 기회, 세 문장으로 답한다.');
+        } else if (action.kind === 'standard_show') {
+          const {status, data} = await memoryCall(this.env, 'standard-get', {name: action.name});
+          await say(status === 200 ? `[작업 기준] ${data.standard.name}\n\n${data.standard.body}` : `"${action.name}" 기준이 없습니다. /standards 로 목록을 확인하세요.`);
+        } else if (action.kind === 'standard_delete') {
+          const {status, data} = await memoryCall(this.env, 'standard-delete', {name: action.name});
+          await say(status === 200 ? `작업 기준 "${data.name}"을 삭제했습니다.` : `"${action.name}" 기준이 없습니다. /standards 로 목록을 확인하세요.`);
+        } else if (action.kind === 'standard_invalid') {
+          await say([
+            `기준 형식을 이해하지 못했습니다. 이름은 30자 이내, 본문은 ${MAX_STANDARD_BODY}자 이내입니다.`,
+            '예)',
+            '기준 저장: 협찬 거절',
+            '감사 인사 → 이번에는 어려운 이유 → 다음 기회 제안. 세 문장, 담백하게.',
+          ].join('\n'));
         } else if (action.kind === 'query_too_long') {
           await say(`질문은 ${MAX_QUERY_CHARS}자 이내로 보내주세요.`);
         } else if (action.kind === 'voice_too_large') {
@@ -587,6 +665,31 @@ export class JarvisMemory {
         const current = (await storage.get('doc')) || emptyMemory();
         await storage.put('doc', {...emptyMemory(), rev: (Number(current.rev) || 0) + 1});
         return Response.json({ok: true});
+      }
+      if (op === 'standards-list') {
+        return Response.json({standards: (await storage.get('standards')) || []});
+      }
+      if (op === 'standard-put' || op === 'standard-get' || op === 'standard-delete') {
+        const name = typeof body.name === 'string' ? body.name.trim() : '';
+        if (!STANDARD_NAME.test(name)) return Response.json({error: 'invalid'}, {status: 400});
+        const standards = (await storage.get('standards')) || [];
+        const index = standards.findIndex(s => normalizeKey(s.name) === normalizeKey(name));
+        if (op === 'standard-get') {
+          return index >= 0 ? Response.json({standard: standards[index]}) : Response.json({error: 'not_found'}, {status: 404});
+        }
+        if (op === 'standard-delete') {
+          if (index < 0) return Response.json({error: 'not_found'}, {status: 404});
+          const [removed] = standards.splice(index, 1);
+          await storage.put('standards', standards);
+          return Response.json({name: removed.name});
+        }
+        const text = typeof body.body === 'string' ? body.body.trim() : '';
+        if (text.length < 2 || text.length > MAX_STANDARD_BODY) return Response.json({error: 'invalid'}, {status: 400});
+        if (index < 0 && standards.length >= MAX_STANDARDS) return Response.json({error: 'too_many'}, {status: 409});
+        const entry = {name, body: text, updated: new Date().toISOString()};
+        if (index >= 0) standards[index] = entry; else standards.push(entry);
+        await storage.put('standards', standards);
+        return Response.json({ok: true, replaced: index >= 0});
       }
       if (op === 'pending-put') {
         if (!Number.isSafeInteger(body.update_id) || typeof body.text !== 'string') return Response.json({error: 'invalid'}, {status: 400});

@@ -410,3 +410,54 @@ test('GitHub 실패는 재시도하고 성공한 dispatch는 ACK 실패에도 �
     globalThis.fetch = originalFetch;
   }
 });
+
+test('작업 기준 명령을 분류하고 형식이 틀리면 안내한다', () => {
+  assert.deepEqual(classify(textUpdate('기준 저장: 협찬 거절\n감사 인사 → 어려운 이유 → 다음 기회'), '42'),
+    {kind: 'standard_save', name: '협찬 거절', body: '감사 인사 → 어려운 이유 → 다음 기회'});
+  assert.deepEqual(classify(textUpdate('기준 저장: 보고서 / 결론 → 근거 3개'), '42'), {kind: 'standard_save', name: '보고서', body: '결론 → 근거 3개'});
+  assert.equal(classify(textUpdate('기준 저장: 이름만'), '42').kind, 'standard_invalid');
+  assert.equal(classify(textUpdate(`기준 저장: 긴 본문\n${'가'.repeat(1501)}`), '42').kind, 'standard_invalid');
+  assert.equal(classify(textUpdate('/standards'), '42').kind, 'standard_list');
+  assert.equal(classify(textUpdate('기준 목록'), '42').kind, 'standard_list');
+  assert.deepEqual(classify(textUpdate('기준 보기: #협찬 거절'), '42'), {kind: 'standard_show', name: '협찬 거절'});
+  assert.deepEqual(classify(textUpdate('기준 삭제: 보고서'), '42'), {kind: 'standard_delete', name: '보고서'});
+  assert.equal(classify(textUpdate('협찬 거절 기준으로 답장 써줘'), '42').kind, 'general_query');
+});
+
+test('작업 기준은 저장·덮어쓰기·조회·삭제되고 /forget_all 후에도 유지되며 인증된 API로만 읽힌다', async () => {
+  const calls = captureFetch();
+  try {
+    const env = fullEnv();
+    await worker.fetch(telegramRequest(901, '기준 저장: 협찬 거절\n감사 → 이유 → 다음 기회'), env);
+    assert.match(calls.telegram.at(-1), /"협찬 거절"을 저장했습니다/);
+    await worker.fetch(telegramRequest(902, '기준 저장: 협찬거절\n세 문장, 담백하게'), env);
+    assert.match(calls.telegram.at(-1), /덮어썼습니다/);
+    await worker.fetch(telegramRequest(903, '/standards'), env);
+    assert.match(calls.telegram.at(-1), /저장된 작업 기준 1개/);
+    await worker.fetch(telegramRequest(904, '기준 보기: 협찬 거절'), env);
+    assert.match(calls.telegram.at(-1), /세 문장, 담백하게/);
+
+    await worker.fetch(telegramRequest(905, '/forget_all'), env);
+    const api = await memoryApi(env, '/memory/standards', {method: 'GET'});
+    assert.equal(api.status, 200);
+    assert.equal((await api.json()).standards[0].body, '세 문장, 담백하게');
+    assert.equal((await memoryApi(env, '/memory/standards', {method: 'GET'}, 'bad')).status, 403);
+
+    await worker.fetch(telegramRequest(906, '기준 삭제: 협찬 거절'), env);
+    assert.match(calls.telegram.at(-1), /삭제했습니다/);
+    await worker.fetch(telegramRequest(907, '기준 보기: 협찬 거절'), env);
+    assert.match(calls.telegram.at(-1), /기준이 없습니다/);
+    assert.equal(calls.github.length, 0);
+  } finally {
+    calls.restore();
+  }
+});
+
+test('작업 기준은 최대 30개까지 저장한다', async () => {
+  const {object} = memoryNamespace();
+  const op = (name, body) => object.fetch(new Request(`https://internal/${name}`, {method: 'POST', body: JSON.stringify(body)}));
+  for (let i = 0; i < 30; i += 1) assert.equal((await op('standard-put', {name: `기준${i}`, body: '본문입니다'})).status, 200);
+  assert.equal((await op('standard-put', {name: '기준30', body: '본문입니다'})).status, 409);
+  assert.equal((await op('standard-put', {name: '기준0', body: '덮어쓰기는 허용'})).status, 200);
+  assert.equal((await op('standard-put', {name: '<script>', body: '본문입니다'})).status, 400);
+});

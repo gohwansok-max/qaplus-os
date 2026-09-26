@@ -6,7 +6,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {
   LEARNING_INSTRUCTIONS, PROVIDER_LABELS, applyLearning, cleanForTelegram, conversationPrompt,
-  isLimitError, learningPrompt, normalizeMemory, parseLearning, personaPrompt, route,
+  isLimitError, learningPrompt, matchStandards, normalizeMemory, parseLearning, personaPrompt, route,
 } from './lib.mjs';
 import {makeProviders} from './providers.mjs';
 
@@ -31,6 +31,11 @@ export function createApi({workerUrl, agentToken, fetchImpl = fetch}) {
       if (status !== 200) throw new Error(`memory ${status}`);
       return normalizeMemory(data.doc);
     },
+    loadStandards: async () => {
+      const {status, data} = await call('GET', '/memory/standards');
+      if (status !== 200) throw new Error(`standards ${status}`);
+      return Array.isArray(data.standards) ? data.standards : [];
+    },
     saveMemory: async doc => {
       const {status, data} = await call('PUT', '/memory', {expected_rev: doc.rev, doc});
       if (status === 409) return false;
@@ -41,13 +46,13 @@ export function createApi({workerUrl, agentToken, fetchImpl = fetch}) {
   };
 }
 
-async function answerWith(providers, order, doc, query, log, fresh = false) {
+async function answerWith(providers, order, doc, query, log, fresh = false, standards = []) {
   const errors = [];
   for (const id of order) {
     const started = Date.now();
     try {
       const webSearch = id === 'gemini' || (fresh && id === 'claude');
-      const result = await providers[id]({system: personaPrompt(doc, {webSearch}), prompt: conversationPrompt(doc, query), webSearch});
+      const result = await providers[id]({system: personaPrompt(doc, {webSearch, standards}), prompt: conversationPrompt(doc, query), webSearch});
       if (webSearch) result.webSearch = true;
       log({event: 'answered', provider: id, model: result.model, ms: Date.now() - started});
       return {...result, provider: id, errors};
@@ -67,20 +72,23 @@ export async function processJob(job, {api, providers, log = () => {}, learnMode
   const plan = route(job.text, available);
   let doc;
   try { doc = await api.loadMemory(); } catch { doc = normalizeMemory(null); log({event: 'memory_load_failed'}); }
+  let standards = [];
+  try { standards = matchStandards(await api.loadStandards?.() || [], plan.query); } catch { log({event: 'standards_load_failed'}); }
+  const standardNote = standards.length ? ` · 기준: ${standards.map(s => s.name).join(', ')}` : '';
 
   let answerText;
   let learnedFrom;
   if (plan.mode === 'all') {
-    const results = await Promise.allSettled(plan.order.map(id => answerWith(providers, [id], doc, plan.query, log)));
+    const results = await Promise.allSettled(plan.order.map(id => answerWith(providers, [id], doc, plan.query, log, false, standards)));
     const sections = results.map((r, i) => `[${PROVIDER_LABELS[plan.order[i]]}]\n${r.status === 'fulfilled' ? cleanForTelegram(r.value.text).slice(0, 1300) : '답변 실패'}`);
-    answerText = `세 모델 비교\n\n${sections.join('\n\n')}`;
+    answerText = `세 모델 비교${standardNote}\n\n${sections.join('\n\n')}`;
     learnedFrom = results.find(r => r.status === 'fulfilled')?.value.text || '';
   } else {
     try {
-      const result = await answerWith(providers, plan.order, doc, plan.query, log, plan.fresh);
+      const result = await answerWith(providers, plan.order, doc, plan.query, log, plan.fresh, standards);
       const note = result.errors.length ? `\n(${result.errors.join(', ')} → 다음 모델로 전환)` : '';
       const web = result.webSearch && result.provider === 'claude' ? ' · 웹 검색' : '';
-      answerText = `${cleanForTelegram(result.text)}\n\n— ${PROVIDER_LABELS[result.provider]} · ${result.model}${web}${note}`;
+      answerText = `${cleanForTelegram(result.text)}\n\n— ${PROVIDER_LABELS[result.provider]} · ${result.model}${web}${standardNote}${note}`;
       learnedFrom = result.text;
     } catch (error) {
       await api.reply(job.update_id, `구독 모델이 모두 응답하지 못했습니다.\n${(error.errors || []).join('\n')}`, true);
