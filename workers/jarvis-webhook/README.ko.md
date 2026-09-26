@@ -311,3 +311,58 @@ Jarvis는 자유 질문에 답할 때마다 사용자에 대해 새로 알게 �
 ### 한계
 - 웹 검색은 아직 하지 않습니다. 최신 정보는 [확인 필요]로 답합니다.
 - 블로그·쇼츠 생성, 메일 발송 같은 실행 기능은 이 단계에 포함되지 않습니다.
+
+## 10. 작업 기준(이름 붙인 답변 규칙)
+
+반복 업무의 답변 규칙을 이름을 붙여 원문 그대로 저장하고, 질문에 그 이름이 나오면 적용한다. 학습 기억(자동 추출, 항목당 200자)과 달리 사용자가 직접 쓴 본문을 최대 1500자까지 그대로 보관한다.
+
+| 명령 | 동작 |
+|---|---|
+| `기준 저장: 협찬 거절` + 다음 줄부터 본문 (또는 `기준 저장: 이름 / 본문`) | 저장. 같은 이름(띄어쓰기 무시)이면 덮어씀 |
+| `/standards` 또는 `기준 목록` | 이름·길이·수정일 목록 |
+| `기준 보기: 이름` / `기준 삭제: 이름` | 본문 확인 / 삭제 |
+| 질문에 `협찬 거절` 또는 `#협찬거절` 포함 | 해당 기준을 프롬프트에 넣어 답하고 답변 끝에 `기준: 협찬 거절` 표시 (최대 2개, 긴 이름 우선) |
+
+- 저장 위치: JarvisMemory Durable Object의 `standards` 키. 학습 기억 `doc`과 분리되어 `/forget_all`, 구버전 에이전트의 기억 저장에 지워지지 않는다.
+- 조회 API: `GET /memory/standards` (기억 API와 같은 인증). PC 에이전트와 Actions가 질문마다 읽는다. 조회 실패 시 기준 없이 답한다.
+- 한도: 이름 30자, 본문 1500자, 최대 30개.
+- 배포 순서: Worker 먼저 배포(`npx wrangler deploy --config workers/jarvis-webhook/wrangler.jsonc`) → PC 에이전트 재설치(`install.ps1`). 에이전트만 먼저 바꾸면 조회가 404로 실패해 기준 없이 답하므로 순서가 바뀌어도 기존 동작은 깨지지 않는다.
+- 백업: `curl -H "Authorization: Bearer <메모리 토큰>" <Worker URL>/memory/standards > standards-backup.json`
+
+## 11. 점검 명령 (`/status`, `점검`)
+
+Worker가 LLM 호출 없이 바로 답한다. 질문·기억 원문은 넣지 않고 개수와 시각만 표시한다.
+
+| 항목 | 내용 |
+|---|---|
+| PC 에이전트 | 정상(20초 안에 폴링) / 꺼짐(마지막 확인 시각, Actions로 처리) / 연결 기록 없음 / 미설정 |
+| 사용 가능 모델 | 에이전트가 폴링 때 보고한 Claude·ChatGPT·Codex·Gemini 사용 가능 여부 |
+| 마지막 답변 완료 | 에이전트가 마지막으로 답변을 끝낸 시각 |
+| 대기열 | 처리 대기 질문 수, 제한 시간을 넘긴 지연 건수 |
+| 기억 | 누적 대화 수, 기억 항목 수, 작업 기준 수 |
+| 연결 PC | 기본 PC + 페어링 기기 수 |
+| GitHub Actions | `jarvis.yml` 최근 실행 결과·시각 |
+
+- Actions 최근 실행은 `JARVIS_DISPATCH_TOKEN`으로 조회한다. fine-grained 토큰이면 해당 저장소에 **Actions: Read** 권한을 추가해야 하며, 없으면 "조회 불가"로 표시되고 나머지 항목은 정상 표시된다.
+- 모델 상태는 PC 에이전트가 새 버전이 아니어도 기존 폴링 값(`capabilities`)으로 표시된다. Worker만 배포하면 된다.
+
+## 12. 결과물 파일 저장 (`저장해줘`)
+
+직전 답변을 Google Drive의 `Jarvis 저장함` 폴더에 md 파일로 저장하고 링크를 보낸다.
+
+| 명령 | 동작 |
+|---|---|
+| `저장해줘`, `저장`, `/save`, `파일로 저장해줘` | 직전 답변 저장. 파일명은 `YYYY-MM-DD_HHMM_질문앞부분.md` |
+| `저장해줘: 주간 보고` | 제목 지정(60자 이내 한 줄) |
+
+- 흐름: 답변 직후 PC 에이전트·Actions가 화면에 보낸 답변 전문(최대 12,000자)을 `PUT /memory/last`로 보관 → `저장해줘` 시 Worker가 그 시점 답변을 `save:<update_id>`로 고정 → `jarvis_save_output` dispatch(페이로드에는 update ID만) → Actions가 `POST /memory/save/take`로 한 번만 꺼내 Drive에 업로드.
+- 저장 요청 뒤 새 질문이 와도 요청 시점의 답변이 저장된다. 저장 스냅숏은 24시간 뒤 정리된다.
+- 권한: OAuth 범위 `drive.file` 하나. Jarvis가 만든 폴더·파일만 접근하며 기존 Drive 파일은 읽거나 수정할 수 없다. 코드 allowlist는 폴더 검색·생성과 업로드뿐(삭제·공유 없음). Gmail 토큰은 범위를 넓히지 않고 별도 토큰을 쓴다.
+
+### 설정 (1회)
+1. Google Cloud Console(Jarvis Gmail OAuth 클라이언트 프로젝트)에서 **Google Drive API** 사용 설정, OAuth 동의 화면 범위에 `drive.file` 추가
+2. 본인 PC에서 `python scripts/get_jarvis_drive_refresh_token.py` 실행 → 브라우저 로그인·승인
+3. 출력된 값을 GitHub Actions Secret `JARVIS_DRIVE_REFRESH_TOKEN`으로 등록
+4. (선택) 폴더 이름을 바꾸려면 Actions 환경변수 `JARVIS_DRIVE_FOLDER_NAME`
+
+토큰이 없으면 `저장해줘`에 "Google Drive 저장이 아직 설정되지 않았습니다" 안내만 보내고 다른 기능은 영향이 없다.

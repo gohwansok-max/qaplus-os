@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {processJob} from '../agent.mjs';
-import {addItems, applyLearning, cleanForTelegram, normalizeMemory, parseLearning, personaPrompt, redactSecrets, route} from '../lib.mjs';
+import {addItems, applyLearning, cleanForTelegram, matchStandards, normalizeMemory, parseLearning, personaPrompt, redactSecrets, route} from '../lib.mjs';
 import {makeProviders, subscriptionEnv} from '../providers.mjs';
 
 const ALL = ['claude', 'codex', 'gemini'];
@@ -155,4 +155,58 @@ test('Worker가 이미 Actions로 넘겼으면(409) 중복 답변을 보내지 �
   assert.deepEqual(await processJob({update_id: 7, text: '질문'}, {api, providers}), {ok: false});
   assert.equal(api.state.replies.length, 1);
   assert.equal(api.state.saves, 0);
+});
+
+const SPONSOR = {name: '협찬 거절', body: '감사 인사 → 어려운 이유 → 다음 기회. 세 문장.', updated: '2026-09-26'};
+const REPORT = {name: '보고서', body: '결론 → 근거 3개 → 액션', updated: '2026-09-26'};
+
+test('작업 기준은 이름(띄어쓰기 무시)이나 #이름이 질문에 있을 때만 최대 2개 고른다', () => {
+  assert.equal(matchStandards([SPONSOR, REPORT], 'A사 협찬거절 답장 써줘')[0].name, '협찬 거절');
+  assert.equal(matchStandards([SPONSOR], '#협찬거절 B사')[0].name, '협찬 거절');
+  assert.deepEqual(matchStandards([SPONSOR, REPORT], '오늘 날씨'), []);
+  const names = matchStandards([{name: '협찬', body: '짧게'}, SPONSOR, REPORT], '협찬 거절 보고서').map(s => s.name);
+  assert.deepEqual(names, ['협찬 거절', '보고서']);
+  assert.deepEqual(matchStandards([null, 'x', {name: 1}], '협찬'), []);
+  assert.doesNotMatch(personaPrompt(normalizeMemory(null)), /반드시 적용/);
+  assert.match(personaPrompt(normalizeMemory(null), {standards: [SPONSOR]}), /반드시 적용[\s\S]*세 문장/);
+});
+
+test('질문에 맞는 작업 기준을 프롬프트에 넣고 답변 끝에 적용 기준을 표시한다', async () => {
+  const api = {...fakeApi(), loadStandards: async () => [SPONSOR, REPORT]};
+  const systems = [];
+  const providers = {
+    claude: async ({system}) => {
+      if (system.startsWith('너는 개인 비서의 학습 모듈')) return {text: '{"updates":{}}', model: 'haiku'};
+      systems.push(system);
+      return {text: '감사합니다. 이번엔 어렵습니다. 다음에 함께해요.', model: 'sonnet'};
+    },
+  };
+  await processJob({update_id: 11, text: 'C사 협찬 거절 답장 써줘'}, {api, providers});
+  assert.match(systems[0], /\[협찬 거절\]\n감사 인사/);
+  assert.doesNotMatch(systems[0], /근거 3개/);
+  assert.match(api.state.replies[0].text, /· 기준: 협찬 거절/);
+});
+
+test('작업 기준 조회가 실패해도 기준 없이 답한다', async () => {
+  const base = fakeApi();
+  const api = {...base, loadStandards: async () => { throw new Error('standards 503'); }};
+  const providers = {claude: async ({system}) => ({text: system.startsWith('너는 개인 비서의 학습 모듈') ? '{"updates":{}}' : '답', model: 'sonnet'})};
+  const result = await processJob({update_id: 12, text: '협찬 거절 답장'}, {api, providers});
+  assert.equal(result.ok, true);
+  assert.doesNotMatch(base.state.replies[0].text, /기준:/);
+});
+
+test('답변을 보낸 뒤 "저장해줘"용으로 화면에 보낸 답변 전문을 보관하고, 실패해도 처리는 계속한다', async () => {
+  const saved = [];
+  const api = {...fakeApi(), saveLast: async last => { saved.push(last); }};
+  const long = '가'.repeat(2000);
+  const providers = {claude: async ({system}) => ({text: system.startsWith('너는 개인 비서의 학습 모듈') ? '{"updates":{}}' : long, model: 'sonnet'})};
+  await processJob({update_id: 21, text: '긴 보고서 써줘'}, {api, providers});
+  assert.equal(saved.length, 1);
+  assert.equal(saved[0].q, '긴 보고서 써줘');
+  assert.ok(saved[0].a.startsWith(long));
+  assert.match(saved[0].a, /Claude\(구독\)/);
+
+  const failing = {...fakeApi(), saveLast: async () => { throw new Error('last 503'); }};
+  assert.equal((await processJob({update_id: 22, text: '질문'}, {api: failing, providers})).ok, true);
 });

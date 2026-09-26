@@ -168,7 +168,29 @@ export function profileSummary(doc) {
   return lines.join('\n');
 }
 
-export function personaPrompt(doc, {webSearch = false} = {}) {
+const MAX_MATCHED_STANDARDS = 2;
+
+/** 질문에 기준 이름(띄어쓰기 무시) 또는 #이름이 들어 있는 작업 기준을 최대 2개 고른다. 긴 이름을 우선한다. */
+export function matchStandards(standards, query) {
+  const target = norm(query);
+  return (Array.isArray(standards) ? standards : [])
+    .filter(s => s && typeof s.name === 'string' && typeof s.body === 'string' && norm(s.name).length >= 2)
+    .filter(s => target.includes(norm(s.name)))
+    .sort((a, b) => norm(b.name).length - norm(a.name).length)
+    .slice(0, MAX_MATCHED_STANDARDS);
+}
+
+export function standardsPrompt(matched) {
+  if (!matched?.length) return '';
+  return [
+    '',
+    '### 사용자가 저장한 작업 기준 (이번 답변에 반드시 적용)',
+    '사용자가 직접 정한 답변 규칙이다. 형식·순서·분량·말투를 이 기준대로 맞추고, 기준과 다른 방식으로 답하지 않는다.',
+    ...matched.map(s => `[${s.name}]\n${s.body}`),
+  ].join('\n');
+}
+
+export function personaPrompt(doc, {webSearch = false, standards = []} = {}) {
   const known = profileSummary(doc) || '(아직 학습된 정보가 없다. 대화하며 알아간다.)';
   return [
     '너는 사용자의 전속 개인 비서 Jarvis다. 아래는 지금까지 사용자와 대화하며 학습한 사용자 프로필이다.',
@@ -185,7 +207,8 @@ export function personaPrompt(doc, {webSearch = false} = {}) {
     '- 답변은 3000자 이내로 한다.',
     '',
     `### 학습된 사용자 프로필\n${known}`,
-  ].join('\n');
+    standardsPrompt(standards),
+  ].join('\n').trimEnd();
 }
 
 export function conversationPrompt(doc, query) {

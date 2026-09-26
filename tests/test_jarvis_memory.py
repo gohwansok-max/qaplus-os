@@ -14,6 +14,7 @@ from jarvis_memory import (
     add_items,
     empty_memory,
     memory_token,
+    match_standards,
     merge_learning,
     normalize_memory,
     persona_system_prompt,
@@ -34,8 +35,11 @@ class FakeResponse:
 class FakeWorker:
     """Worker /memory API를 흉내 낸다. 인증 헤더와 rev 충돌을 실제처럼 검사한다."""
 
-    def __init__(self, doc=None, pending=None, conflicts=0, fail_load=False):
+    def __init__(self, doc=None, pending=None, conflicts=0, fail_load=False, standards=None):
         self.doc = doc or empty_memory()
+        self.standards = standards if standards is not None else []
+        self.last = None
+        self.saves_pending = {}
         self.pending = dict(pending or {})
         self.conflicts = conflicts
         self.fail_load = fail_load
@@ -60,6 +64,16 @@ class FakeWorker:
             self.doc["rev"] = json["expected_rev"] + 1
             self.saves += 1
             return FakeResponse(200, {"rev": self.doc["rev"]})
+        if path == "/memory/last" and method == "PUT":
+            self.last = copy.deepcopy(json)
+            return FakeResponse(200, {"ok": True})
+        if path == "/memory/save/take":
+            save = self.saves_pending.pop(json["update_id"], None)
+            return FakeResponse(200, {"save": save}) if save else FakeResponse(404)
+        if path == "/memory/standards" and method == "GET":
+            if self.fail_load:
+                return FakeResponse(503)
+            return FakeResponse(200, {"standards": copy.deepcopy(self.standards)})
         if path == "/memory/pending/take":
             text = self.pending.pop(json["update_id"], None)
             return FakeResponse(200, {"text": text}) if text else FakeResponse(404)
@@ -197,6 +211,36 @@ class GeneralQueryLearningTests(unittest.TestCase):
     def test_worker_url_must_be_https(self):
         with self.assertRaises(RuntimeError):
             MemoryClient("http://jarvis.example.workers.dev", SECRET)
+
+
+SPONSOR = {"name": "협찬 거절", "body": "감사 인사 → 어려운 이유 → 다음 기회. 세 문장.", "updated": "2026-09-26"}
+REPORT = {"name": "보고서", "body": "결론 → 근거 3개 → 액션", "updated": "2026-09-26"}
+
+
+class StandardsTests(unittest.TestCase):
+    def test_matches_name_ignoring_spaces_or_hash_and_caps_at_two(self):
+        extra = {"name": "협찬", "body": "짧게", "updated": ""}
+        self.assertEqual(match_standards([SPONSOR, REPORT], "A사 협찬제안 왔어. 협찬거절로 답장 써줘")[0]["name"], "협찬 거절")
+        self.assertEqual(match_standards([SPONSOR], "#협찬거절 B사 건")[0]["name"], "협찬 거절")
+        self.assertEqual(match_standards([SPONSOR, REPORT], "오늘 날씨 어때"), [])
+        names = [s["name"] for s in match_standards([extra, SPONSOR, REPORT], "협찬 거절 보고서 같이")]
+        self.assertEqual(names, ["협찬 거절", "보고서"])
+        self.assertEqual(match_standards(["junk", {"name": 1}, None], "협찬"), [])
+
+    def test_prompt_includes_only_matched_standard_body(self):
+        prompt = persona_system_prompt(empty_memory(), [SPONSOR])
+        self.assertIn("반드시 적용", prompt)
+        self.assertIn("감사 인사 → 어려운 이유 → 다음 기회", prompt)
+        self.assertNotIn("반드시 적용", persona_system_prompt(empty_memory()))
+
+    def test_general_query_applies_matched_standard_and_notes_it(self):
+        worker = FakeWorker(pending={7: "C사 협찬 거절 답장 써줘"}, standards=[SPONSOR, REPORT])
+        ai = FakeAI()
+        telegram = FakeTelegram()
+        run_action("jarvis_general_query", {"telegram_update_id": 7}, None, ai, telegram, "secret", client(worker))
+        self.assertIn("세 문장", ai.system_prompts[0])
+        self.assertNotIn("근거 3개", ai.system_prompts[0])
+        self.assertEqual(telegram.messages[0], "답변: C사 협찬 거절 답장 써줘\n\n— 기준: 협찬 거절")
 
 
 class OpenAIPersonaTests(unittest.TestCase):
