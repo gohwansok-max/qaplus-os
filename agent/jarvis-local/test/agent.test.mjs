@@ -16,11 +16,14 @@ test('질문 성격에 따라 구독 모델을 고르고 직접 지정도 된다
   assert.deepEqual(route('@all 이 전략 어때?', ALL), {mode: 'all', query: '이 전략 어때?', order: ALL});
   // Gemini 미로그인 시 최신 정보 질문도 사용 가능한 모델로 간다
   assert.deepEqual(route('최신 뉴스 알려줘', ['claude', 'codex']).order, ['claude', 'codex']);
+  assert.equal(route('최신 뉴스 알려줘', ['claude', 'codex']).fresh, true);
+  assert.equal(route('HACCP 7원칙 설명해줘', ALL).fresh, false);
 });
 
 test('텔레그램에서 깨지는 마크다운을 정리하되 코드 블록은 유지한다', () => {
   assert.equal(cleanForTelegram('## 결론\n**핵심**은 __이것__\n* 항목'), '결론\n핵심은 이것\n- 항목');
   assert.equal(cleanForTelegram('```py\nx = **2\n```'), '```py\nx = **2\n```');
+  assert.equal(cleanForTelegram('- [식약처](https://www.mfds.go.kr/a)'), '- 식약처 (https://www.mfds.go.kr/a)');
 });
 
 test('비밀값을 가리고 학습 병합은 중복을 합친다', () => {
@@ -67,6 +70,13 @@ test('CLI 출력 형식을 해석하고 도구 사용을 막는 인자를 넘긴
   assert.equal(claudeArgs[claudeArgs.indexOf('--setting-sources') + 1], 'project,local');
   assert.ok(claudeArgs.includes('--strict-mcp-config') && claudeArgs.includes('--disable-slash-commands'));
   assert.ok(!claudeArgs.includes('--bare'));
+  assert.ok(!claudeArgs.includes('WebSearch'));
+
+  await providers.claude({system: 'S', prompt: 'P', webSearch: true});
+  const webArgs = calls.at(-1).args;
+  assert.equal(webArgs[webArgs.indexOf('--tools') + 1], 'WebSearch,WebFetch');
+  assert.equal(webArgs[webArgs.indexOf('--max-turns') + 1], '8');
+  assert.ok(!webArgs.join(' ').match(/Bash|Write|Edit|Read\b/));
   assert.ok(calls[1].args.includes('read-only'));
   assert.ok(calls[2].args.includes('plan'));
   assert.equal(calls[0].input, 'P');
@@ -122,6 +132,20 @@ test('@all은 세 모델 답을 모아 비교하고, 새로 배운 게 없으면
   assert.match(api.state.replies[0].text, /\[Gemini\(구독, 웹 검색\)\]\n답변 실패/);
   assert.deepEqual(api.state.replies.at(-1), {id: 6, text: '', done: true});
   assert.equal(api.state.replies.length, 2);
+});
+
+test('Gemini가 없으면 최신 정보 질문에 Claude가 웹 검색을 켜고, 일반 질문은 끄고 답한다', async () => {
+  const flags = [];
+  const providers = {claude: async ({webSearch, system}) => {
+    if (system.startsWith('너는 개인 비서의 학습')) return {text: '{"updates":{}}', model: 'h'};
+    flags.push({webSearch: Boolean(webSearch), prompt: system.includes('웹 검색을 사용')});
+    return {text: '답', model: 'claude-sonnet-5'};
+  }};
+  const api1 = fakeApi();
+  await processJob({update_id: 8, text: '이번 주 식약처 보도자료 알려줘'}, {api: api1, providers});
+  await processJob({update_id: 9, text: 'HACCP 7원칙 정리'}, {api: fakeApi(), providers});
+  assert.deepEqual(flags, [{webSearch: true, prompt: true}, {webSearch: false, prompt: false}]);
+  assert.match(api1.state.replies[0].text, /Claude\(구독\) · claude-sonnet-5 · 웹 검색/);
 });
 
 test('Worker가 이미 Actions로 넘겼으면(409) 중복 답변을 보내지 않는다', async () => {

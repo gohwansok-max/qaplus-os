@@ -47,13 +47,16 @@ export function route(text, available) {
     primary = 'claude';
   }
   const order = [primary, ...avail.filter(id => id !== primary)].filter(id => avail.includes(id));
-  return {mode: 'single', query, order, explicit: Boolean(explicit)};
+  // fresh: 최신 정보가 필요한 질문. Gemini가 없으면 Claude가 웹 검색 도구를 켜고 답한다.
+  const fresh = primary === 'gemini' || FRESH_HINT.test(query);
+  return {mode: 'single', query, order, explicit: Boolean(explicit), fresh};
 }
 
 /** Telegram 일반 텍스트로 보낼 때 깨지는 마크다운 기호를 정리한다(코드 블록은 유지). */
 export function cleanForTelegram(text) {
   const parts = String(text || '').split(/(```[\s\S]*?```)/g);
   return parts.map(part => part.startsWith('```') ? part : part
+    .replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g, '$1 ($2)')
     .replace(/\*\*(.+?)\*\*/g, '$1')
     .replace(/__(.+?)__/g, '$1')
     .replace(/^#{1,6}\s+/gm, '')

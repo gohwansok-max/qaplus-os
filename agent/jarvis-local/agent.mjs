@@ -41,12 +41,14 @@ export function createApi({workerUrl, agentToken, fetchImpl = fetch}) {
   };
 }
 
-async function answerWith(providers, order, doc, query, log) {
+async function answerWith(providers, order, doc, query, log, fresh = false) {
   const errors = [];
   for (const id of order) {
     const started = Date.now();
     try {
-      const result = await providers[id]({system: personaPrompt(doc, {webSearch: id === 'gemini'}), prompt: conversationPrompt(doc, query)});
+      const webSearch = id === 'gemini' || (fresh && id === 'claude');
+      const result = await providers[id]({system: personaPrompt(doc, {webSearch}), prompt: conversationPrompt(doc, query), webSearch});
+      if (webSearch) result.webSearch = true;
       log({event: 'answered', provider: id, model: result.model, ms: Date.now() - started});
       return {...result, provider: id, errors};
     } catch (error) {
@@ -75,9 +77,10 @@ export async function processJob(job, {api, providers, log = () => {}, learnMode
     learnedFrom = results.find(r => r.status === 'fulfilled')?.value.text || '';
   } else {
     try {
-      const result = await answerWith(providers, plan.order, doc, plan.query, log);
+      const result = await answerWith(providers, plan.order, doc, plan.query, log, plan.fresh);
       const note = result.errors.length ? `\n(${result.errors.join(', ')} → 다음 모델로 전환)` : '';
-      answerText = `${cleanForTelegram(result.text)}\n\n— ${PROVIDER_LABELS[result.provider]} · ${result.model}${note}`;
+      const web = result.webSearch && result.provider === 'claude' ? ' · 웹 검색' : '';
+      answerText = `${cleanForTelegram(result.text)}\n\n— ${PROVIDER_LABELS[result.provider]} · ${result.model}${web}${note}`;
       learnedFrom = result.text;
     } catch (error) {
       await api.reply(job.update_id, `구독 모델이 모두 응답하지 못했습니다.\n${(error.errors || []).join('\n')}`, true);
