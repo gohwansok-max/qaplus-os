@@ -277,3 +277,37 @@ tests/
   test_jarvis_dispatch.py
 .github/workflows/jarvis.yml
 ```
+
+
+## 9. 학습 기억(대화할수록 개인화)
+
+Jarvis는 자유 질문에 답할 때마다 사용자에 대해 새로 알게 된 점을 추출해 저장하고, 다음 답변의 페르소나 프롬프트에 반영합니다.
+
+학습 축: 정체성·역할, 성격·성향, 말투·톤앤매너, 선호 형식, 목표·방향성, 개인사, 품질관리 전문성, AI 활용·AI 네이티브·바이브 코딩 역량, 반복 업무(스킬), 기억할 사실.
+
+### 저장 위치와 보안
+- 이 저장소는 **공개**이므로 프로필과 대화 기록은 저장소에 두지 않습니다.
+- 기억은 Worker의 비공개 Durable Object `JarvisMemory`에만 저장됩니다.
+- GitHub Actions는 `JARVIS_WEBHOOK_SECRET`에서 HMAC으로 파생한 토큰으로만 `/memory` API를 호출합니다. 새 Secret은 필요 없습니다.
+- 자유 질문 원문은 공개된 Actions 이벤트 페이로드에 넣지 않습니다. Worker가 원문을 잠시 보관하고, Actions가 인증 후 한 번만 꺼내 갑니다(24시간 후 자동 삭제).
+- 비밀번호, API 키, 봇 토큰, 주민번호, 카드번호 패턴은 OpenAI 전송과 저장 전에 가려집니다.
+- 저장량 상한: 분류별 학습 항목 30개(자주 확인된 항목 우선), 직접 기억 항목 50개, 최근 대화 12개.
+
+### 설정(1회)
+1. `npx wrangler deploy --config workers/jarvis-webhook/wrangler.jsonc` 로 재배포합니다. `v2` 마이그레이션이 `JarvisMemory`를 추가하며 기존 데이터에는 영향이 없습니다.
+2. GitHub 저장소 **Variables**에 `JARVIS_WORKER_URL` = `https://qaplus-jarvis-webhook.<subdomain>.workers.dev` 를 등록합니다.
+3. BotFather `/setcommands` 에 `memory - 기억한 내용 보기`, `forget_all - 기억 전체 삭제` 를 추가합니다(선택).
+
+### 사용법
+| 입력 | 동작 |
+|---|---|
+| 아무 질문 | 학습된 프로필 기반 답변 + 새로 기억한 내용 알림 |
+| `/memory` | Jarvis가 기억하는 내용 보기 |
+| `기억해: 내용` | 직접 기억(고정, 자동 정리 대상 아님) |
+| 여러 줄 `기억해:` + `[분류] 내용` | 분류별로 한 번에 기억. 분류: 정체성, 성격, 말투, 선호, 방향, 개인사, 품질, AI, 스킬, 사실 |
+| `기억 수정: 내용` | 잘못 학습한 내용을 바로잡는 정정 메모 |
+| `/forget_all` | 기억 전체 삭제 |
+
+### 한계
+- 웹 검색은 아직 하지 않습니다. 최신 정보는 [확인 필요]로 답합니다.
+- 블로그·쇼츠 생성, 메일 발송 같은 실행 기능은 이 단계에 포함되지 않습니다.
