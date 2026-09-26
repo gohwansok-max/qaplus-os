@@ -6,6 +6,9 @@ param(
 $ErrorActionPreference = 'Stop'
 # 일부 실행 환경에서는 $env:USERNAME 이 비어 있으므로 Windows 계정 정보에서 직접 가져온다.
 $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+if (-not $user) { throw 'Windows 계정을 확인할 수 없습니다.' }
+# 일부 실행 환경에서는 $env:USERNAME 이 비어 있으므로 Windows 계정 정보에서 직접 가져온다.
+$user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
 if (-not $WorkerUrl.StartsWith('https://')) { throw 'WorkerUrl은 https 주소여야 합니다.' }
 if (-not (Test-Path $NodePath)) { throw "Node를 찾을 수 없습니다: $NodePath" }
 
