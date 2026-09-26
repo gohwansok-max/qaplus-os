@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, {classify, JarvisMemory, JarvisUpdate, memoryToken, verifyDraftCallback} from '../src/index.mjs';
+import worker, {classify, JarvisMemory, JarvisUpdate, memoryToken, sha256Hex, verifyDraftCallback} from '../src/index.mjs';
 
 const baseEnv = {
   JARVIS_TELEGRAM_CHAT_ID: '42',
@@ -154,11 +154,11 @@ async function agentApi(env, path, body, token = AGENT_TOKEN) {
 }
 
 function captureFetch() {
-  const calls = {github: [], telegram: []};
+  const calls = {github: [], telegram: [], telegramBodies: []};
   const original = globalThis.fetch;
   globalThis.fetch = async (url, options = {}) => {
     if (String(url).includes('api.github.com')) { calls.github.push(JSON.parse(options.body)); return new Response(null, {status: 204}); }
-    if (String(url).includes('api.telegram.org')) calls.telegram.push(JSON.parse(options.body).text);
+    if (String(url).includes('api.telegram.org')) { const body = JSON.parse(options.body); calls.telegram.push(body.text); calls.telegramBodies.push(body); }
     return Response.json({ok: true});
   };
   calls.restore = () => { globalThis.fetch = original; };
@@ -216,7 +216,32 @@ test('에이전트가 꺼져 있거나 제한 시간 안에 가져가지 않으�
   }
 });
 
-test('에이전트 API는 에이전트 토큰만 허용한다', async () => {
+test('페어링 승인 전 PC는 차단되고, Telegram 코드 승인 뒤에만 에이전트·기억 API에 접근한다', async () => {
+  const calls = captureFetch();
+  try {
+    const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    const deviceToken = 'c'.repeat(48);
+    const hash = await sha256Hex(deviceToken);
+    assert.equal((await agentApi(env, '/agent/poll', {}, deviceToken)).status, 403);
+
+    const pair = await worker.fetch(new Request('https://test/agent/pair', {method: 'POST', body: JSON.stringify({token_hash: hash, name: '회사 PC'})}), env);
+    const request = await pair.json();
+    assert.match(request.code, /^\d{6}$/);
+    assert.match(calls.telegram.at(-1), /회사 PC/);
+
+    const callback = calls.telegramBodies.at(-1).reply_markup.inline_keyboard[0][0].callback_data;
+    const approve = new Request('https://test/telegram', {method: 'POST', headers: {'X-Telegram-Bot-Api-Secret-Token': baseEnv.JARVIS_WEBHOOK_SECRET}, body: JSON.stringify({update_id: 88, callback_query: {id: 'pair-cb', data: callback, message: {chat: {id: 42}}}})});
+    assert.equal((await worker.fetch(approve, env)).status, 200);
+    assert.deepEqual(await (await worker.fetch(new Request('https://test/agent/pair/status', {method: 'POST', body: JSON.stringify({token_hash: hash})}), env)).json(), {approved: true});
+    assert.equal((await agentApi(env, '/agent/poll', {}, deviceToken)).status, 200);
+    assert.equal((await memoryApi(env, '/memory', {}, deviceToken)).status, 200);
+
+    await worker.fetch(telegramRequest(89, '/devices'), env);
+    assert.match(calls.telegram.at(-1), /회사 PC/);
+  } finally { calls.restore(); }
+});
+
+test('에이전트 API는 에이전트 토큰 또는 승인된 페어링 기기만 허용한다', async () => {
   const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
   assert.equal((await agentApi(env, '/agent/poll', {}, 'b'.repeat(48))).status, 403);
   assert.equal((await agentApi(env, '/agent/poll', {}, await memoryToken(baseEnv.JARVIS_WEBHOOK_SECRET))).status, 403);
