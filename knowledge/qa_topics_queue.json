@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-09-23 21:36:27",
+  "last_run": "2026-09-25 21:30:54",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -464,28 +464,32 @@
       "topic": "EQ006 스테인리스 식품가공 핵심소재",
       "filename": "58_QA+_V2_EQ006_스테인리스_식품가공_핵심소재_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\58_QA+_V2_EQ006_스테인리스_식품가공_핵심소재_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-24_EQ006_스테인리스_식품가공_핵심소재_shorts.mp4"
     },
     {
       "id": 59,
       "topic": "FAC001 식품공장 에폭시바닥",
       "filename": "59_QA+_V2_FAC001_식품공장_에폭시바닥_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\59_QA+_V2_FAC001_식품공장_에폭시바닥_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-24_FAC001_식품공장_에폭시바닥_shorts.mp4"
     },
     {
       "id": 60,
       "topic": "MIC003 위험한식중독균 5종",
       "filename": "60_QA+_V2_MIC003_위험한식중독균_5종_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\60_QA+_V2_MIC003_위험한식중독균_5종_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-25_MIC003_위험한식중독균_5종_shorts.mp4"
     },
     {
       "id": 61,
       "topic": "FSC006 식품산업 주요인증 14가지",
       "filename": "61_QA+_V2_FSC006_식품산업_주요인증_14가지_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\61_QA+_V2_FSC006_식품산업_주요인증_14가지_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-09-25_FSC006_식품산업_주요인증_14가지_shorts.mp4"
     },
     {
       "id": 62,
