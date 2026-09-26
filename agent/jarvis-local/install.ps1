@@ -4,6 +4,8 @@ param(
   [string]$NodePath = "C:\Program Files\nodejs\node.exe"
 )
 $ErrorActionPreference = 'Stop'
+# 일부 실행 환경에서는 $env:USERNAME 이 비어 있으므로 Windows 계정 정보에서 직접 가져온다.
+$user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
 if (-not $WorkerUrl.StartsWith('https://')) { throw 'WorkerUrl은 https 주소여야 합니다.' }
 if (-not (Test-Path $NodePath)) { throw "Node를 찾을 수 없습니다: $NodePath" }
 
@@ -24,7 +26,7 @@ foreach ($pair in @(@('claudeModel', 'sonnet'), @('learnModel', 'haiku'), @('cod
   if (-not $config.($pair[0])) { $config | Add-Member -Force $pair[0] $pair[1] }
 }
 $config | ConvertTo-Json | Set-Content -Encoding utf8 $configPath
-icacls $configPath /inheritance:r /grant:r "$($env:USERNAME):F" | Out-Null   # 본인 계정만 읽기
+icacls $configPath /inheritance:r /grant:r "$($user):F" | Out-Null   # 본인 계정만 읽기
 
 # 콘솔 창 없이 실행하는 런처(종료 코드를 작업 스케줄러에 전달해 실패 시 재시작되게 한다)
 $launcher = Join-Path $agentHome 'launch.vbs'
@@ -35,10 +37,10 @@ WScript.Quit code
 "@ | Set-Content -Encoding ascii $launcher
 
 $action = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument "`"$launcher`"" -WorkingDirectory $agentHome
-$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+$trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable `
   -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -ExecutionTimeLimit (New-TimeSpan -Seconds 0) -MultipleInstances IgnoreNew
-$principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
+$principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
 Register-ScheduledTask -TaskName 'JarvisAgent' -Action $action -Trigger $trigger -Settings $settings -Principal $principal -Force | Out-Null
 Stop-ScheduledTask -TaskName 'JarvisAgent' -ErrorAction SilentlyContinue
 Start-ScheduledTask -TaskName 'JarvisAgent'

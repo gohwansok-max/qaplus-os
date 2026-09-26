@@ -65,6 +65,8 @@ test('CLI 출력 형식을 해석하고 도구 사용을 막는 인자를 넘긴
   assert.equal(claudeArgs[claudeArgs.indexOf('--tools') + 1], '');
   assert.equal(claudeArgs[claudeArgs.indexOf('--model') + 1], 'sonnet');
   assert.equal(claudeArgs[claudeArgs.indexOf('--setting-sources') + 1], 'project,local');
+  assert.ok(claudeArgs.includes('--strict-mcp-config') && claudeArgs.includes('--disable-slash-commands'));
+  assert.ok(!claudeArgs.includes('--bare'));
   assert.ok(calls[1].args.includes('read-only'));
   assert.ok(calls[2].args.includes('plan'));
   assert.equal(calls[0].input, 'P');
