@@ -229,6 +229,10 @@ class OpenAIPersonaTests(unittest.TestCase):
         self.assertEqual(messages[1]["content"], "이전 질문")
         self.assertNotIn("sk-abcdefghijklmnop123", json.dumps(messages, ensure_ascii=False))
 
+    def test_answer_markdown_is_cleaned_for_telegram(self):
+        ai, _ = self.make("## 결론\n**핵심** 항목\n* 둘째")
+        self.assertEqual(ai.answer_general_query("q", "S"), "결론\n핵심 항목\n- 둘째")
+
     def test_learning_extraction_uses_memory_notice_not_email_notice(self):
         ai, calls = self.make('{"updates": {"tone_manner": ["짧은 지시형"]}}')
         result = ai.extract_learning("표로 줘", "네", "")

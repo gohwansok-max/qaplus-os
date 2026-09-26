@@ -3,6 +3,11 @@ const MAX_VOICE_BYTES = 20 * 1024 * 1024;
 const MAX_VOICE_SECONDS = 300;
 const CALLBACK_TTL_SECONDS = 48 * 60 * 60;
 const MAX_QUERY_CHARS = 2000;
+// PC 에이전트(구독 CLI)가 최근 이 시간 안에 폴링했으면 질문을 에이전트에 맡긴다.
+const AGENT_FRESH_MS = 20 * 1000;
+// 에이전트가 이 시간 안에 가져가지 않거나 끝내지 못하면 GitHub Actions(API)로 넘긴다.
+const AGENT_CLAIM_TIMEOUT_MS = 60 * 1000;
+const AGENT_WORK_TIMEOUT_MS = 6 * 60 * 1000;
 const MAX_MEMORY_BYTES = 256 * 1024;
 const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 const MEMORY_LABELS = {
@@ -274,10 +279,46 @@ function emptyMemory() {
   return {version: 1, rev: 0, profile: {}, turns: [], stats: {conversations: 0, learned_items: 0}};
 }
 
-async function handleMemoryApi(request, env, path) {
-  const expected = await memoryToken(env.JARVIS_WEBHOOK_SECRET);
+async function callerOf(request, env) {
   const provided = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
-  if (!safeEqual(provided, expected)) return new Response('Forbidden', {status: 403});
+  if (!provided) return null;
+  if (env.JARVIS_AGENT_TOKEN && env.JARVIS_AGENT_TOKEN.length >= 32 && safeEqual(provided, env.JARVIS_AGENT_TOKEN)) return 'agent';
+  if (safeEqual(provided, await memoryToken(env.JARVIS_WEBHOOK_SECRET))) return 'actions';
+  return null;
+}
+
+async function sendChunks(env, text) {
+  const body = String(text || '').slice(0, 12000);
+  for (let index = 0; index < Math.max(body.length, 1); index += 3900) {
+    await telegram(env, 'sendMessage', {chat_id: env.JARVIS_TELEGRAM_CHAT_ID, text: body.slice(index, index + 3900) || '(빈 응답)'});
+  }
+}
+
+async function handleAgentApi(request, env, path) {
+  if (await callerOf(request, env) !== 'agent') return new Response('Forbidden', {status: 403});
+  if (request.method !== 'POST') return new Response('Method not allowed', {status: 405});
+  let parsed = {};
+  try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
+  if (path === '/agent/poll') {
+    const {data} = await memoryCall(env, 'agent-poll', {capabilities: parsed.capabilities});
+    return Response.json(data);
+  }
+  if (path === '/agent/reply') {
+    const text = typeof parsed.text === 'string' ? parsed.text.trim() : '';
+    if (!Number.isSafeInteger(parsed.update_id) || (!text && !parsed.done)) {
+      return new Response('Invalid reply', {status: 400});
+    }
+    const {status} = await memoryCall(env, 'agent-check', {update_id: parsed.update_id});
+    if (status !== 200) return Response.json({error: 'not_claimed'}, {status: 409});
+    if (text) await sendChunks(env, text);  // text 없이 done만 오면 완료 처리만 한다
+    if (parsed.done) await memoryCall(env, 'agent-done', {update_id: parsed.update_id});
+    return Response.json({ok: true});
+  }
+  return new Response('Not found', {status: 404});
+}
+
+async function handleMemoryApi(request, env, path) {
+  if (!await callerOf(request, env)) return new Response('Forbidden', {status: 403});
 
   if (path === '/memory' && request.method === 'GET') {
     const {data} = await memoryCall(env, 'get');
@@ -316,6 +357,10 @@ export default {
     if (path === '/memory' || path.startsWith('/memory/')) {
       if (!ready) return new Response('Not ready', {status: 503});
       return handleMemoryApi(request, env, path);
+    }
+    if (path.startsWith('/agent/')) {
+      if (!ready) return new Response('Not ready', {status: 503});
+      return handleAgentApi(request, env, path);
     }
     if (path !== '/telegram') return new Response('Not found', {status: 404});
     if (request.method !== 'POST') return new Response('Method not allowed', {status: 405});
@@ -368,11 +413,16 @@ export class JarvisUpdate {
             }
           }
           if (!await this.ctx.storage.get('dispatched')) {
+            let mode = 'actions';
             if (action.kind === 'general_query') {
-              const stored = await memoryCall(this.env, 'pending-put', {update_id: action.update_id, text: action.text});
+              const stored = await memoryCall(this.env, 'pending-put', {
+                update_id: action.update_id, text: action.text, agent_enabled: Boolean(this.env.JARVIS_AGENT_TOKEN),
+              });
               if (stored.status !== 200) throw new Error('pending_store_failed');
+              mode = stored.data.mode;
             }
-            await dispatch(this.env, requestToDispatch[0], requestToDispatch[1]);
+            // PC 에이전트가 켜져 있으면 구독 모델이 처리하므로 GitHub Actions를 부르지 않는다.
+            if (mode !== 'agent') await dispatch(this.env, requestToDispatch[0], requestToDispatch[1]);
             await this.ctx.storage.put('dispatched', true);
           }
         } else if (action.kind === 'help') {
@@ -461,17 +511,69 @@ export class JarvisMemory {
         const now = Date.now();
         const old = await storage.list({prefix: 'pending:'});
         for (const [key, value] of old) if (now - (Number(value?.at) || 0) > PENDING_TTL_MS) await storage.delete(key);
-        await storage.put(`pending:${body.update_id}`, {text: body.text.slice(0, MAX_QUERY_CHARS), at: now});
-        return Response.json({ok: true});
+        const key = `pending:${body.update_id}`;
+        const existing = await storage.get(key);
+        if (existing) return Response.json({ok: true, mode: existing.mode || 'actions'});  // 재시도 시 같은 결정 유지
+        const lastSeen = Number(await storage.get('agent:lastSeen')) || 0;
+        const mode = body.agent_enabled && now - lastSeen <= AGENT_FRESH_MS ? 'agent' : 'actions';
+        await storage.put(key, {text: body.text.slice(0, MAX_QUERY_CHARS), at: now, mode});
+        if (mode === 'agent') await this.scheduleAlarm(now + AGENT_CLAIM_TIMEOUT_MS);
+        return Response.json({ok: true, mode});
       }
       if (op === 'pending-take') {
         const key = `pending:${body.update_id}`;
         const value = await storage.get(key);
-        if (!value) return Response.json({error: 'not_found'}, {status: 404});
+        if (!value || value.mode === 'agent') return Response.json({error: 'not_found'}, {status: 404});
         await storage.delete(key);
         return Response.json({text: value.text});
       }
+      if (op === 'agent-poll') {
+        const now = Date.now();
+        await storage.put('agent:lastSeen', now);
+        const items = [...await storage.list({prefix: 'pending:'})]
+          .filter(([, value]) => value?.mode === 'agent' && !value.claimedAt)
+          .sort((a, b) => a[1].at - b[1].at);
+        if (!items.length) return Response.json({job: null});
+        const [key, value] = items[0];
+        await storage.put(key, {...value, claimedAt: now});
+        await this.scheduleAlarm(now + AGENT_WORK_TIMEOUT_MS);
+        return Response.json({job: {update_id: Number(key.slice('pending:'.length)), text: value.text}});
+      }
+      if (op === 'agent-check') {
+        const value = await storage.get(`pending:${body.update_id}`);
+        return value?.mode === 'agent' && value.claimedAt ? Response.json({ok: true}) : Response.json({error: 'not_claimed'}, {status: 409});
+      }
+      if (op === 'agent-done') {
+        await storage.delete(`pending:${body.update_id}`);
+        return Response.json({ok: true});
+      }
       return Response.json({error: 'unknown_op'}, {status: 404});
+    });
+  }
+
+  async scheduleAlarm(at) {
+    const current = await this.ctx.storage.getAlarm?.();
+    if (!current || current > at) await this.ctx.storage.setAlarm(at);
+  }
+
+  // 에이전트가 가져가지 않았거나 처리 중 멈춘 질문을 GitHub Actions(API)로 넘긴다.
+  async alarm() {
+    await this.ctx.blockConcurrencyWhile(async () => {
+      const now = Date.now();
+      let next = 0;
+      for (const [key, value] of await this.ctx.storage.list({prefix: 'pending:'})) {
+        if (value?.mode !== 'agent') continue;
+        const deadline = value.claimedAt ? value.claimedAt + AGENT_WORK_TIMEOUT_MS : value.at + AGENT_CLAIM_TIMEOUT_MS;
+        if (deadline > now) { next = next ? Math.min(next, deadline) : deadline; continue; }
+        try {
+          await dispatch(this.env, 'jarvis_general_query', {telegram_update_id: Number(key.slice('pending:'.length))});
+          await this.ctx.storage.put(key, {text: value.text, at: value.at, mode: 'actions'});
+          console.log(JSON.stringify({event: 'jarvis_agent_fallback', update_id: Number(key.slice('pending:'.length))}));
+        } catch {
+          next = next ? Math.min(next, now + 30000) : now + 30000;
+        }
+      }
+      if (next) await this.ctx.storage.setAlarm(next);
     });
   }
 }
