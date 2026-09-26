@@ -19,6 +19,7 @@ on:
       - jarvis_command
       - jarvis_voice_command
       - jarvis_create_draft
+      - jarvis_general_query
 
 permissions:
   contents: read
@@ -69,6 +70,8 @@ jobs:
           GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
           GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
           GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          # 개인 기억 저장소(Worker) 주소. 비어 있으면 기억 없이 동작한다.
+          JARVIS_WORKER_URL: ${{ vars.JARVIS_WORKER_URL }}
           MANUAL_MODE: ${{ inputs.mode }}
         shell: bash
         run: |

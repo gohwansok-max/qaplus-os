@@ -16,10 +16,13 @@ from typing import Any
 
 from jarvis_ai import OpenAIClient, redact_external_text
 from jarvis_gmail import GmailClient, MailMessage, MESSAGE_ID_RE
+from jarvis_memory import MemoryClient, apply_update, empty_memory, persona_system_prompt, profile_summary
 from jarvis_telegram import TelegramClient, draft_keyboard, masked_sender, verify_draft_callback
 
 KST = timezone(timedelta(hours=9), name="KST")
-SUPPORTED_ACTIONS = {"briefing", "today_tasks", "jarvis_command", "jarvis_voice_command", "jarvis_create_draft"}
+SUPPORTED_ACTIONS = {
+    "briefing", "today_tasks", "jarvis_command", "jarvis_voice_command", "jarvis_create_draft", "jarvis_general_query",
+}
 
 
 def classify_command_text(text: str) -> str | None:
@@ -83,7 +86,14 @@ def run_today_tasks(gmail: GmailClient, ai: OpenAIClient, telegram: TelegramClie
     telegram.send_message("\n\n".join(lines))
 
 
-def run_voice(payload: dict[str, Any], gmail: GmailClient, ai: OpenAIClient, telegram: TelegramClient, callback_secret: str) -> None:
+def run_voice(
+    payload: dict[str, Any],
+    gmail: GmailClient,
+    ai: OpenAIClient,
+    telegram: TelegramClient,
+    callback_secret: str,
+    memory: MemoryClient | None = None,
+) -> None:
     file_id = str(payload.get("voice_file_id", ""))
     if not file_id or len(file_id) > 512:
         raise ValueError("잘못된 Telegram 음성 파일 ID입니다.")
@@ -94,8 +104,58 @@ def run_voice(payload: dict[str, Any], gmail: GmailClient, ai: OpenAIClient, tel
         run_briefing(gmail, ai, telegram, callback_secret)
     elif command == "today_tasks":
         run_today_tasks(gmail, ai, telegram)
+    elif transcript.strip():
+        telegram.send_message(f"인식한 내용: {transcript.strip()[:300]}")
+        run_general_query({"query": transcript}, ai, telegram, memory)
     else:
-        telegram.send_message("음성에서 지원 명령을 확인하지 못했습니다. '최근 중요 메일 브리핑해줘' 또는 '오늘 할 일 보여줘'라고 말해주세요.")
+        telegram.send_message("음성을 인식하지 못했습니다. 다시 말씀해주세요.")
+
+
+def run_general_query(payload: dict[str, Any], ai: OpenAIClient, telegram: TelegramClient, memory: MemoryClient | None) -> None:
+    """자유 질문: 기억 로드 -> 페르소나 답변 -> 학습 추출 -> 기억 저장."""
+    query = str(payload.get("query", ""))
+    if not query and memory is not None:
+        query = memory.take_pending(int(payload.get("telegram_update_id", 0)))
+    query = query.strip()[:2000]
+    if not query:
+        if memory is None:
+            telegram.send_message("기억 저장소(JARVIS_WORKER_URL)가 설정되지 않아 질문을 처리하지 못했습니다.")
+            return
+        raise ValueError("처리할 질문을 찾지 못했습니다.")
+
+    doc = empty_memory()
+    if memory is not None:
+        try:
+            doc = memory.load()
+        except Exception:
+            print("::warning::Jarvis 기억을 불러오지 못해 기본 페르소나로 답합니다.")
+
+    answer = ai.answer_general_query(query, persona_system_prompt(doc), doc["turns"])
+    telegram.send_message(answer)
+
+    if memory is None:
+        return
+    try:
+        learning = ai.extract_learning(query, answer, profile_summary(doc))
+    except Exception:
+        learning = {}
+    new_items: list[str] = []
+
+    def mutate(current: dict[str, Any]) -> None:
+        before = {k: {i["text"] for i in v} for k, v in current["profile"].items()}
+        apply_update(current, query, answer, learning)
+        new_items.clear()
+        for key, items in current["profile"].items():
+            new_items.extend(i["text"] for i in items if i["text"] not in before.get(key, set()))
+
+    try:
+        memory.update(mutate)
+    except Exception:
+        print("::warning::Jarvis 기억 저장에 실패했습니다.")
+        return
+    if new_items:
+        lines = "\n".join(f"- {text}" for text in new_items[:5])
+        telegram.send_message(f"새로 기억한 내용:\n{lines}\n\n/memory 로 전체 확인, 틀린 내용은 '기억 수정: ...'으로 알려주세요.")
 
 
 def run_create_draft(
@@ -127,6 +187,7 @@ def run_action(
     ai: OpenAIClient,
     telegram: TelegramClient,
     callback_secret: str,
+    memory: MemoryClient | None = None,
 ) -> None:
     if action not in SUPPORTED_ACTIONS:
         raise ValueError("지원하지 않는 Jarvis 작업입니다.")
@@ -143,9 +204,11 @@ def run_action(
         else:
             raise ValueError("지원하지 않는 Jarvis 명령입니다.")
     elif action == "jarvis_voice_command":
-        run_voice(payload, gmail, ai, telegram, callback_secret)
+        run_voice(payload, gmail, ai, telegram, callback_secret, memory)
     elif action == "jarvis_create_draft":
         run_create_draft(payload, gmail, ai, telegram, callback_secret)
+    elif action == "jarvis_general_query":
+        run_general_query(payload, ai, telegram, memory)
 
 
 def _event_from_environment() -> tuple[str, dict[str, Any]]:
@@ -173,13 +236,18 @@ def main(argv: list[str] | None = None) -> int:
             action, payload = _event_from_environment()
         else:
             action, payload = args.mode, {}
-        run_action(action, payload, gmail, ai, telegram, callback_secret)
+        memory: MemoryClient | None = None
+        if os.environ.get("JARVIS_WORKER_URL"):
+            try:
+                memory = MemoryClient()
+            except Exception:
+                print("::warning::JARVIS_WORKER_URL 설정이 올바르지 않아 기억 기능을 끕니다.")
+        run_action(action, payload, gmail, ai, telegram, callback_secret, memory)
         print(json.dumps({"ok": True, "action": action}, ensure_ascii=False))
         return 0
     except Exception as err:
-        import traceback
-        traceback.print_exc()
-        print(f"::error::Jarvis 작업 처리에 실패했습니다: {err}")
+        # 공개 저장소라 Actions 로그가 공개된다. 예외 메시지·traceback은 출력하지 않는다.
+        print(f"::error::Jarvis 작업 처리에 실패했습니다 ({type(err).__name__}).")
         if telegram is not None:
             try:
                 telegram.send_message("Jarvis 작업 처리에 실패했습니다. GitHub Actions 실행 상태를 확인해주세요.")

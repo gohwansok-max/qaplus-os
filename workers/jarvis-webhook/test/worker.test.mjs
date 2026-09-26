@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, {classify, JarvisUpdate, verifyDraftCallback} from '../src/index.mjs';
+import worker, {classify, JarvisMemory, JarvisUpdate, memoryToken, verifyDraftCallback} from '../src/index.mjs';
 
 const baseEnv = {
   JARVIS_TELEGRAM_CHAT_ID: '42',
@@ -62,6 +62,7 @@ test('같은 승인 버튼을 새 callback ID로 다시 눌러도 dispatch는 �
     const objects = new Map();
     const env = {
       ...baseEnv,
+      JARVIS_MEMORY: memoryNamespace(),
       JARVIS_UPDATES: {
         getByName: key => {
           if (!objects.has(key)) {
@@ -90,9 +91,155 @@ test('같은 승인 버튼을 새 callback ID로 다시 눌러도 dispatch는 �
 });
 
 test('Webhook secret 검증을 우회할 수 없다', async () => {
-  const env = {...baseEnv, JARVIS_UPDATES: {}};
+  const env = {...baseEnv, JARVIS_UPDATES: {}, JARVIS_MEMORY: {}};
   const response = await worker.fetch(new Request('https://test/telegram', {method: 'POST', body: '{}'}), env);
   assert.equal(response.status, 403);
+});
+
+function fakeStorage() {
+  const data = new Map();
+  return {
+    get: async key => structuredClone(data.get(key)),
+    put: async (key, value) => { data.set(key, structuredClone(value)); },
+    delete: async key => data.delete(key),
+    list: async ({prefix}) => new Map([...data].filter(([key]) => key.startsWith(prefix))),
+    setAlarm: async () => {},
+    deleteAll: async () => data.clear(),
+  };
+}
+
+function serialCtx(storage) {
+  let chain = Promise.resolve();
+  return {
+    storage,
+    blockConcurrencyWhile: fn => {
+      const result = chain.then(fn);
+      chain = result.catch(() => {});
+      return result;
+    },
+  };
+}
+
+function memoryNamespace() {
+  const object = new JarvisMemory(serialCtx(fakeStorage()), baseEnv);
+  return {getByName: () => ({fetch: (url, options) => object.fetch(new Request(url, options))})};
+}
+
+function fullEnv() {
+  const objects = new Map();
+  const env = {
+    ...baseEnv,
+    JARVIS_MEMORY: memoryNamespace(),
+    JARVIS_UPDATES: {
+      getByName: key => {
+        if (!objects.has(key)) {
+          const object = new JarvisUpdate(serialCtx(fakeStorage()), env);
+          objects.set(key, {fetch: (url, options) => object.fetch(new Request(url, options))});
+        }
+        return objects.get(key);
+      },
+    },
+  };
+  return env;
+}
+
+function telegramRequest(updateId, text) {
+  return new Request('https://test/telegram', {
+    method: 'POST',
+    headers: {'X-Telegram-Bot-Api-Secret-Token': baseEnv.JARVIS_WEBHOOK_SECRET},
+    body: JSON.stringify({update_id: updateId, message: {chat: {id: 42}, text}}),
+  });
+}
+
+async function memoryApi(env, path, init = {}, token) {
+  const auth = token ?? await memoryToken(baseEnv.JARVIS_WEBHOOK_SECRET);
+  return worker.fetch(new Request(`https://test${path}`, {...init, headers: {Authorization: `Bearer ${auth}`, ...(init.headers || {})}}), env);
+}
+
+test('띄어쓰기·슬래시 명령과 자유 질문, 기억 명령을 구분한다', () => {
+  const kind = text => classify(textUpdate(text), '42');
+  assert.deepEqual(kind('/briefing'), {kind: 'command', command: 'briefing'});
+  assert.deepEqual(kind('/today_tasks@gohwansok_jarvis_bot'), {kind: 'command', command: 'today_tasks'});
+  assert.deepEqual(kind('메일브리핑 해줘'), {kind: 'command', command: 'briefing'});
+  assert.deepEqual(kind('오늘할일'), {kind: 'command', command: 'today_tasks'});
+  assert.equal(kind('임원 브리핑 자료에 넣을 HACCP 개선 포인트 정리해줘').kind, 'general_query');
+  assert.deepEqual(kind('내일 감사 준비 체크리스트 만들어줘'), {kind: 'general_query', text: '내일 감사 준비 체크리스트 만들어줘'});
+  assert.deepEqual(kind('기억해: 보고서는 결론부터 써줘'), {kind: 'memory_note', items: [{section: 'facts', text: '보고서는 결론부터 써줘'}]});
+  assert.deepEqual(kind('기억 수정: [개인사] 경력은 20년차'), {kind: 'memory_note', items: [{section: 'personal_history', text: '정정: 경력은 20년차'}]});
+  assert.deepEqual(kind('기억해:\n[품질] 식품 QA 20년차\n- [AI] 바이브 코딩으로 업무 웹앱 제작\n보고서는 결론부터').items, [
+    {section: 'qa_expertise', text: '식품 QA 20년차'},
+    {section: 'ai_capability', text: '바이브 코딩으로 업무 웹앱 제작'},
+    {section: 'facts', text: '보고서는 결론부터'},
+  ]);
+  assert.equal(kind('기억해: [없는분류] 내용').kind, 'memory_note_invalid');
+  assert.equal(kind('/memory').kind, 'memory_show');
+  assert.equal(kind('/forget_all').kind, 'memory_reset');
+  assert.equal(kind('가'.repeat(2001)).kind, 'query_too_long');
+});
+
+test('Worker와 Python의 메모리 API 토큰이 같다', async () => {
+  assert.equal(await memoryToken('test_secret'), '6e7f206b2f78493abc24347c6b65e6df125acfdac1aa756a34c05eea1b8d6afe');
+});
+
+test('자유 질문 원문은 공개 dispatch 페이로드에 싣지 않고 인증된 메모리 API로 한 번만 꺼낸다', async () => {
+  const originalFetch = globalThis.fetch;
+  const bodies = [];
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('api.github.com')) { bodies.push(options.body); return new Response(null, {status: 204}); }
+    return Response.json({ok: true});
+  };
+  try {
+    const env = fullEnv();
+    const secretQuestion = '우리 회사 클레임 대응 전략 알려줘';
+    assert.equal((await worker.fetch(telegramRequest(501, secretQuestion), env)).status, 200);
+    assert.equal(bodies.length, 1);
+    const payload = JSON.parse(bodies[0]);
+    assert.equal(payload.event_type, 'jarvis_general_query');
+    assert.deepEqual(payload.client_payload, {telegram_update_id: 501});
+    assert.ok(!bodies[0].includes('클레임'));
+
+    const take = token => memoryApi(env, '/memory/pending/take', {method: 'POST', body: JSON.stringify({update_id: 501})}, token);
+    assert.equal((await take('wrong-token')).status, 403);
+    const first = await take();
+    assert.equal(first.status, 200);
+    assert.equal((await first.json()).text, secretQuestion);
+    assert.equal((await take()).status, 404);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('메모리 저장은 rev가 맞을 때만 성공하고 기억 명령은 표시·초기화된다', async () => {
+  const originalFetch = globalThis.fetch;
+  const sent = [];
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('api.telegram.org')) sent.push(JSON.parse(options.body).text);
+    return Response.json({ok: true});
+  };
+  try {
+    const env = fullEnv();
+    assert.equal((await memoryApi(env, '/memory')).status, 200);
+    assert.equal((await memoryApi(env, '/memory', {method: 'GET'}, 'bad')).status, 403);
+
+    const put = rev => memoryApi(env, '/memory', {method: 'PUT', body: JSON.stringify({expected_rev: rev, doc: {profile: {tone_manner: [{text: '짧은 지시형 문장', count: 1}]}, turns: [], stats: {}}})});
+    const ok = await put(0);
+    assert.equal(ok.status, 200);
+    assert.equal((await ok.json()).rev, 1);
+    assert.equal((await put(0)).status, 409);
+
+    await worker.fetch(telegramRequest(601, '기억해:\n보고서는 결론부터\n[품질] 식품 QA 20년차'), env);
+    assert.match(sent.at(-1), /기억했습니다 \(2건\)/);
+    await worker.fetch(telegramRequest(602, '/memory'), env);
+    assert.match(sent.at(-1), /보고서는 결론부터 \(직접 기억\)/);
+    assert.match(sent.at(-1), /\[품질관리 전문성\]\n- 식품 QA 20년차/);
+    assert.match(sent.at(-1), /짧은 지시형 문장/);
+
+    await worker.fetch(telegramRequest(603, '/forget_all'), env);
+    await worker.fetch(telegramRequest(604, '/memory'), env);
+    assert.match(sent.at(-1), /아직 기억한 내용이 없습니다/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 function durableObject(env = baseEnv) {
