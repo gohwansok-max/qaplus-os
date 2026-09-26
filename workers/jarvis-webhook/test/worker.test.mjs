@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, {classify, JarvisMemory, JarvisUpdate, memoryToken, sha256Hex, verifyDraftCallback} from '../src/index.mjs';
+import worker, {classify, formatStatus, JarvisMemory, JarvisUpdate, memoryToken, sha256Hex, verifyDraftCallback} from '../src/index.mjs';
 
 const baseEnv = {
   JARVIS_TELEGRAM_CHAT_ID: '42',
@@ -460,4 +460,57 @@ test('작업 기준은 최대 30개까지 저장한다', async () => {
   assert.equal((await op('standard-put', {name: '기준30', body: '본문입니다'})).status, 409);
   assert.equal((await op('standard-put', {name: '기준0', body: '덮어쓰기는 허용'})).status, 200);
   assert.equal((await op('standard-put', {name: '<script>', body: '본문입니다'})).status, 400);
+});
+
+test('점검 명령을 분류하고 긴 문장은 자유 질문으로 둔다', () => {
+  for (const text of ['/status', '점검', '상태 점검', '자비스 점검']) assert.equal(classify(textUpdate(text), '42').kind, 'status', text);
+  assert.equal(classify(textUpdate('HACCP 점검 주기 알려줘'), '42').kind, 'general_query');
+});
+
+test('점검 메시지는 에이전트 상태·모델·대기열·기억·Actions를 원문 없이 보여준다', () => {
+  const now = Date.parse('2026-09-26T12:00:00Z');
+  const online = formatStatus({
+    lastSeen: now - 3000, capabilities: ['claude', 'codex'], agentName: '기본 PC', lastDone: now - 12 * 60000,
+    pending: 1, stuck: 0, conversations: 128, items: 64, standards: 3, devices: 1,
+  }, {ready: true, agentEnabled: true, actions: '최근 실행 성공'}, now);
+  assert.match(online, /21:00 KST/);
+  assert.match(online, /\[PC 에이전트\] 정상 · 3초 전 확인 · 기본 PC/);
+  assert.match(online, /Claude O · ChatGPT·Codex O · Gemini X/);
+  assert.match(online, /마지막 답변 완료: 12분 전/);
+  assert.match(online, /대화 128회 · 기억 항목 64개 · 작업 기준 3개/);
+  assert.match(online, /기본 PC \+ 페어링 1대/);
+
+  const offline = formatStatus({lastSeen: now - 2 * 3600000, pending: 2, stuck: 1}, {ready: true, agentEnabled: true, actions: 'x'}, now);
+  assert.match(offline, /꺼짐 · 마지막 확인 2시간 전 → 질문은 GitHub Actions/);
+  assert.match(offline, /지연 1건/);
+  assert.match(formatStatus({}, {ready: true, agentEnabled: false, actions: 'x'}, now), /미설정/);
+  assert.match(formatStatus({}, {ready: true, agentEnabled: true, actions: 'x'}, now), /연결 기록 없음/);
+});
+
+test('/status는 에이전트 폴링·완료 기록과 Actions 최근 실행을 모아 답하고 dispatch하지 않는다', async () => {
+  const sent = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('/actions/workflows/jarvis.yml/runs')) {
+      return Response.json({workflow_runs: [{status: 'completed', conclusion: 'success', event: 'repository_dispatch', display_title: 'jarvis_general_query', updated_at: new Date().toISOString()}]});
+    }
+    if (String(url).includes('api.github.com')) throw new Error('dispatch must not be called');
+    if (String(url).includes('api.telegram.org')) sent.push(JSON.parse(options.body).text);
+    return Response.json({ok: true});
+  };
+  try {
+    const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    await agentApi(env, '/agent/poll', {capabilities: ['claude', 'gemini', 'evil']});
+    await worker.fetch(telegramRequest(951, '기준 저장: 보고서 / 결론 → 근거 3개'), env);
+    await worker.fetch(telegramRequest(952, '/status'), env);
+    const text = sent.at(-1);
+    assert.match(text, /\[PC 에이전트\] 정상/);
+    assert.match(text, /Claude O · ChatGPT·Codex X · Gemini O/);
+    assert.doesNotMatch(text, /evil/);
+    assert.match(text, /작업 기준 1개/);
+    assert.match(text, /최근 실행 성공 · jarvis_general_query/);
+    assert.doesNotMatch(text, /결론 → 근거/);
+  } finally {
+    globalThis.fetch = original;
+  }
 });

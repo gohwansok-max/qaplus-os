@@ -328,3 +328,20 @@ Jarvis는 자유 질문에 답할 때마다 사용자에 대해 새로 알게 �
 - 한도: 이름 30자, 본문 1500자, 최대 30개.
 - 배포 순서: Worker 먼저 배포(`npx wrangler deploy --config workers/jarvis-webhook/wrangler.jsonc`) → PC 에이전트 재설치(`install.ps1`). 에이전트만 먼저 바꾸면 조회가 404로 실패해 기준 없이 답하므로 순서가 바뀌어도 기존 동작은 깨지지 않는다.
 - 백업: `curl -H "Authorization: Bearer <메모리 토큰>" <Worker URL>/memory/standards > standards-backup.json`
+
+## 11. 점검 명령 (`/status`, `점검`)
+
+Worker가 LLM 호출 없이 바로 답한다. 질문·기억 원문은 넣지 않고 개수와 시각만 표시한다.
+
+| 항목 | 내용 |
+|---|---|
+| PC 에이전트 | 정상(20초 안에 폴링) / 꺼짐(마지막 확인 시각, Actions로 처리) / 연결 기록 없음 / 미설정 |
+| 사용 가능 모델 | 에이전트가 폴링 때 보고한 Claude·ChatGPT·Codex·Gemini 사용 가능 여부 |
+| 마지막 답변 완료 | 에이전트가 마지막으로 답변을 끝낸 시각 |
+| 대기열 | 처리 대기 질문 수, 제한 시간을 넘긴 지연 건수 |
+| 기억 | 누적 대화 수, 기억 항목 수, 작업 기준 수 |
+| 연결 PC | 기본 PC + 페어링 기기 수 |
+| GitHub Actions | `jarvis.yml` 최근 실행 결과·시각 |
+
+- Actions 최근 실행은 `JARVIS_DISPATCH_TOKEN`으로 조회한다. fine-grained 토큰이면 해당 저장소에 **Actions: Read** 권한을 추가해야 하며, 없으면 "조회 불가"로 표시되고 나머지 항목은 정상 표시된다.
+- 모델 상태는 PC 에이전트가 새 버전이 아니어도 기존 폴링 값(`capabilities`)으로 표시된다. Worker만 배포하면 된다.

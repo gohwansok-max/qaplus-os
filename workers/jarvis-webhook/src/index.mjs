@@ -31,6 +31,7 @@ export const HELP = [
   '• /briefing 최근 중요 메일 브리핑',
   '• /today_tasks 오늘 할 일',
   '• /memory Jarvis가 기억하는 내용 보기',
+  '• /status 또는 "점검"  PC 에이전트·모델·기억·Actions 상태 점검',
   '• 기억해: (내용)  직접 기억시키기',
   '• 기억 수정: (내용)  잘못 기억한 것 바로잡기',
   '• /forget_all 학습한 기억 전체 삭제 (작업 기준은 유지)',
@@ -144,6 +145,7 @@ export function classify(update, chatId) {
   if (/^\/memory(?:@\w+)?$/i.test(text)) return {kind: 'memory_show'};
   if (/^\/forget_all(?:@\w+)?$/i.test(text)) return {kind: 'memory_reset'};
   if (/^\/devices(?:@\w+)?$/i.test(text)) return {kind: 'devices_show'};
+  if (/^\/status(?:@\w+)?$/i.test(text) || /^(?:자비스\s*)?(?:상태\s*)?점검$/.test(text)) return {kind: 'status'};
   if (/^\/standards(?:@\w+)?$/i.test(text) || /^기준\s*목록$/.test(text)) return {kind: 'standard_list'};
 
   const standard = /^기준\s*(저장|보기|삭제)\s*[:：]\s*([\s\S]+)$/.exec(text);
@@ -303,6 +305,65 @@ export function formatMemory(doc) {
   const conversations = Number(doc?.stats?.conversations) || 0;
   lines.push('', `누적 대화 ${conversations}회, 기억 항목 ${total}개`);
   return lines.join('\n').slice(0, 3900);
+}
+
+const PROVIDER_NAMES = {claude: 'Claude', codex: 'ChatGPT·Codex', gemini: 'Gemini'};
+
+export function ago(ms, now = Date.now()) {
+  const seconds = Math.max(0, Math.round((now - ms) / 1000));
+  if (seconds < 60) return `${seconds}초 전`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)}분 전`;
+  if (seconds < 86400) return `${Math.round(seconds / 3600)}시간 전`;
+  return `${Math.round(seconds / 86400)}일 전`;
+}
+
+// 점검 결과 메시지. 원문(질문·기억 내용)은 넣지 않고 개수와 시각만 보여준다.
+export function formatStatus(state, {ready, agentEnabled, actions}, now = Date.now()) {
+  const lines = [`Jarvis 점검 (${new Date(now + 9 * 3600 * 1000).toISOString().slice(0, 16).replace('T', ' ')} KST)`, ''];
+  const lastSeen = Number(state.lastSeen) || 0;
+  if (!agentEnabled) {
+    lines.push('[PC 에이전트] 미설정 (JARVIS_AGENT_TOKEN 없음) → 모든 질문을 GitHub Actions로 처리');
+  } else if (!lastSeen) {
+    lines.push('[PC 에이전트] 연결 기록 없음 → 질문은 GitHub Actions(OpenAI API)로 처리');
+  } else if (now - lastSeen <= AGENT_FRESH_MS) {
+    lines.push(`[PC 에이전트] 정상 · ${ago(lastSeen, now)} 확인${state.agentName ? ` · ${state.agentName}` : ''}`);
+  } else {
+    lines.push(`[PC 에이전트] 꺼짐 · 마지막 확인 ${ago(lastSeen, now)} → 질문은 GitHub Actions(OpenAI API)로 처리`);
+  }
+  if (agentEnabled && lastSeen) {
+    const caps = Array.isArray(state.capabilities) ? state.capabilities : [];
+    lines.push(`- 사용 가능 모델: ${Object.entries(PROVIDER_NAMES).map(([id, name]) => `${name} ${caps.includes(id) ? 'O' : 'X'}`).join(' · ')}`);
+    lines.push(`- 마지막 답변 완료: ${state.lastDone ? ago(state.lastDone, now) : '기록 없음'}`);
+  }
+  lines.push(`[대기열] 처리 대기 ${state.pending || 0}건${state.stuck ? ` · 지연 ${state.stuck}건(제한 시간 초과, Actions 전환 대기)` : ''}`);
+  lines.push(`[기억] 대화 ${state.conversations || 0}회 · 기억 항목 ${state.items || 0}개 · 작업 기준 ${state.standards || 0}개`);
+  lines.push(`[연결 PC] 기본 PC${state.devices ? ` + 페어링 ${state.devices}대` : ''}`);
+  lines.push(`[GitHub Actions] ${actions}`);
+  lines.push(`[Worker 설정] ${ready ? '필수 설정 정상' : '필수 설정 누락'}`);
+  return lines.join('\n');
+}
+
+async function lastActionsRun(env, now = Date.now()) {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${env.GITHUB_REPOSITORY}/actions/workflows/jarvis.yml/runs?per_page=1`, {
+      headers: {
+        'Authorization': `Bearer ${env.JARVIS_DISPATCH_TOKEN}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'qaplus-jarvis-webhook',
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.status === 401 || response.status === 403 || response.status === 404) return '조회 불가 (dispatch 토큰에 Actions 읽기 권한 필요)';
+    if (!response.ok) return `조회 실패 (${response.status})`;
+    const run = (await response.json())?.workflow_runs?.[0];
+    if (!run) return '실행 기록 없음';
+    const result = run.status !== 'completed' ? '실행 중' : run.conclusion === 'success' ? '성공' : `실패(${run.conclusion})`;
+    const at = Date.parse(run.updated_at || run.created_at);
+    return `최근 실행 ${result} · ${run.event === 'repository_dispatch' ? run.display_title || 'dispatch' : run.event} · ${Number.isFinite(at) ? ago(at, now) : ''}`.trim();
+  } catch {
+    return '조회 실패 (시간 초과)';
+  }
 }
 
 function normalizeKey(text) {
@@ -553,6 +614,9 @@ export class JarvisUpdate {
         } else if (action.kind === 'memory_reset') {
           await memoryCall(this.env, 'reset');
           await say('학습한 기억을 모두 삭제했습니다.');
+        } else if (action.kind === 'status') {
+          const [{data}, actions] = await Promise.all([memoryCall(this.env, 'status'), lastActionsRun(this.env)]);
+          await say(formatStatus(data, {ready: true, agentEnabled: Boolean(this.env.JARVIS_AGENT_TOKEN), actions}));
         } else if (action.kind === 'standard_save') {
           const {status, data} = await memoryCall(this.env, 'standard-put', {name: action.name, body: action.body});
           if (status === 409) {
@@ -666,6 +730,27 @@ export class JarvisMemory {
         await storage.put('doc', {...emptyMemory(), rev: (Number(current.rev) || 0) + 1});
         return Response.json({ok: true});
       }
+      if (op === 'status') {
+        const now = Date.now();
+        const doc = (await storage.get('doc')) || emptyMemory();
+        const profile = doc.profile && typeof doc.profile === 'object' ? doc.profile : {};
+        const items = Object.values(profile).reduce((sum, list) => sum + (Array.isArray(list) ? list.length : 0), 0);
+        const pending = [...await storage.list({prefix: 'pending:'})].map(([, value]) => value);
+        const stuck = pending.filter(v => v?.mode === 'agent' && now - (v.claimedAt ? v.claimedAt + AGENT_WORK_TIMEOUT_MS : v.at + AGENT_CLAIM_TIMEOUT_MS) > 0).length;
+        const agent = (await storage.get('agent:info')) || {};
+        return Response.json({
+          lastSeen: Number(await storage.get('agent:lastSeen')) || 0,
+          capabilities: agent.capabilities || [],
+          agentName: agent.name || '',
+          lastDone: Number(await storage.get('agent:lastDone')) || 0,
+          pending: pending.length,
+          stuck,
+          conversations: Number(doc.stats?.conversations) || 0,
+          items,
+          standards: ((await storage.get('standards')) || []).length,
+          devices: Object.keys((await storage.get('devices')) || {}).length,
+        });
+      }
       if (op === 'standards-list') {
         return Response.json({standards: (await storage.get('standards')) || []});
       }
@@ -767,6 +852,12 @@ export class JarvisMemory {
       if (op === 'agent-poll') {
         const now = Date.now();
         await storage.put('agent:lastSeen', now);
+        // 점검용: 사용 가능한 구독 모델과 기기 이름. 바뀔 때만 저장한다.
+        const capabilities = (Array.isArray(body.capabilities) ? body.capabilities : []).filter(id => Object.hasOwn(PROVIDER_NAMES, id));
+        const devices = body.device ? (await storage.get('devices')) || {} : {};
+        const info = {capabilities, name: body.device ? devices[body.device]?.name || '' : '기본 PC'};
+        const previous = (await storage.get('agent:info')) || {};
+        if (JSON.stringify(previous) !== JSON.stringify(info)) await storage.put('agent:info', info);
         const items = [...await storage.list({prefix: 'pending:'})]
           .filter(([, value]) => value?.mode === 'agent' && !value.claimedAt)
           .sort((a, b) => a[1].at - b[1].at);
@@ -782,6 +873,7 @@ export class JarvisMemory {
       }
       if (op === 'agent-done') {
         await storage.delete(`pending:${body.update_id}`);
+        await storage.put('agent:lastDone', Date.now());
         return Response.json({ok: true});
       }
       return Response.json({error: 'unknown_op'}, {status: 404});
