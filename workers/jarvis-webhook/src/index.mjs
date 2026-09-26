@@ -17,6 +17,10 @@ const PENDING_TTL_MS = 24 * 60 * 60 * 1000;
 const MAX_STANDARDS = 30;
 const MAX_STANDARD_BODY = 1500;
 const STANDARD_NAME = /^[\w가-힣 .·()+&-]{1,30}$/;
+// 파일 저장: 마지막 답변 전문(학습 기억 turns는 900자로 잘림)과 저장 요청 스냅숏.
+const MAX_LAST_CHARS = 12000;
+const MAX_SAVE_TITLE = 60;
+const SAVE_TTL_MS = 24 * 60 * 60 * 1000;
 const MEMORY_LABELS = {
   identity: '정체성·역할', personality: '성격·성향', tone_manner: '말투·톤앤매너',
   preferences: '선호 형식·작업 방식', direction: '목표·방향성', personal_history: '개인사',
@@ -32,6 +36,7 @@ export const HELP = [
   '• /today_tasks 오늘 할 일',
   '• /memory Jarvis가 기억하는 내용 보기',
   '• /status 또는 "점검"  PC 에이전트·모델·기억·Actions 상태 점검',
+  '• 저장해줘 (또는 "저장해줘: 제목")  직전 답변을 Google Drive "Jarvis 저장함"에 md 파일로 저장',
   '• 기억해: (내용)  직접 기억시키기',
   '• 기억 수정: (내용)  잘못 기억한 것 바로잡기',
   '• /forget_all 학습한 기억 전체 삭제 (작업 기준은 유지)',
@@ -145,6 +150,12 @@ export function classify(update, chatId) {
   if (/^\/memory(?:@\w+)?$/i.test(text)) return {kind: 'memory_show'};
   if (/^\/forget_all(?:@\w+)?$/i.test(text)) return {kind: 'memory_reset'};
   if (/^\/devices(?:@\w+)?$/i.test(text)) return {kind: 'devices_show'};
+  const save = /^(?:\/save(?:@\w+)?|저장(?:해줘|해|하기)?|파일로\s*저장(?:해줘)?)(?:\s*[:：]\s*([^\n]+))?$/i.exec(text);
+  if (save) {
+    const title = (save[1] || '').trim();
+    if (title.length > MAX_SAVE_TITLE) return {kind: 'save_invalid'};
+    return {kind: 'save_output', title};
+  }
   if (/^\/status(?:@\w+)?$/i.test(text) || /^(?:자비스\s*)?(?:상태\s*)?점검$/.test(text)) return {kind: 'status'};
   if (/^\/standards(?:@\w+)?$/i.test(text) || /^기준\s*목록$/.test(text)) return {kind: 'standard_list'};
 
@@ -257,6 +268,10 @@ function dispatchRequest(action) {
       approval_id: action.approval_id,
       telegram_update_id: action.update_id,
     }];
+  }
+  if (action.kind === 'save_output') {
+    // 제목·답변 원문은 공개 페이로드에 싣지 않는다. Actions가 JarvisMemory의 저장 스냅숏을 한 번만 꺼낸다.
+    return ['jarvis_save_output', {telegram_update_id: action.update_id}];
   }
   if (action.kind === 'general_query') {
     // 공개 저장소의 Actions 이벤트에 질문 원문을 싣지 않는다. 원문은 JarvisMemory에 잠시 보관한다.
@@ -498,6 +513,20 @@ async function handleMemoryApi(request, env, path) {
     const {status, data} = await memoryCall(env, 'put', parsed);
     return Response.json(data, {status});
   }
+  if (path === '/memory/last' && request.method === 'PUT') {
+    let parsed;
+    try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
+    if (typeof parsed?.a !== 'string' || !parsed.a.trim()) return new Response('Invalid answer', {status: 400});
+    const {status, data} = await memoryCall(env, 'last-put', {q: String(parsed.q || ''), a: parsed.a, source: String(parsed.source || '')});
+    return Response.json(data, {status});
+  }
+  if (path === '/memory/save/take' && request.method === 'POST') {
+    let parsed;
+    try { parsed = await request.json(); } catch { return new Response('Invalid JSON', {status: 400}); }
+    if (!Number.isSafeInteger(parsed?.update_id)) return new Response('Invalid update', {status: 400});
+    const {status, data} = await memoryCall(env, 'save-take', {update_id: parsed.update_id});
+    return Response.json(data, {status});
+  }
   if (path === '/memory/standards' && request.method === 'GET') {
     const {data} = await memoryCall(env, 'standards-list');
     return Response.json({standards: data.standards || []});
@@ -568,11 +597,23 @@ export class JarvisUpdate {
       try {
         const requestToDispatch = dispatchRequest(action);
         if (requestToDispatch) {
+          if (action.kind === 'save_output') {
+            // 재시도해도 같은 스냅숏을 쓴다(save-put은 멱등). 저장할 답변이 없으면 접수 안내 없이 끝낸다.
+            const stored = await memoryCall(this.env, 'save-put', {update_id: action.update_id, title: action.title});
+            if (stored.status === 404) {
+              await say('저장할 직전 답변이 없습니다. 질문에 답을 받은 뒤 "저장해줘"를 보내주세요.');
+              await this.ctx.storage.put('done', true);
+              await this.ctx.storage.setAlarm(Date.now() + 7 * 86400 * 1000);
+              return Response.json({ok: true, nothing: true});
+            }
+            if (stored.status !== 200) throw new Error('save_store_failed');
+          }
           if (!await this.ctx.storage.get('acknowledged')) {
             try {
               if (action.callback_id) await answer('승인을 확인했습니다. Gmail 초안 생성 요청을 접수합니다.');
               else if (action.kind === 'voice') await say('음성 명령을 접수했습니다. 인식 후 결과를 보내드리겠습니다.');
               else if (action.kind === 'general_query') await say('질문을 받았습니다. 답변을 준비하고 있습니다.');
+              else if (action.kind === 'save_output') await say('직전 답변을 Google Drive에 저장합니다.');
               else await say('요청을 접수했습니다. 준비되는 대로 결과를 보내드리겠습니다.');
               await this.ctx.storage.put('acknowledged', true);
             } catch {
@@ -641,6 +682,8 @@ export class JarvisUpdate {
         } else if (action.kind === 'standard_delete') {
           const {status, data} = await memoryCall(this.env, 'standard-delete', {name: action.name});
           await say(status === 200 ? `작업 기준 "${data.name}"을 삭제했습니다.` : `"${action.name}" 기준이 없습니다. /standards 로 목록을 확인하세요.`);
+        } else if (action.kind === 'save_invalid') {
+          await say(`저장 제목은 ${MAX_SAVE_TITLE}자 이내 한 줄로 적어주세요. 예) 저장해줘: 협찬 거절 답장`);
         } else if (action.kind === 'standard_invalid') {
           await say([
             `기준 형식을 이해하지 못했습니다. 이름은 30자 이내, 본문은 ${MAX_STANDARD_BODY}자 이내입니다.`,
@@ -750,6 +793,34 @@ export class JarvisMemory {
           standards: ((await storage.get('standards')) || []).length,
           devices: Object.keys((await storage.get('devices')) || {}).length,
         });
+      }
+      if (op === 'last-put') {
+        await storage.put('last', {
+          q: String(body.q || '').slice(0, MAX_QUERY_CHARS),
+          a: String(body.a || '').slice(0, MAX_LAST_CHARS),
+          source: String(body.source || '').slice(0, 80),
+          at: new Date().toISOString(),
+        });
+        return Response.json({ok: true});
+      }
+      if (op === 'save-put') {
+        // 요청 시점의 직전 답변을 고정한다. 그 사이 새 질문이 와도 요청한 답변이 저장된다.
+        const now = Date.now();
+        for (const [key, value] of await storage.list({prefix: 'save:'})) if (now - (Number(value?.requestedAt) || 0) > SAVE_TTL_MS) await storage.delete(key);
+        if (!Number.isSafeInteger(body.update_id)) return Response.json({error: 'invalid'}, {status: 400});
+        const key = `save:${body.update_id}`;
+        if (await storage.get(key)) return Response.json({ok: true});
+        const last = await storage.get('last');
+        if (!last?.a) return Response.json({error: 'nothing'}, {status: 404});
+        await storage.put(key, {...last, title: String(body.title || '').slice(0, MAX_SAVE_TITLE), requestedAt: now});
+        return Response.json({ok: true});
+      }
+      if (op === 'save-take') {
+        const key = `save:${body.update_id}`;
+        const value = await storage.get(key);
+        if (!value) return Response.json({error: 'not_found'}, {status: 404});
+        await storage.delete(key);
+        return Response.json({save: value});
       }
       if (op === 'standards-list') {
         return Response.json({standards: (await storage.get('standards')) || []});

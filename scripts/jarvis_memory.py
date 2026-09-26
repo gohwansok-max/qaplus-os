@@ -246,6 +246,22 @@ class MemoryClient:
         standards = response.json().get("standards")
         return standards if isinstance(standards, list) else []
 
+    def save_last(self, query: str, answer: str, source: str = "actions") -> None:
+        """"저장해줘"용 직전 답변 전문을 보관한다(학습 기억 turns는 900자로 잘린다)."""
+        response = self._request("PUT", "/memory/last", json={"q": query, "a": answer, "source": source})
+        if response.status_code != 200:
+            raise RuntimeError(f"직전 답변 보관 실패 ({response.status_code})")
+
+    def take_save(self, update_id: int) -> dict[str, Any] | None:
+        """Worker가 저장 요청 시점에 고정한 답변 스냅숏을 한 번만 꺼낸다."""
+        response = self._request("POST", "/memory/save/take", json={"update_id": int(update_id)})
+        if response.status_code == 404:
+            return None
+        if response.status_code != 200:
+            raise RuntimeError(f"저장 요청 조회 실패 ({response.status_code})")
+        save = response.json().get("save")
+        return save if isinstance(save, dict) else None
+
     def take_pending(self, update_id: int) -> str:
         """Worker가 보관해 둔 질문 원문을 한 번만 꺼낸다(공개 Actions 페이로드에 원문을 싣지 않기 위함)."""
         response = self._request("POST", "/memory/pending/take", json={"update_id": int(update_id)})

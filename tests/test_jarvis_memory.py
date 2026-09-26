@@ -38,6 +38,8 @@ class FakeWorker:
     def __init__(self, doc=None, pending=None, conflicts=0, fail_load=False, standards=None):
         self.doc = doc or empty_memory()
         self.standards = standards if standards is not None else []
+        self.last = None
+        self.saves_pending = {}
         self.pending = dict(pending or {})
         self.conflicts = conflicts
         self.fail_load = fail_load
@@ -62,6 +64,12 @@ class FakeWorker:
             self.doc["rev"] = json["expected_rev"] + 1
             self.saves += 1
             return FakeResponse(200, {"rev": self.doc["rev"]})
+        if path == "/memory/last" and method == "PUT":
+            self.last = copy.deepcopy(json)
+            return FakeResponse(200, {"ok": True})
+        if path == "/memory/save/take":
+            save = self.saves_pending.pop(json["update_id"], None)
+            return FakeResponse(200, {"save": save}) if save else FakeResponse(404)
         if path == "/memory/standards" and method == "GET":
             if self.fail_load:
                 return FakeResponse(503)

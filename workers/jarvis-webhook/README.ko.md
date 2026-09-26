@@ -345,3 +345,24 @@ Worker가 LLM 호출 없이 바로 답한다. 질문·기억 원문은 넣지 �
 
 - Actions 최근 실행은 `JARVIS_DISPATCH_TOKEN`으로 조회한다. fine-grained 토큰이면 해당 저장소에 **Actions: Read** 권한을 추가해야 하며, 없으면 "조회 불가"로 표시되고 나머지 항목은 정상 표시된다.
 - 모델 상태는 PC 에이전트가 새 버전이 아니어도 기존 폴링 값(`capabilities`)으로 표시된다. Worker만 배포하면 된다.
+
+## 12. 결과물 파일 저장 (`저장해줘`)
+
+직전 답변을 Google Drive의 `Jarvis 저장함` 폴더에 md 파일로 저장하고 링크를 보낸다.
+
+| 명령 | 동작 |
+|---|---|
+| `저장해줘`, `저장`, `/save`, `파일로 저장해줘` | 직전 답변 저장. 파일명은 `YYYY-MM-DD_HHMM_질문앞부분.md` |
+| `저장해줘: 주간 보고` | 제목 지정(60자 이내 한 줄) |
+
+- 흐름: 답변 직후 PC 에이전트·Actions가 화면에 보낸 답변 전문(최대 12,000자)을 `PUT /memory/last`로 보관 → `저장해줘` 시 Worker가 그 시점 답변을 `save:<update_id>`로 고정 → `jarvis_save_output` dispatch(페이로드에는 update ID만) → Actions가 `POST /memory/save/take`로 한 번만 꺼내 Drive에 업로드.
+- 저장 요청 뒤 새 질문이 와도 요청 시점의 답변이 저장된다. 저장 스냅숏은 24시간 뒤 정리된다.
+- 권한: OAuth 범위 `drive.file` 하나. Jarvis가 만든 폴더·파일만 접근하며 기존 Drive 파일은 읽거나 수정할 수 없다. 코드 allowlist는 폴더 검색·생성과 업로드뿐(삭제·공유 없음). Gmail 토큰은 범위를 넓히지 않고 별도 토큰을 쓴다.
+
+### 설정 (1회)
+1. Google Cloud Console(Jarvis Gmail OAuth 클라이언트 프로젝트)에서 **Google Drive API** 사용 설정, OAuth 동의 화면 범위에 `drive.file` 추가
+2. 본인 PC에서 `python scripts/get_jarvis_drive_refresh_token.py` 실행 → 브라우저 로그인·승인
+3. 출력된 값을 GitHub Actions Secret `JARVIS_DRIVE_REFRESH_TOKEN`으로 등록
+4. (선택) 폴더 이름을 바꾸려면 Actions 환경변수 `JARVIS_DRIVE_FOLDER_NAME`
+
+토큰이 없으면 `저장해줘`에 "Google Drive 저장이 아직 설정되지 않았습니다" 안내만 보내고 다른 기능은 영향이 없다.

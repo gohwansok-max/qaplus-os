@@ -514,3 +514,41 @@ test('/status는 에이전트 폴링·완료 기록과 Actions 최근 실행을 
     globalThis.fetch = original;
   }
 });
+
+test('저장 명령을 분류하고 제목은 60자 한 줄까지만 받는다', () => {
+  for (const text of ['저장해줘', '저장', '/save', '파일로 저장해줘']) assert.deepEqual(classify(textUpdate(text), '42'), {kind: 'save_output', title: ''}, text);
+  assert.deepEqual(classify(textUpdate('저장해줘: 협찬 거절 답장'), '42'), {kind: 'save_output', title: '협찬 거절 답장'});
+  assert.equal(classify(textUpdate(`저장해줘: ${'가'.repeat(61)}`), '42').kind, 'save_invalid');
+  assert.equal(classify(textUpdate('저장 온도 기준 알려줘'), '42').kind, 'general_query');
+});
+
+test('저장해줘는 요청 시점의 직전 답변 전문을 고정하고, 원문 없이 dispatch하며, Actions가 한 번만 꺼낸다', async () => {
+  const calls = captureFetch();
+  try {
+    const env = fullEnv({JARVIS_AGENT_TOKEN: AGENT_TOKEN});
+    await worker.fetch(telegramRequest(961, '저장해줘'), env);
+    assert.match(calls.telegram.at(-1), /저장할 직전 답변이 없습니다/);
+    assert.equal(calls.github.length, 0);
+
+    const full = '가'.repeat(5000);
+    const saved = await worker.fetch(new Request('https://test/memory/last', {
+      method: 'PUT', headers: {Authorization: `Bearer ${AGENT_TOKEN}`}, body: JSON.stringify({q: '긴 보고서 써줘', a: full, source: 'agent'}),
+    }), env);
+    assert.equal(saved.status, 200);
+
+    await worker.fetch(telegramRequest(962, '저장해줘: 주간 보고'), env);
+    assert.match(calls.telegram.at(-1), /Google Drive에 저장합니다/);
+    assert.deepEqual(calls.github.at(-1), {event_type: 'jarvis_save_output', client_payload: {telegram_update_id: 962}});
+
+    // 저장 요청 뒤 새 답변이 와도 요청 시점 답변이 저장된다.
+    await memoryApi(env, '/memory/last', {method: 'PUT', body: JSON.stringify({q: '다음 질문', a: '다른 답'})});
+    const take = await memoryApi(env, '/memory/save/take', {method: 'POST', body: JSON.stringify({update_id: 962})});
+    const {save} = await take.json();
+    assert.equal(save.a, full);
+    assert.equal(save.title, '주간 보고');
+    assert.equal((await memoryApi(env, '/memory/save/take', {method: 'POST', body: JSON.stringify({update_id: 962})})).status, 404);
+    assert.equal((await memoryApi(env, '/memory/last', {method: 'PUT', body: JSON.stringify({a: 'x'})}, 'bad')).status, 403);
+  } finally {
+    calls.restore();
+  }
+});

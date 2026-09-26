@@ -195,3 +195,18 @@ test('작업 기준 조회가 실패해도 기준 없이 답한다', async () =>
   assert.equal(result.ok, true);
   assert.doesNotMatch(base.state.replies[0].text, /기준:/);
 });
+
+test('답변을 보낸 뒤 "저장해줘"용으로 화면에 보낸 답변 전문을 보관하고, 실패해도 처리는 계속한다', async () => {
+  const saved = [];
+  const api = {...fakeApi(), saveLast: async last => { saved.push(last); }};
+  const long = '가'.repeat(2000);
+  const providers = {claude: async ({system}) => ({text: system.startsWith('너는 개인 비서의 학습 모듈') ? '{"updates":{}}' : long, model: 'sonnet'})};
+  await processJob({update_id: 21, text: '긴 보고서 써줘'}, {api, providers});
+  assert.equal(saved.length, 1);
+  assert.equal(saved[0].q, '긴 보고서 써줘');
+  assert.ok(saved[0].a.startsWith(long));
+  assert.match(saved[0].a, /Claude\(구독\)/);
+
+  const failing = {...fakeApi(), saveLast: async () => { throw new Error('last 503'); }};
+  assert.equal((await processJob({update_id: 22, text: '질문'}, {api: failing, providers})).ok, true);
+});

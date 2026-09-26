@@ -36,6 +36,11 @@ export function createApi({workerUrl, agentToken, fetchImpl = fetch}) {
       if (status !== 200) throw new Error(`standards ${status}`);
       return Array.isArray(data.standards) ? data.standards : [];
     },
+    // "저장해줘"용 직전 답변 전문. 학습 기억(turns)은 900자로 잘리므로 따로 보관한다.
+    saveLast: async last => {
+      const {status} = await call('PUT', '/memory/last', last);
+      if (status !== 200) throw new Error(`last ${status}`);
+    },
     saveMemory: async doc => {
       const {status, data} = await call('PUT', '/memory', {expected_rev: doc.rev, doc});
       if (status === 409) return false;
@@ -98,6 +103,7 @@ export async function processJob(job, {api, providers, log = () => {}, learnMode
 
   const status = await api.reply(job.update_id, answerText, false);
   if (status === 409) { log({event: 'reply_rejected_fallback_took_over', update_id: job.update_id}); return {ok: false}; }
+  try { await api.saveLast?.({q: plan.query, a: answerText, source: 'agent'}); } catch { log({event: 'last_save_failed'}); }
 
   let learning = {updates: {}};
   if (providers.claude || providers.codex) {

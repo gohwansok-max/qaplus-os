@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from jarvis_ai import OpenAIClient, redact_external_text
+from jarvis_drive import DriveClient, build_markdown
 from jarvis_gmail import GmailClient, MailMessage, MESSAGE_ID_RE
 from jarvis_memory import MemoryClient, apply_update, empty_memory, match_standards, persona_system_prompt, profile_summary
 from jarvis_telegram import TelegramClient, draft_keyboard, masked_sender, verify_draft_callback
@@ -22,6 +23,7 @@ from jarvis_telegram import TelegramClient, draft_keyboard, masked_sender, verif
 KST = timezone(timedelta(hours=9), name="KST")
 SUPPORTED_ACTIONS = {
     "briefing", "today_tasks", "jarvis_command", "jarvis_voice_command", "jarvis_create_draft", "jarvis_general_query",
+    "jarvis_save_output",
 }
 
 
@@ -145,6 +147,10 @@ def run_general_query(payload: dict[str, Any], ai: OpenAIClient, telegram: Teleg
     if memory is None:
         return
     try:
+        memory.save_last(query, answer)
+    except Exception:
+        print("::warning::직전 답변 보관에 실패했습니다(저장해줘 기능만 영향).")
+    try:
         learning = ai.extract_learning(query, answer, profile_summary(doc))
     except Exception:
         learning = {}
@@ -165,6 +171,27 @@ def run_general_query(payload: dict[str, Any], ai: OpenAIClient, telegram: Teleg
     if new_items:
         lines = "\n".join(f"- {text}" for text in new_items[:5])
         telegram.send_message(f"새로 기억한 내용:\n{lines}\n\n/memory 로 전체 확인, 틀린 내용은 '기억 수정: ...'으로 알려주세요.")
+
+
+def run_save_output(payload: dict[str, Any], telegram: TelegramClient, memory: MemoryClient | None, drive: Any = None) -> None:
+    """저장해줘: Worker가 고정한 직전 답변을 Google Drive 'Jarvis 저장함'에 md 파일로 만든다."""
+    if memory is None:
+        telegram.send_message("기억 저장소(JARVIS_WORKER_URL)가 설정되지 않아 저장할 답변을 찾지 못했습니다.")
+        return
+    save = memory.take_save(int(payload.get("telegram_update_id", 0)))
+    if not save or not str(save.get("a", "")).strip():
+        telegram.send_message("저장할 답변을 찾지 못했습니다(이미 저장했거나 24시간이 지났습니다). 다시 \"저장해줘\"를 보내주세요.")
+        return
+    if drive is None:
+        try:
+            drive = DriveClient()
+        except Exception:
+            telegram.send_message("Google Drive 저장이 아직 설정되지 않았습니다. README의 'JARVIS_DRIVE_REFRESH_TOKEN' 설정을 확인해주세요.")
+            return
+    filename, content = build_markdown(save, datetime.now(timezone.utc))
+    created = drive.upload_markdown(filename, content)
+    link = f"\n{created['link']}" if created.get("link") else ""
+    telegram.send_message(f"Google Drive '{drive.folder_name}'에 저장했습니다.\n{created['name']}{link}")
 
 
 def run_create_draft(
@@ -197,6 +224,7 @@ def run_action(
     telegram: TelegramClient,
     callback_secret: str,
     memory: MemoryClient | None = None,
+    drive: Any = None,
 ) -> None:
     if action not in SUPPORTED_ACTIONS:
         raise ValueError("지원하지 않는 Jarvis 작업입니다.")
@@ -218,6 +246,8 @@ def run_action(
         run_create_draft(payload, gmail, ai, telegram, callback_secret)
     elif action == "jarvis_general_query":
         run_general_query(payload, ai, telegram, memory)
+    elif action == "jarvis_save_output":
+        run_save_output(payload, telegram, memory, drive)
 
 
 def _event_from_environment() -> tuple[str, dict[str, Any]]:
