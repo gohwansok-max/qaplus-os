@@ -59,10 +59,14 @@ export function makeProviders({commands = resolveCommands(), runner = runCli, wo
   const providers = {};
 
   if (commands.claude) {
-    providers.claude = async ({system, prompt, model, timeoutMs = 180000}) => {
+    providers.claude = async ({system, prompt, model, webSearch = false, timeoutMs = webSearch ? 240000 : 180000}) => {
+      // 최신 정보 질문에만 웹 검색·웹 조회 도구를 연다(읽기 전용). 파일·명령 도구는 항상 닫힌다.
+      const tools = webSearch
+        ? ['--max-turns', '8', '--tools', 'WebSearch,WebFetch', '--allowedTools', 'WebSearch', 'WebFetch']
+        : ['--max-turns', '1', '--tools', ''];
       const args = [
-        ...commands.claude.prefix, '-p', '--output-format', 'json', '--max-turns', '1',
-        '--model', model || config.claudeModel || 'sonnet', '--tools', '', '--system-prompt', system,
+        ...commands.claude.prefix, '-p', '--output-format', 'json', ...tools,
+        '--model', model || config.claudeModel || 'sonnet', '--system-prompt', system,
         // 사용자 전역 설정(~/.claude/settings.json)의 모델 별칭 재지정·훅을 적용하지 않는다.
         // 전역 설정은 sonnet→opus, haiku→크레딧 필요 모델로 바꿔 Pro 한도를 빨리 소모하거나 429를 낸다.
         '--setting-sources', 'project,local',
