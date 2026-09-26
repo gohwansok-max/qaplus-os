@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-27",
+    "topic": "SIPOC 프로세스분석",
+    "title": "식품공장 공정 흐름이 한눈에 보이는 SIPOC 분석법: 원료부터 출하까지 품질 체인(QCM) 완벽 구축 실무 가이드",
+    "file": "outputs/2026/09/27/[블로그최종]_SIPOC_프로세스분석.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6504602903773803820",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
