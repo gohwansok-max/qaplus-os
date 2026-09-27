@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-28",
+    "topic": "QC7가지기법",
+    "title": "교과서 통계는 잊어라: 식품공장 품질 실무자가 매일 쓰는 'QC 7가지 기법' 실전 적용 가이드",
+    "file": "outputs/2026/09/28/[블로그최종]_QC7가지기법.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6008681926035802218",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
