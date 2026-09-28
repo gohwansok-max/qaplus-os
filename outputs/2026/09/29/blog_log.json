@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-29",
+    "topic": "FATTOM 미생물증식조건",
+    "title": "FATTOM 미생물 증식 6가지 조건 완벽 정리: 교과서 이론을 현장 HACCP 기준값으로 바꾸는 실무 가이드",
+    "file": "outputs/2026/09/29/[블로그최종]_FATTOM_미생물증식조건.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4087917478229013313",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
