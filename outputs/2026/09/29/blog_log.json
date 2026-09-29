@@ -18,5 +18,25 @@
       "image_prompt": "realistic-cover-only",
       "editor": "Gemini(gemini-3.8-flash)"
     }
+  },
+  {
+    "date": "2026-09-29",
+    "topic": "식품 표시사항 원재료명 원산지 영양성분 실무 가이드: 표시 오류로 재작업 막기",
+    "title": "포장지 전량 폐기 막는 식품 표시사항 실무 가이드: 원재료·원산지·영양성분 완전 정복",
+    "file": "outputs/2026/09/29/[블로그최종]_식품_표시사항_원재료명_원산지_영양성분_실무_가이드__표시_오류로_재작업_막기.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4143087494311284237",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
   }
 ]
