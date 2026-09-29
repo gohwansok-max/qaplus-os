@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-09-30",
+    "topic": "국내표시대상 알레르기19종 실사형",
+    "title": "국내 식품 알레르기 19종 총정리: HACCP·식약처 실사 통과를 위한 현장 교차오염 방지 및 세척 밸리데이션 실무 가이드",
+    "file": "outputs/2026/09/30/[블로그최종]_국내표시대상_알레르기19종_실사형.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "5187473603049631370",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
