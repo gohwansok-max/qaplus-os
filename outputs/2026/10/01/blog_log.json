@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-01",
+    "topic": "식품산업 QA QC 커리어",
+    "title": "식품 품질관리(QC)에서 품질보증(QA)으로: 20년 차가 밝히는 현실 커리어 로드맵 및 트러블슈팅 가이드",
+    "file": "outputs/2026/10/01/[블로그최종]_식품산업_QA_QC_커리어.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6555503985788705667",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
