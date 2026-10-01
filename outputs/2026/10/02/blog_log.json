@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-02",
+    "topic": "배치공정 연속공정 비교",
+    "title": "식품공장 배치공정 vs 연속공정: 차이점부터 HACCP 로트 분할·CCP 격리(Hold) 실무까지 총정리",
+    "file": "outputs/2026/10/02/[블로그최종]_배치공정_연속공정_비교.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3626271763410370918",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
