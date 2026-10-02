@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-03",
+    "topic": "식품안전 오해와진실",
+    "title": "\"냉동하면 균 죽는다?\" 20년 차 QA가 팩트체크하는 식품안전 오해와 진실 BEST 5",
+    "file": "outputs/2026/10/03/[블로그최종]_식품안전_오해와진실.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "5938816773235081609",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
