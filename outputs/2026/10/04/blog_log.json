@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-04",
+    "topic": "CIP시스템 작동원리",
+    "title": "배관을 뜯지 않고 완벽하게 세척하는 CIP 시스템 작동원리와 4대 핵심 관리지표 (TACT)",
+    "file": "outputs/2026/10/04/[블로그최종]_CIP시스템_작동원리.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8107454610205607844",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
