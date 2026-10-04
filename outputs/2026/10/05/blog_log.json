@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-05",
+    "topic": "Sanitizer Disinfectant 비교",
+    "title": "식품공장 살균제(Sanitizer) vs 소독제(Disinfectant) 차이: 5-Log와 6-Log 기준 및 구역별 위생 관리 프로토콜",
+    "file": "outputs/2026/10/05/[블로그최종]_Sanitizer_Disinfectant_비교.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "7548027716597919765",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
