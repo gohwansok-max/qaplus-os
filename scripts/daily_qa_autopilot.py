@@ -1268,66 +1268,11 @@ def mix_scene_audio_with_sfx(tts_file, duration, scene_id):
     subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return mixed_audio if os.path.exists(mixed_audio) else tts_file
 
-def run_daily_autopilot(custom_topic=None):
-    print("==================================================================")
-    print("  🚀 [큐에이플러스 AI CEO OS] 쇼츠 영상 5대 고도화 엔진 가동")
-    print("==================================================================")
-    
-    sfx_whoosh = os.path.join(AUDIO_DIR, "sfx_whoosh.wav")
-    if not os.path.exists(sfx_whoosh):
-        try:
-            from generate_audio_assets import generate_whoosh, generate_ding, generate_pop, generate_ambient_bgm
-            generate_whoosh(); generate_ding(); generate_pop(); generate_ambient_bgm()
-        except Exception:
-            pass
+USE_MOTION = os.environ.get("QA_RENDERER", "remotion").lower() != "legacy"
 
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
-    next_item = None
-    scenes = None
-    topic_name = ""
 
-    if custom_topic:
-        topic_name = custom_topic
-        print(f"\n[사용자 지정 토픽 수신] {topic_name}")
-        try:
-            scenes = generate_live_web_scenes_for_custom_topic(topic_name)
-        except Exception as e:
-            # 실시간 웹 검색/LLM 생성이 실패하면 방송을 멈추는 대신 고정 템플릿으로
-            # 대체한다. 단, 이 경우 캡션에서 바로 티가 나도록 로그를 남긴다.
-            print(f"  [실시간 웹 대본 실패] 고정 템플릿으로 대체합니다: {e}")
-            scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
-    else:
-        with open(QUEUE_FILE, "r", encoding="utf-8") as f:
-            queue_data = json.load(f)
-            
-        for item in queue_data["topics"]:
-            if item["status"] == "pending":
-                next_item = item
-                break
-                
-        if not next_item:
-            print("[!] 모든 대기 토픽이 완료되었습니다. 큐를 리셋하여 1번부터 순환합니다.")
-            for item in queue_data["topics"]:
-                item["status"] = "pending"
-            next_item = queue_data["topics"][0]
-
-        topic_id = next_item["id"]
-        topic_name = next_item["topic"]
-        print(f"\n[큐에서 선택된 오늘의 토픽] ID #{topic_id}: {topic_name}")
-
-        # 큐의 95개 토픽 중 13~95번은 TOPIC_TEMPLATES에 매핑이 없어 항상 같은
-        # 고정 문구로 나갔었다. /make와 동일하게 실시간 웹검색+LLM을 우선 시도하고,
-        # 실패할 때만 (12개짜리) 사전 제작 템플릿 → 그래도 없으면 범용 폴백 순으로 내려간다.
-        try:
-            scenes = generate_live_web_scenes_for_custom_topic(topic_name)
-        except Exception as e:
-            print(f"  [실시간 웹 대본 실패] 사전 제작 템플릿으로 대체합니다: {e}")
-            template_data = TOPIC_TEMPLATES.get(topic_id)
-            if template_data:
-                scenes = template_data["scenes"]
-            else:
-                scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
-
+def _render_legacy(scenes, topic_name, today_str):
+    """기존 PIL+FFmpeg 정지이미지 렌더러 (QA_RENDERER=legacy 일 때만 사용)."""
     # 1. TTS Voiceover
     audio_files = asyncio.run(generate_tts_for_scenes(scenes))
     
@@ -1415,6 +1360,78 @@ def run_daily_autopilot(custom_topic=None):
             
     print(f"  🎉 [완성] 5대 고도화 마스터 쇼츠 MP4: {master_mp4}")
     
+    return master_mp4, out_filename, scenes
+
+
+def run_daily_autopilot(custom_topic=None):
+    print("==================================================================")
+    print("  🚀 [큐에이플러스 AI CEO OS] 쇼츠 영상 5대 고도화 엔진 가동")
+    print("==================================================================")
+    
+    sfx_whoosh = os.path.join(AUDIO_DIR, "sfx_whoosh.wav")
+    if not os.path.exists(sfx_whoosh):
+        try:
+            from generate_audio_assets import generate_whoosh, generate_ding, generate_pop, generate_ambient_bgm
+            generate_whoosh(); generate_ding(); generate_pop(); generate_ambient_bgm()
+        except Exception:
+            pass
+
+    today_str = datetime.date.today().strftime("%Y-%m-%d")
+    next_item = None
+    scenes = None
+    topic_name = ""
+
+    if custom_topic:
+        topic_name = custom_topic
+        print(f"\n[사용자 지정 토픽 수신] {topic_name}")
+        try:
+            scenes = None if USE_MOTION else generate_live_web_scenes_for_custom_topic(topic_name)
+        except Exception as e:
+            # 실시간 웹 검색/LLM 생성이 실패하면 방송을 멈추는 대신 고정 템플릿으로
+            # 대체한다. 단, 이 경우 캡션에서 바로 티가 나도록 로그를 남긴다.
+            print(f"  [실시간 웹 대본 실패] 고정 템플릿으로 대체합니다: {e}")
+            scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
+    else:
+        with open(QUEUE_FILE, "r", encoding="utf-8") as f:
+            queue_data = json.load(f)
+            
+        for item in queue_data["topics"]:
+            if item["status"] == "pending":
+                next_item = item
+                break
+                
+        if not next_item:
+            print("[!] 모든 대기 토픽이 완료되었습니다. 큐를 리셋하여 1번부터 순환합니다.")
+            for item in queue_data["topics"]:
+                item["status"] = "pending"
+            next_item = queue_data["topics"][0]
+
+        topic_id = next_item["id"]
+        topic_name = next_item["topic"]
+        print(f"\n[큐에서 선택된 오늘의 토픽] ID #{topic_id}: {topic_name}")
+
+        # 큐의 95개 토픽 중 13~95번은 TOPIC_TEMPLATES에 매핑이 없어 항상 같은
+        # 고정 문구로 나갔었다. /make와 동일하게 실시간 웹검색+LLM을 우선 시도하고,
+        # 실패할 때만 (12개짜리) 사전 제작 템플릿 → 그래도 없으면 범용 폴백 순으로 내려간다.
+        try:
+            scenes = None if USE_MOTION else generate_live_web_scenes_for_custom_topic(topic_name)
+        except Exception as e:
+            print(f"  [실시간 웹 대본 실패] 사전 제작 템플릿으로 대체합니다: {e}")
+            template_data = TOPIC_TEMPLATES.get(topic_id)
+            if template_data:
+                scenes = template_data["scenes"]
+            else:
+                scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
+
+    if USE_MOTION:
+        # Remotion 모션그래픽 렌더 — 40~60초, 씬 6종, Edge-TTS 유지
+        from qa_motion_shorts import build_motion_short
+        _res = build_motion_short(topic_name)
+        master_mp4, out_filename, scenes = _res['path'], _res['filename'], _res['scenes']
+        print(f"  🎉 [완성] 모션그래픽 쇼츠 {_res['duration_sec']:.1f}s: {master_mp4}")
+    else:
+        master_mp4, out_filename, scenes = _render_legacy(scenes, topic_name, today_str)
+
     # 5. Update Queue Status if it came from Queue
     # 렌더링에 5~10분이 걸리는 동안 다른 실행이 큐 파일을 먼저 갱신했을 수 있으므로,
     # 실행 시작 시점에 메모리로 읽어둔 queue_data를 그대로 덮어쓰지 않고

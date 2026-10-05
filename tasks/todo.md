@@ -51,3 +51,10 @@
 - [x] 텔레그램에 최종 HTML 파일 직접 첨부
 - [x] Google Drive 날짜별 아카이브 동기화 스크립트·30분 예약 등록기 추가
 - [ ] 운영 활성화: Blogger OAuth 시크릿 4개 등록 후 실제 임시저장→버튼 발행 1회 검증
+
+## 2026-10-05 모션그래픽 쇼츠 자동화
+- [x] Remotion 템플릿 6종(hook/stat/flow/compare/checklist/outro) + 렌더 검증
+- [x] 대본 엔진(구독형 Claude/ChatGPT CLI → CHIPSUB 폴백) + 검증기
+- [x] 워크플로우 교체(Node·폰트·Chrome 라이브러리·CLI 설치)
+- [ ] 운영 활성화: GitHub Secret `CLAUDE_CODE_OAUTH_TOKEN`(`claude setup-token`) 등록 → workflow_dispatch 1회 실제 실행(Edge-TTS·LLM 실호출 검증)
+- [ ] (선택) `CODEX_AUTH_JSON` 등록 시 ChatGPT 구독 폴백 활성

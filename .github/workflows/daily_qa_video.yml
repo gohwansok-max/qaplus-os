@@ -42,11 +42,34 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 시스템 필수 패키지 설치 (FFmpeg & 한글 나눔폰트)
+      - name: Node 22 설정 (Remotion 모션그래픽 렌더러)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: qa-shorts/package-lock.json
+
+      - name: 시스템 필수 패키지 설치 (FFmpeg · 한글 폰트 · Chrome 구동 라이브러리)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg fonts-nanum fonts-nanum-extra
+          sudo apt-get install -y ffmpeg fonts-nanum fonts-nanum-extra fonts-noto-cjk \
+            libnss3 libdbus-1-3 libatk1.0-0 libatk-bridge2.0-0 libgbm1 libasound2t64 \
+            libxrandr2 libxkbcommon-x11-0 libxfixes3 libxcomposite1 libxdamage1 libcups2 libpango-1.0-0
           fc-cache -fv
+
+      - name: Remotion 의존성 설치 및 브라우저 준비
+        working-directory: qa-shorts
+        run: |
+          npm ci --no-audit --no-fund
+          npx remotion browser ensure
+
+      - name: 구독형 LLM CLI 설치 (Claude Code / Codex — 시크릿이 있는 것만)
+        env:
+          HAS_CLAUDE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+          HAS_CODEX: ${{ secrets.CODEX_AUTH_JSON != '' }}
+        run: |
+          if [ "$HAS_CLAUDE" = "true" ]; then npm install -g @anthropic-ai/claude-code; fi
+          if [ "$HAS_CODEX" = "true" ]; then npm install -g @openai/codex; fi
 
       - name: 파이썬 라이브러리 설치 (Pillow, Edge-TTS, Requests)
         run: |
@@ -69,6 +92,13 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           # 칩섭을 우선 사용합니다. 값은 로그에 남지 않는 GitHub Secret으로만 전달합니다.
+          # ── 대본 생성 LLM 우선순위: Claude 구독 → ChatGPT 구독 → 칩섭(CHIPSUB_API) → 로컬 대체 ──
+          # CLAUDE_CODE_OAUTH_TOKEN : 로컬에서 `claude setup-token` 으로 발급한 구독용 토큰
+          # CODEX_AUTH_JSON         : 로컬 ~/.codex/auth.json 파일 내용 전체 (ChatGPT 로그인 상태)
+          QA_RENDERER: remotion
+          QA_LLM_PROVIDERS: claude_cli,codex_cli,cheapai
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CODEX_AUTH_JSON: ${{ secrets.CODEX_AUTH_JSON }}
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
           CHEAPAI_BASE_URL: https://api.cheapai.im/v1
           CHEAPAI_STORY_MODEL: gpt-5.6-sol

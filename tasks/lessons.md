@@ -128,3 +128,10 @@
 - 이미지 3장·고유 URL·한글 alt·내부코드 0건을 코드로 검사하고, 실패 시 Blogger 단계로 넘어가지 않는다.
 - 공개 발행은 텔레그램 버튼으로 사람이 승인한 경우에만 수행한다.
 - Telegram에는 파일명만 알리지 않고 실제 HTML 파일을 첨부한다.
+
+### WIN: 2026-10-05 — 쇼츠 렌더러를 정지이미지(PIL+FFmpeg, 3.25fps)에서 Remotion 모션그래픽으로 교체
+
+- 원인: 12장 키프레임을 이어붙인 슬라이드쇼라 모션 불가, 대본도 고정 템플릿(핵심 체크포인트/선배 조언/요약).
+- 해결: `qa-shorts/`(Remotion, 씬 6종) + `scripts/qa_motion_shorts.py`(대본 JSON→Edge-TTS→렌더, 40~60초 게이트).
+- 규칙: stat(수치) 씬은 공식 출처 문맥에 있는 숫자만 허용 / 렌더 시 외부 폰트 다운로드 금지(시스템 `fonts-noto-cjk`).
+- LLM 우선순위: Claude 구독(CLAUDE_CODE_OAUTH_TOKEN) → ChatGPT 구독(CODEX_AUTH_JSON) → CHIPSUB_API → 로컬 대체. 롤백: `QA_RENDERER=legacy`.
