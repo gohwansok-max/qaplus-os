@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-06",
+    "topic": "FSMS 심사실패 5대원인",
+    "title": "FSMS 인증 심사 실패 5대 원인과 방어 전략: 20년 차 품질팀장이 밝히는 탈락 방지 실전 가이드",
+    "file": "outputs/2026/10/06/[블로그최종]_FSMS_심사실패_5대원인.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8471098740124545767",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
