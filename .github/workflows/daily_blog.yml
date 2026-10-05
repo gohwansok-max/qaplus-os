@@ -71,9 +71,12 @@ jobs:
       # ------------------------------------------------------------
 
       - name: 저장소 체크아웃
+        # [2026-10-05] 숏츠 워크플로(daily_qa_video.yml)에서 체크아웃이 45분간 멈춘 사례 → 동일 보강.
+        # 단계 타임아웃 5분 + 얕은 clone. (scripts/에 git 이력 의존 코드 없음 확인)
+        timeout-minutes: 5
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
 
       - name: 최신 main 상태 동기화
