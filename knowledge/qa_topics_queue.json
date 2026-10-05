@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-05 11:41:37",
+  "last_run": "2026-10-05 22:27:26",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -592,7 +592,8 @@
       "topic": "EQ010 금속검출기 Xray검사기 비교",
       "filename": "74_QA+_V2_EQ010_금속검출기_Xray검사기_비교_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\74_QA+_V2_EQ010_금속검출기_Xray검사기_비교_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-05_EQ010_금속검출기_Xray검사기_비교_shorts.mp4"
     },
     {
       "id": 75,
