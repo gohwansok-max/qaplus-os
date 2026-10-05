@@ -437,7 +437,8 @@ jobs:
     needs:
       - generate-daily-blog
 
-    if: ${{ always() && needs.generate-daily-blog.result == 'failure' }}
+    # failure뿐 아니라 cancelled(러너 정지 후 강제 취소 등)도 알림. 'skipped'(check_only 모드)는 제외.
+    if: ${{ always() && (needs.generate-daily-blog.result == 'failure' || needs.generate-daily-blog.result == 'cancelled') }}
 
     runs-on: ubuntu-latest
 
