@@ -1,6 +1,6 @@
 {
   "last_run": "2026-10-05 11:09:05",
-  "total_topics": 95,
+  "total_topics": 240,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
     {
@@ -739,6 +739,1167 @@
       "filename": "95_생물학적 위해요소 예시.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\95_생물학적 위해요소 예시.png",
       "status": "pending"
+    },
+    {
+      "id": 96,
+      "topic": "FSSAI Schedule 4 한눈에 보기",
+      "filename": "96_QA+_FSSAI_Schedule_4_한눈에_보기_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\96_QA+_FSSAI_Schedule_4_한눈에_보기_202608.png",
+      "drive_file_id": "1kXqe11KRzInipsKyIrRWP7jSB7Q-9yU8",
+      "status": "pending"
+    },
+    {
+      "id": 97,
+      "topic": "CO2 인큐베이터는 왜 37도 5퍼센트로 맞출까",
+      "filename": "97_QA+_CO2_인큐베이터는_왜_37도_5퍼센트로_맞출까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\97_QA+_CO2_인큐베이터는_왜_37도_5퍼센트로_맞출까_202608.png",
+      "drive_file_id": "19r7tJYSq_bB1EsHs-Ykkcyc4DhMpKmI5",
+      "status": "pending"
+    },
+    {
+      "id": 98,
+      "topic": "AI로 만드는 20가지 바이럴 이미지 프롬프트",
+      "filename": "98_QA+_AI로_만드는_20가지_바이럴_이미지_프롬프트_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\98_QA+_AI로_만드는_20가지_바이럴_이미지_프롬프트_202608.png",
+      "drive_file_id": "1SexbeCVQ9jlA9JVDpnG776r29cNpvOnO",
+      "status": "pending"
+    },
+    {
+      "id": 99,
+      "topic": "냉동하면 모든 세균이 죽을까",
+      "filename": "99_QA+_냉동하면_모든_세균이_죽을까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\99_QA+_냉동하면_모든_세균이_죽을까_202608.png",
+      "drive_file_id": "1JuWoj1hd67UleTEMjezyu2lcnj2EcKlo",
+      "status": "pending"
+    },
+    {
+      "id": 100,
+      "topic": "수분활성도와 수분함량",
+      "filename": "100_QA+_수분활성도와_수분함량_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\100_QA+_수분활성도와_수분함량_202608.png",
+      "drive_file_id": "1hmgMd7qtmtfateVOC1JBFBZZSfmtLv7U",
+      "status": "pending"
+    },
+    {
+      "id": 101,
+      "topic": "식품산업 GMP 핵심 요구사항 TOP20",
+      "filename": "101_QA+_식품산업_GMP_핵심_요구사항_TOP20_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\101_QA+_식품산업_GMP_핵심_요구사항_TOP20_202608.png",
+      "drive_file_id": "1llMy9yKMA_99BVv2u-3vgxr999BelwVM",
+      "status": "pending"
+    },
+    {
+      "id": 102,
+      "topic": "식품시험에 자주 사용하는 실험실 장비 TOP20",
+      "filename": "102_QA+_식품시험에_자주_사용하는_실험실_장비_TOP20_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\102_QA+_식품시험에_자주_사용하는_실험실_장비_TOP20_202608.png",
+      "drive_file_id": "1KHjharzLle4nTYlmxx5i9vMp2dWtErcc",
+      "status": "pending"
+    },
+    {
+      "id": 103,
+      "topic": "오토클레이브는 왜 121도를 사용할까",
+      "filename": "103_QA+_오토클레이브는_왜_121도를_사용할까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\103_QA+_오토클레이브는_왜_121도를_사용할까_202608.png",
+      "drive_file_id": "1Y_pRdOd0KKm_O0EKN0XNtWlV2Zyy8N61",
+      "status": "pending"
+    },
+    {
+      "id": 104,
+      "topic": "뜨거운 음식은 밤새 실온에 두어도 안전할까",
+      "filename": "104_QA+_뜨거운_음식은_밤새_실온에_두어도_안전할까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\104_QA+_뜨거운_음식은_밤새_실온에_두어도_안전할까_202608.png",
+      "drive_file_id": "168Nmhvq_cRRgMK4NjMNUHU1wJPz3xZro",
+      "status": "pending"
+    },
+    {
+      "id": 105,
+      "topic": "HACCP 핵심 원칙과 용어 TOP20",
+      "filename": "105_QA+_HACCP_핵심_원칙과_용어_TOP20_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\105_QA+_HACCP_핵심_원칙과_용어_TOP20_202608.png",
+      "drive_file_id": "1eWv-tkPY636sGM1QfzsWfJWfHs0NsthV",
+      "status": "pending"
+    },
+    {
+      "id": 106,
+      "topic": "유량계의 종류",
+      "filename": "106_QA+_유량계의_종류_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\106_QA+_유량계의_종류_202608.png",
+      "drive_file_id": "1EcZL9mmvYitY25SB7ozWLH3GP7Oxxk6v",
+      "status": "pending"
+    },
+    {
+      "id": 107,
+      "topic": "원심펌프의 이해",
+      "filename": "107_QA+_원심펌프의_이해_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\107_QA+_원심펌프의_이해_202608.png",
+      "drive_file_id": "1rcPidKcXr8MkCVUkhd1F-e2u6meqUa-i",
+      "status": "pending"
+    },
+    {
+      "id": 108,
+      "topic": "캘리브레이션은 왜 해야 할까",
+      "filename": "108_QA+_캘리브레이션은_왜_해야_할까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\108_QA+_캘리브레이션은_왜_해야_할까_202608.png",
+      "drive_file_id": "1Uv-HBm2cM8jRa_fRgdszypWB-oLErTgu",
+      "status": "pending"
+    },
+    {
+      "id": 109,
+      "topic": "pH미터는 왜 측정 전에 교정할까",
+      "filename": "109_QA+_pH미터는_왜_측정_전에_교정할까_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\109_QA+_pH미터는_왜_측정_전에_교정할까_202608.png",
+      "drive_file_id": "1WJDoSgpbg41kuB6NvpKPouvLhoxw31zz",
+      "status": "pending"
+    },
+    {
+      "id": 110,
+      "topic": "분리막의 종류",
+      "filename": "110_QA+_분리막의_종류_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\110_QA+_분리막의_종류_202608.png",
+      "drive_file_id": "1UQeqIDxwRd__0AfI8O_EArJ2nsEjT3fx",
+      "status": "pending"
+    },
+    {
+      "id": 111,
+      "topic": "밸브의 종류",
+      "filename": "111_QA+_밸브의_종류_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\111_QA+_밸브의_종류_202608.png",
+      "drive_file_id": "1tTvyy2u6GUZQuoJzFaVtsvoxdVBOW142",
+      "status": "pending"
+    },
+    {
+      "id": 112,
+      "topic": "열교환기의 종류",
+      "filename": "112_QA+_열교환기의_종류_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\112_QA+_열교환기의_종류_202608.png",
+      "drive_file_id": "16rmJAbpZi_c_XbUAnDx1U8J0DzowDos9",
+      "status": "pending"
+    },
+    {
+      "id": 113,
+      "topic": "쿨링타워의 이해",
+      "filename": "113_QA+_쿨링타워의_이해_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\113_QA+_쿨링타워의_이해_202608.png",
+      "drive_file_id": "1pGrCr27yQBvmOWYPXhUt11fvXDXTsstw",
+      "status": "pending"
+    },
+    {
+      "id": 114,
+      "topic": "제어밸브의 작동 원리",
+      "filename": "114_QA+_제어밸브의_작동_원리_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\114_QA+_제어밸브의_작동_원리_202608.png",
+      "drive_file_id": "13bDDuJhAQwJJnrBkYmvnh3s3lijVI5DG",
+      "status": "pending"
+    },
+    {
+      "id": 115,
+      "topic": "압력용기의 이해",
+      "filename": "115_QA+_압력용기의_이해_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\115_QA+_압력용기의_이해_202608.png",
+      "drive_file_id": "11bKHAL4NeGHww9ggQX9CnTrxHRoV6Ku1",
+      "status": "pending"
+    },
+    {
+      "id": 116,
+      "topic": "정확도와 정밀도",
+      "filename": "116_QA+_정확도와_정밀도_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\116_QA+_정확도와_정밀도_202608.png",
+      "drive_file_id": "1-9wNj41K93Kg2Ns9qbcU47taqp7zAas9",
+      "status": "pending"
+    },
+    {
+      "id": 117,
+      "topic": "열교환기의 이해 완성본",
+      "filename": "117_QA+_열교환기의_이해_완성본_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\117_QA+_열교환기의_이해_완성본_202608.png",
+      "drive_file_id": "12RS4-_tOfSe1VIMfQwdlVVLzip2ITC9D",
+      "status": "pending"
+    },
+    {
+      "id": 119,
+      "topic": "펌프의 종류",
+      "filename": "119_QA+_펌프의_종류_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\119_QA+_펌프의_종류_202608.png",
+      "drive_file_id": "1Uczm2CMMqOmMbrYdlzG2f7EMUTHP0f1X",
+      "status": "pending"
+    },
+    {
+      "id": 120,
+      "topic": "식품안전과 식품방어와 식품사기",
+      "filename": "120_QA+_식품안전과_식품방어와_식품사기_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\120_QA+_식품안전과_식품방어와_식품사기_202608.png",
+      "drive_file_id": "1xjSr1JsTmHaUccv_Xqhinf3mRqRSXiYQ",
+      "status": "pending"
+    },
+    {
+      "id": 121,
+      "topic": "PLC란 무엇인가",
+      "filename": "121_QA+_PLC란_무엇인가_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\121_QA+_PLC란_무엇인가_202608.png",
+      "drive_file_id": "17RUOBH23gTtW9p0485BInBDI73-Lq-Xd",
+      "status": "pending"
+    },
+    {
+      "id": 122,
+      "topic": "O링의 이해",
+      "filename": "122_QA+_O링의_이해_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\122_QA+_O링의_이해_202608.png",
+      "drive_file_id": "1qY9si_BXSQNhjNNnCyvCIagroEGQORyk",
+      "status": "pending"
+    },
+    {
+      "id": 123,
+      "topic": "미생물 성장곡선 4단계",
+      "filename": "123_QA+_미생물_성장곡선_4단계_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\123_QA+_미생물_성장곡선_4단계_202608.png",
+      "drive_file_id": "1nbhcWKAhBjAH5ElSn-wGP_pjcTGqVGlH",
+      "status": "pending"
+    },
+    {
+      "id": 124,
+      "topic": "OCR과 BCR의 차이점",
+      "filename": "124_QA+_OCR과_BCR의_차이점_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\124_QA+_OCR과_BCR의_차이점_202608.png",
+      "drive_file_id": "17tZfBP33x-Zn1yg1l1XupBlJSeczE5aH",
+      "status": "pending"
+    },
+    {
+      "id": 125,
+      "topic": "수분활성도와 수분함량 비교형",
+      "filename": "125_QA+_수분활성도와_수분함량_비교형_202608.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\125_QA+_수분활성도와_수분함량_비교형_202608.png",
+      "drive_file_id": "1gjJpnZHg7tkOfbgMC1AzmWhtZ4-a5Ljv",
+      "status": "pending"
+    },
+    {
+      "id": 126,
+      "topic": "설비 오염도 검사 구간별 실시",
+      "filename": "126_QA+_설비 오염도 검사 구간별 실시.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\126_QA+_설비 오염도 검사 구간별 실시.png",
+      "drive_file_id": "1fCFS79Jvshfun9tPEdAAhT-f7-3fVeuw",
+      "status": "pending"
+    },
+    {
+      "id": 127,
+      "topic": "포충기 구조와 원리",
+      "filename": "127_QA+_포충기 구조와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\127_QA+_포충기 구조와 원리.png",
+      "drive_file_id": "1HX286V4vwhdfo06pTMmRN7HZ1Dsad4xR",
+      "status": "pending"
+    },
+    {
+      "id": 128,
+      "topic": "익스트루더의 원리",
+      "filename": "128_QA+_익스트루더의 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\128_QA+_익스트루더의 원리.png",
+      "drive_file_id": "1X1NZfMzfz0L82J-j0cU_J0U6GJnylLF-",
+      "status": "pending"
+    },
+    {
+      "id": 129,
+      "topic": "에어커튼의 원리",
+      "filename": "129_QA+_에어커튼의 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\129_QA+_에어커튼의 원리.png",
+      "drive_file_id": "1-qxwRzdlzIC-0QQA17rdhpdAgDcIT8f8",
+      "status": "pending"
+    },
+    {
+      "id": 130,
+      "topic": "와류 세척기의 원리",
+      "filename": "130_QA+_와류 세척기의 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\130_QA+_와류 세척기의 원리.png",
+      "drive_file_id": "1rX5lAwqhl3FsRj-roY3N6LQt39oW0E9E",
+      "status": "pending"
+    },
+    {
+      "id": 131,
+      "topic": "RO 시스템의 구조와 원리",
+      "filename": "131_QA+_RO 시스템의 구조와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\131_QA+_RO 시스템의 구조와 원리.png",
+      "drive_file_id": "1duenkocLQG7nIxbw_XLusxbg_PtlHYAn",
+      "status": "pending"
+    },
+    {
+      "id": 132,
+      "topic": "자석봉의 용도와 원리",
+      "filename": "132_QA+_자석봉의 용도와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\132_QA+_자석봉의 용도와 원리.png",
+      "drive_file_id": "1Q-PZErGzCrIFb0BBL6jxZRlomXgfuqSd",
+      "status": "pending"
+    },
+    {
+      "id": 133,
+      "topic": "UHT살균기와 판형열교환기 혼합성 시스템",
+      "filename": "133_QA+_UHT살균기와 판형열교환기 혼합성 시스템.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\133_QA+_UHT살균기와 판형열교환기 혼합성 시스템.png",
+      "drive_file_id": "1Jddr2TZBpbBrTixQ3F1tBuuGcrcTIo_I",
+      "status": "pending"
+    },
+    {
+      "id": 134,
+      "topic": "AUDIT의 이해",
+      "filename": "134_QA+_AUDIT의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\134_QA+_AUDIT의 이해.png",
+      "drive_file_id": "1rQXxSBgWUQ9Z2oiRtO-5XhPLhPaUf1vJ",
+      "status": "pending"
+    },
+    {
+      "id": 135,
+      "topic": "금속검출기의 원리와 구조",
+      "filename": "135_QA+_금속검출기의 원리와 구조.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\135_QA+_금속검출기의 원리와 구조.png",
+      "drive_file_id": "1IrlyeAmrzxJ2yrrwXsAt4-V2fvS9Hr5n",
+      "status": "pending"
+    },
+    {
+      "id": 136,
+      "topic": "X RAY 이물검사기의 구조와 원리",
+      "filename": "136_QA+_X RAY 이물검사기의 구조와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\136_QA+_X RAY 이물검사기의 구조와 원리.png",
+      "drive_file_id": "1jQWhMSwmN_PWBK3C2OFro0FaqlXqokvc",
+      "status": "pending"
+    },
+    {
+      "id": 137,
+      "topic": "중량검출기의 구조와 원리",
+      "filename": "137_QA+_중량검출기의 구조와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\137_QA+_중량검출기의 구조와 원리.png",
+      "drive_file_id": "1aYIons6yrsNu2UaJ-2XrjVyrxhHXHkcv",
+      "status": "pending"
+    },
+    {
+      "id": 138,
+      "topic": "날인기의 종류와 용도",
+      "filename": "138_QA+_날인기의 종류와 용도.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\138_QA+_날인기의 종류와 용도.png",
+      "drive_file_id": "1R1yqksaEQjMfC1P-OLqaoOKt5O2ggXxT",
+      "status": "pending"
+    },
+    {
+      "id": 139,
+      "topic": "HACCP 원스트라이크 아웃제",
+      "filename": "139_QA+_HACCP 원스트라이크 아웃제 .png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\139_QA+_HACCP 원스트라이크 아웃제 .png",
+      "drive_file_id": "1pF_CN-YAsTPiv0IJE30llCST48BY8GWw",
+      "status": "pending"
+    },
+    {
+      "id": 140,
+      "topic": "복합원재료 표시 이렇게 판단하세요",
+      "filename": "140_QA+_복합원재료 표시 이렇게 판단하세요.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\140_QA+_복합원재료 표시 이렇게 판단하세요.png",
+      "drive_file_id": "1nQhkmoVYKwcg51c8BRjh8bjpTgE1Nodg",
+      "status": "pending"
+    },
+    {
+      "id": 141,
+      "topic": "QC없는 QA는 근거 없는 서류입니다",
+      "filename": "141_QA+_QC없는 QA는 근거 없는 서류입니다.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\141_QA+_QC없는 QA는 근거 없는 서류입니다.png",
+      "drive_file_id": "1rZUoKAtOmBs-IlJYmElWzXvxzhyVIhMJ",
+      "status": "pending"
+    },
+    {
+      "id": 142,
+      "topic": "QA QC 업무 백과사전",
+      "filename": "142_QA+_QA QC 업무 백과사전.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\142_QA+_QA QC 업무 백과사전.png",
+      "drive_file_id": "1w1CiZzX8-6W-XsHnu6HxASRYkgKdauuh",
+      "status": "pending"
+    },
+    {
+      "id": 143,
+      "topic": "원료입고검사 이렇게 판단하세요",
+      "filename": "143_QA+_원료입고검사 이렇게 판단하세요.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\143_QA+_원료입고검사 이렇게 판단하세요.png",
+      "drive_file_id": "1d2gyS5KiYbd5oqFQRXa1edd6CLh42yyn",
+      "status": "pending"
+    },
+    {
+      "id": 144,
+      "topic": "7가지 QC 도구",
+      "filename": "144_QA+_7가지 QC 도구.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\144_QA+_7가지 QC 도구.png",
+      "drive_file_id": "1TB-0bPhZFnwspONb5os-1j_zJLcYq7wq",
+      "status": "pending"
+    },
+    {
+      "id": 145,
+      "topic": "8D 문제해결 프로세스",
+      "filename": "145_QA+_8D 문제해결 프로세스.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\145_QA+_8D 문제해결 프로세스.png",
+      "drive_file_id": "1Q3bDdo8BCLZLYqZnEJzSHreI8ZviM9p5",
+      "status": "pending"
+    },
+    {
+      "id": 146,
+      "topic": "QC7가지 도구와 신 QC7가지",
+      "filename": "146_QA+_QC7가지 도구와 신 QC7가지.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\146_QA+_QC7가지 도구와 신 QC7가지.png",
+      "drive_file_id": "1jO5LuWSI8Vasb4J2R4-XjtDvhJBgIMx8",
+      "status": "pending"
+    },
+    {
+      "id": 147,
+      "topic": "식품공장 투자비와 운영비",
+      "filename": "147_QA+_식품공장 투자비와 운영비.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\147_QA+_식품공장 투자비와 운영비.png",
+      "drive_file_id": "1prUY1HWMe9ZeaG3HScI9CwP6LRXUwj7k",
+      "status": "pending"
+    },
+    {
+      "id": 148,
+      "topic": "린 생산 관리",
+      "filename": "148_QA+_린 생산 관리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\148_QA+_린 생산 관리.png",
+      "drive_file_id": "1Qz-05nDFO3eMWoECP8HDBD8p3VWj_Mcx",
+      "status": "pending"
+    },
+    {
+      "id": 149,
+      "topic": "일본식 생산 혁신 도구",
+      "filename": "149_QA+_일본식 생산 혁신 도구.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\149_QA+_일본식 생산 혁신 도구.png",
+      "drive_file_id": "18eU7RSjrEt3BzW3Kie7bsg5WRzHlKDX-",
+      "status": "pending"
+    },
+    {
+      "id": 150,
+      "topic": "제조 현장 문제 해결을 위한 5G",
+      "filename": "150_QA+_제조 현장 문제 해결을 위한 5G.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\150_QA+_제조 현장 문제 해결을 위한 5G.png",
+      "drive_file_id": "1W_EpdHzEudHojcArUggez1x0gYrD6NON",
+      "status": "pending"
+    },
+    {
+      "id": 151,
+      "topic": "시정조치와 예방조치",
+      "filename": "151_QA+_시정조치와 예방조치.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\151_QA+_시정조치와 예방조치.png",
+      "drive_file_id": "1Vt6aP6IgAWASyRSzira56BBWlkYo2EeD",
+      "status": "pending"
+    },
+    {
+      "id": 152,
+      "topic": "식품공장 7대 낭비요소",
+      "filename": "152_QA+_식품공장 7대 낭비요소.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\152_QA+_식품공장 7대 낭비요소.png",
+      "drive_file_id": "1Qlx6iGJBMMOfIJqsi4qC-M3cLzBzOP6M",
+      "status": "pending"
+    },
+    {
+      "id": 153,
+      "topic": "PDCA 사이클",
+      "filename": "153_QA+_PDCA 사이클.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\153_QA+_PDCA 사이클.png",
+      "drive_file_id": "1epLXneh_rJELQkk2qwVr677xhNSRVVxg",
+      "status": "pending"
+    },
+    {
+      "id": 154,
+      "topic": "인산완충식염수 인포",
+      "filename": "154_QA+_인산완충식염수 인포.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\154_QA+_인산완충식염수 인포.png",
+      "drive_file_id": "1LVmVnOP2Ex4kNpNiTW8YTHo9Hb63GjCi",
+      "status": "pending"
+    },
+    {
+      "id": 155,
+      "topic": "식품 사기 인포",
+      "filename": "155_QA+_식품 사기 인포.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\155_QA+_식품 사기 인포.png",
+      "drive_file_id": "1xY1XvPliD4F9-qHvRDUX4uplrsXGZsvE",
+      "status": "pending"
+    },
+    {
+      "id": 156,
+      "topic": "구연산의 기능",
+      "filename": "156_QA+_구연산의 기능.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\156_QA+_구연산의 기능.png",
+      "drive_file_id": "12wIYm2uP_IA09-RUKOahBsGRYpqYL3P0",
+      "status": "pending"
+    },
+    {
+      "id": 157,
+      "topic": "PPM계산 핵심 공식",
+      "filename": "157_QA+_PPM계산 핵심 공식.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\157_QA+_PPM계산 핵심 공식.png",
+      "drive_file_id": "14j9Fx5oLIFEccM1w_2M-upWlym09X0uc",
+      "status": "pending"
+    },
+    {
+      "id": 158,
+      "topic": "PID 컨트롤러 온도 조절지시계",
+      "filename": "158_QA+_PID 컨트롤러 _ 온도 조절지시계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\158_QA+_PID 컨트롤러 _ 온도 조절지시계.png",
+      "drive_file_id": "16yRjz8A_lXARAgulTenUaUHjSU1LtBZ6",
+      "status": "pending"
+    },
+    {
+      "id": 159,
+      "topic": "반응기 밀폐형 교반 탱크의 구조",
+      "filename": "159_QA+_반응기_밀폐형 교반 탱크의 구조.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\159_QA+_반응기_밀폐형 교반 탱크의 구조.png",
+      "drive_file_id": "1f0Zwn8siL8F4NQ99R3xIyXTRJ43rGa8x",
+      "status": "pending"
+    },
+    {
+      "id": 160,
+      "topic": "pH메터 교정의 핵심 절차",
+      "filename": "160_QA+_pH메터 교정의 핵심 절차.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\160_QA+_pH메터 교정의 핵심 절차.png",
+      "drive_file_id": "1lOAnJjoC1mYs7K649QdwmGasjWb38YeT",
+      "status": "pending"
+    },
+    {
+      "id": 161,
+      "topic": "벨리데이션과 캘리브레이션",
+      "filename": "161_QA+_벨리데이션과 캘리브레이션.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\161_QA+_벨리데이션과 캘리브레이션.png",
+      "drive_file_id": "1I5QnH8IAA_bqlgkfTjv_D2an4RWK4SFA",
+      "status": "pending"
+    },
+    {
+      "id": 162,
+      "topic": "휴대용 pH메터의 구조와 원리",
+      "filename": "162_QA+_휴대용 pH메터의 구조와 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\162_QA+_휴대용 pH메터의 구조와 원리.png",
+      "drive_file_id": "1R6zTRTWGjdm7FhUnmCPrW5XUwl9Ki7KM",
+      "status": "pending"
+    },
+    {
+      "id": 163,
+      "topic": "펌프NPSH의 이해",
+      "filename": "163_QA+_펌프NPSH의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\163_QA+_펌프NPSH의 이해.png",
+      "drive_file_id": "1DgfS3KKzEAgFoQhGQ0PzOrELr6zLu47I",
+      "status": "pending"
+    },
+    {
+      "id": 164,
+      "topic": "젤라틴과 펙틴",
+      "filename": "164_QA+_젤라틴과 펙틴.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\164_QA+_젤라틴과 펙틴.png",
+      "drive_file_id": "1evj1owxM2JQBob4a7K2qK2riAdAeaC7C",
+      "status": "pending"
+    },
+    {
+      "id": 165,
+      "topic": "ISO9001의 핵심",
+      "filename": "165_QA+_ISO9001의 핵심.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\165_QA+_ISO9001의 핵심.png",
+      "drive_file_id": "1VoIrhVXmWPXtREnc7NBIvX7O9QSFSbEO",
+      "status": "pending"
+    },
+    {
+      "id": 166,
+      "topic": "팹톤수에 대한 이해",
+      "filename": "166_QA+_팹톤수에 대한 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\166_QA+_팹톤수에 대한 이해.png",
+      "drive_file_id": "1Y_bLbp4B548yuOJCuSCB4Hdb0ew39EG7",
+      "status": "pending"
+    },
+    {
+      "id": 167,
+      "topic": "냉각탑 쿨링타워의 구조",
+      "filename": "167_QA+_냉각탑_ 쿨링타워의 구조.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\167_QA+_냉각탑_ 쿨링타워의 구조.png",
+      "drive_file_id": "10PQg_jYm7QVuqIfwnOmGEwRZ6folaTCS",
+      "status": "pending"
+    },
+    {
+      "id": 168,
+      "topic": "MES와 ERP",
+      "filename": "168_QA+_MES와 ERP.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\168_QA+_MES와 ERP.png",
+      "drive_file_id": "1aJO4a-L4oMoPyb02zmkf93X0eIUylh6p",
+      "status": "pending"
+    },
+    {
+      "id": 169,
+      "topic": "압력 측정의 핵심",
+      "filename": "169_QA+_압력 측정의 핵심.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\169_QA+_압력 측정의 핵심.png",
+      "drive_file_id": "185ADX1_i0ajecsEbu4ZVtf66nrmgQkjh",
+      "status": "pending"
+    },
+    {
+      "id": 170,
+      "topic": "수질관리 10대 체크포인트",
+      "filename": "170_QA+_수질관리 10대 체크포인트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\170_QA+_수질관리 10대 체크포인트.png",
+      "drive_file_id": "1oB3aRDn3ZUhnNEuvXpH_l453ZH7TsbJD",
+      "status": "pending"
+    },
+    {
+      "id": 171,
+      "topic": "마이크로 피펫 사용방법",
+      "filename": "171_QA+_마이크로 피펫 사용방법.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\171_QA+_마이크로 피펫 사용방법.png",
+      "drive_file_id": "1sJY6tioWk3OmetSEkkaCptZIy8GD0fO9",
+      "status": "pending"
+    },
+    {
+      "id": 172,
+      "topic": "식품에 효소가 미치는 영향",
+      "filename": "172_QA+_식품에 효소가 미치는 영향.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\172_QA+_식품에 효소가 미치는 영향.png",
+      "drive_file_id": "1Uv2OqKkDx_TA5LrEQ-d_RIJVBAFISj5K",
+      "status": "pending"
+    },
+    {
+      "id": 173,
+      "topic": "비중의 이해",
+      "filename": "173_QA+_비중의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\173_QA+_비중의 이해.png",
+      "drive_file_id": "1kLT6z0Lps6rP8bV_hf6RcWLFLLBZjy4C",
+      "status": "pending"
+    },
+    {
+      "id": 174,
+      "topic": "OCR과 BCR의 차이",
+      "filename": "174_QA+_OCR과 BCR의 차이.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\174_QA+_OCR과 BCR의 차이.png",
+      "drive_file_id": "13GOE8KvZWMeQrHdOtH5QdVW2B6L-UpBF",
+      "status": "pending"
+    },
+    {
+      "id": 175,
+      "topic": "도말법 획선 배양법",
+      "filename": "175_QA+_도말법_획선 배양법.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\175_QA+_도말법_획선 배양법.png",
+      "drive_file_id": "1olYlkQvJYtBcWIOXdZhXkpvUz2aYTSpn",
+      "status": "pending"
+    },
+    {
+      "id": 176,
+      "topic": "판형 열교환기의 구조와 이해",
+      "filename": "176_QA+_판형 열교환기의 구조와 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\176_QA+_판형 열교환기의 구조와 이해.png",
+      "drive_file_id": "1SLZtllun3xP61FaD_ClQ3IeIwx9F1n4M",
+      "status": "pending"
+    },
+    {
+      "id": 177,
+      "topic": "원심펌프의 주요 문제와 해결방법",
+      "filename": "177_QA+_원심펌프의 주요 문제와 해결방법.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\177_QA+_원심펌프의 주요 문제와 해결방법.png",
+      "drive_file_id": "14H55Nw2F4z0IN_3IGZLfzY1kahszBJrH",
+      "status": "pending"
+    },
+    {
+      "id": 178,
+      "topic": "탄산음료에 탄산이 들어가는 원리",
+      "filename": "178_QA+_탄산음료에 탄산이 들어가는 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\178_QA+_탄산음료에 탄산이 들어가는 원리.png",
+      "drive_file_id": "1L7KV5IOxM3R7nwGfpf6-ytZn1gzbqmjn",
+      "status": "pending"
+    },
+    {
+      "id": 179,
+      "topic": "방구 등급 IP 의 정의",
+      "filename": "179_QA+_방구 등급 IP 의 정의.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\179_QA+_방구 등급 IP 의 정의.png",
+      "drive_file_id": "1PSzbH_lcoiMCbAf5LuuUW3odxaqchqiM",
+      "status": "pending"
+    },
+    {
+      "id": 180,
+      "topic": "피펫 팁 위치가 결과에 미치는 영향",
+      "filename": "180_QA+_피펫 팁 위치가 결과에 미치는 영향.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\180_QA+_피펫 팁 위치가 결과에 미치는 영향.png",
+      "drive_file_id": "1Bj6B42trcm2QYJQZFs7zSvwy7qRps7T3",
+      "status": "pending"
+    },
+    {
+      "id": 181,
+      "topic": "FMEA에 대한 이해",
+      "filename": "181_QA+_FMEA에 대한 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\181_QA+_FMEA에 대한 이해.png",
+      "drive_file_id": "1FaDYylrMC7AA93hoQarJ5J3F7hwUJS8H",
+      "status": "pending"
+    },
+    {
+      "id": 182,
+      "topic": "이중관 열교환기의 구조와 이해",
+      "filename": "182_QA+_이중관 열교환기의 구조와 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\182_QA+_이중관 열교환기의 구조와 이해.png",
+      "drive_file_id": "1unhxJiSiOsoeWTRyuTgJDgtkmCpITDoL",
+      "status": "pending"
+    },
+    {
+      "id": 183,
+      "topic": "CIP와 COP의 이해",
+      "filename": "183_QA+_CIP와 COP의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\183_QA+_CIP와 COP의 이해.png",
+      "drive_file_id": "1v9wPCww1W641uCXJfPWYQb-fVSerUHra",
+      "status": "pending"
+    },
+    {
+      "id": 184,
+      "topic": "전자 저울의 원리",
+      "filename": "184_QA+_전자 저울의 원리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\184_QA+_전자 저울의 원리.png",
+      "drive_file_id": "1nFb5eZEAwyIwWfD7PlEuszTjDvNMgSSb",
+      "status": "pending"
+    },
+    {
+      "id": 185,
+      "topic": "공기 압축기 에어 콤프레셔의 이해",
+      "filename": "185_QA+_공기 압축기_에어 콤프레셔의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\185_QA+_공기 압축기_에어 콤프레셔의 이해.png",
+      "drive_file_id": "1xp3OEkLuqZK_a_M3hkVCIzoey-J3ap9z",
+      "status": "pending"
+    },
+    {
+      "id": 186,
+      "topic": "SUS304 SUS 316의 이해",
+      "filename": "186_QA+_SUS304 SUS 316의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\186_QA+_SUS304 SUS 316의 이해.png",
+      "drive_file_id": "1gO2dtECykytrSxM2cXxmOIyuqUoSlPbG",
+      "status": "pending"
+    },
+    {
+      "id": 187,
+      "topic": "냉동은 세균을 죽일까",
+      "filename": "187_QA+_냉동은 세균을 죽일까.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\187_QA+_냉동은 세균을 죽일까.png",
+      "drive_file_id": "1owSB_zfIMEyCExS_AUM2Sb8gk_aCGJxs",
+      "status": "pending"
+    },
+    {
+      "id": 188,
+      "topic": "PET 음료병 바닥의 구조의 이해",
+      "filename": "188_QA+_PET 음료병 바닥의 구조의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\188_QA+_PET 음료병 바닥의 구조의 이해.png",
+      "drive_file_id": "11YfB24bj4EFW5ZzResELpE3I0wIeAnlC",
+      "status": "pending"
+    },
+    {
+      "id": 189,
+      "topic": "배관 탱크 CIP의 절차",
+      "filename": "189_QA+_배관 탱크 CIP의 절차.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\189_QA+_배관 탱크 CIP의 절차.png",
+      "drive_file_id": "1SAUnk34enSOrVntUDrS-N-7ryn8V6NGl",
+      "status": "pending"
+    },
+    {
+      "id": 190,
+      "topic": "판형 열교환기의 구조와 이해",
+      "filename": "190_QA+_판형 열교환기의 구조와 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\190_QA+_판형 열교환기의 구조와 이해.png",
+      "drive_file_id": "1bAg1T4mivEbmihy5E5-OH4MtsMeqzceO",
+      "status": "pending"
+    },
+    {
+      "id": 191,
+      "topic": "핫필과 무균 충전의 이해",
+      "filename": "191_QA+_핫필과 무균 충전의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\191_QA+_핫필과 무균 충전의 이해.png",
+      "drive_file_id": "1fO0J4LzXE2VS-9nva2L7JfujSFpbDIbg",
+      "status": "pending"
+    },
+    {
+      "id": 192,
+      "topic": "수분활성도와 수분함량",
+      "filename": "192_QA+_수분활성도와 수분함량.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\192_QA+_수분활성도와 수분함량.png",
+      "drive_file_id": "1uwP90UEfR_RwE2hL4GzUB1AIqgbrzvwb",
+      "status": "pending"
+    },
+    {
+      "id": 193,
+      "topic": "식품의 소비기한이 다른 이유",
+      "filename": "193_QA+_식품의 소비기한이 다른 이유.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\193_QA+_식품의 소비기한이 다른 이유.png",
+      "drive_file_id": "17L5_hPAt0BIrjtwXJEajhvmLguH4e5TM",
+      "status": "pending"
+    },
+    {
+      "id": 194,
+      "topic": "공정능력 cp, cpk 의 이해",
+      "filename": "194_QA+_공정능력 cp, cpk 의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\194_QA+_공정능력 cp, cpk 의 이해.png",
+      "drive_file_id": "1pqnXeFwzFeDSbq_f9D5RkWnUHr8Zwx_t",
+      "status": "pending"
+    },
+    {
+      "id": 195,
+      "topic": "교반 탱크에서 배플의 활용",
+      "filename": "195_QA+_교반 탱크에서 배플의 활용.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\195_QA+_교반 탱크에서 배플의 활용.png",
+      "drive_file_id": "15bqfZNXp40KVuI8sLwstNcEa51XBShmY",
+      "status": "pending"
+    },
+    {
+      "id": 196,
+      "topic": "QMS 품질경영시스템의 구조",
+      "filename": "196_QA+_QMS 품질경영시스템의 구조.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\196_QA+_QMS 품질경영시스템의 구조.png",
+      "drive_file_id": "14aD9jYKpmERv4TkZhuqinycZH4WMI8qm",
+      "status": "pending"
+    },
+    {
+      "id": 197,
+      "topic": "설비 적격성 평가 시스템",
+      "filename": "197_QA+_설비 적격성 평가 시스템.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\197_QA+_설비 적격성 평가 시스템.png",
+      "drive_file_id": "1GU1EWj2cvguwcOfUVki28MGgeS73-N7e",
+      "status": "pending"
+    },
+    {
+      "id": 198,
+      "topic": "QA, QC, QI의 이해",
+      "filename": "198_QA+_QA, QC, QI의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\198_QA+_QA, QC, QI의 이해.png",
+      "drive_file_id": "1sxR6ifLVWHgkNLJDVgmnrAe0Ua3HELzJ",
+      "status": "pending"
+    },
+    {
+      "id": 199,
+      "topic": "병원성미생물 주요 7종",
+      "filename": "199_QA+_병원성미생물 주요 7종.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\199_QA+_병원성미생물 주요 7종.png",
+      "drive_file_id": "19uyfcHcmXeizUbvfTIKaFO9UQoYVEq2g",
+      "status": "pending"
+    },
+    {
+      "id": 200,
+      "topic": "식품 pH의 활용",
+      "filename": "200_QA+_식품 pH의 활용.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\200_QA+_식품 pH의 활용.png",
+      "drive_file_id": "1Joyqt1n0LEyKsZFeC8G4BEuI1B4SYDYg",
+      "status": "pending"
+    },
+    {
+      "id": 201,
+      "topic": "무균충전과 레토르트 충전",
+      "filename": "201_QA+_무균충전과 레토르트 충전.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\201_QA+_무균충전과 레토르트 충전.png",
+      "drive_file_id": "1n6NggDy15iInxCyUQaDfM_ySnRQjfJWS",
+      "status": "pending"
+    },
+    {
+      "id": 202,
+      "topic": "PDCA 사이클의 이해",
+      "filename": "202_QA+_PDCA 사이클의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\202_QA+_PDCA 사이클의 이해.png",
+      "drive_file_id": "1Y1TMAU2O0RyszCf80MzDt4RGOkCIjSp1",
+      "status": "pending"
+    },
+    {
+      "id": 203,
+      "topic": "미생물 생장곡선의 이해",
+      "filename": "203_QA+_미생물 생장곡선의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\203_QA+_미생물 생장곡선의 이해.png",
+      "drive_file_id": "1qMqkMXg0mbDHp7-XPY0x7YeILBJdfJf3",
+      "status": "pending"
+    },
+    {
+      "id": 204,
+      "topic": "균질화 기술의 이해",
+      "filename": "204_QA+_균질화 기술의 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\204_QA+_균질화 기술의 이해.png",
+      "drive_file_id": "1bjE7yge_pjD25Q3mprTIKedq9WdjgZF4",
+      "status": "pending"
+    },
+    {
+      "id": 205,
+      "topic": "식품공장 에어커튼 관리기준",
+      "filename": "205_QA+_식품공장 에어커튼 관리기준.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\205_QA+_식품공장 에어커튼 관리기준.png",
+      "drive_file_id": "1ySwSSDuk7ooSwjPKlvxbPTlw8FCErtuf",
+      "status": "pending"
+    },
+    {
+      "id": 206,
+      "topic": "PCQI란 무엇인가",
+      "filename": "206_QA+_PCQI란 무엇인가.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\206_QA+_PCQI란 무엇인가.png",
+      "drive_file_id": "1rxp1wYlg7Zdx_IykGWGjatCSsMvVdAIj",
+      "status": "pending"
+    },
+    {
+      "id": 207,
+      "topic": "FSSC22000 에 대한 이해",
+      "filename": "207_QA+_FSSC22000 에 대한 이해.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\207_QA+_FSSC22000 에 대한 이해.png",
+      "drive_file_id": "1glxgtaVwWUcTe8IweM90LtzlgSc7NYkE",
+      "status": "pending"
+    },
+    {
+      "id": 208,
+      "topic": "공정이상의 3요소",
+      "filename": "208_QA+_공정이상의 3요소.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\208_QA+_공정이상의 3요소.png",
+      "drive_file_id": "11rGYsu6nvVyrue2tOQhW7iZWDlBHPVih",
+      "status": "pending"
+    },
+    {
+      "id": 209,
+      "topic": "비타민C와 자몽이 들어간 음료 갈변",
+      "filename": "209_QA+_비타민C와 자몽이 들어간 음료 갈변.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\209_QA+_비타민C와 자몽이 들어간 음료 갈변.png",
+      "drive_file_id": "1YwrpvAeae8E1qCdqTXex3cbebXSKVfn-",
+      "status": "pending"
+    },
+    {
+      "id": 210,
+      "topic": "이상발생 등급분류 & 보고체계",
+      "filename": "210_QA+_이상발생 등급분류 & 보고체계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\210_QA+_이상발생 등급분류 & 보고체계.png",
+      "drive_file_id": "1Yy0WpYd_Z4jnNoiiRZR6byshUT1QzBvO",
+      "status": "pending"
+    },
+    {
+      "id": 211,
+      "topic": "라인스톱(Line Stop) 운영기준",
+      "filename": "211_QA+_라인스톱(Line Stop) 운영기준.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\211_QA+_라인스톱(Line Stop) 운영기준.png",
+      "drive_file_id": "1szqL_0zGgkj5CAOXTZpkJkGjPF-cEJPD",
+      "status": "pending"
+    },
+    {
+      "id": 212,
+      "topic": "4M 변경관리 정의",
+      "filename": "212_QA+_4M 변경관리 정의.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\212_QA+_4M 변경관리 정의.png",
+      "drive_file_id": "1990Pc48hZHT27g89BkwFoyApMC_5MHCs",
+      "status": "pending"
+    },
+    {
+      "id": 213,
+      "topic": "변경점 등급기준 & CCB 운영",
+      "filename": "213_QA+_변경점 등급기준 & CCB 운영.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\213_QA+_변경점 등급기준 & CCB 운영.png",
+      "drive_file_id": "1nWDeNn5n_D0yoKNoZyJuk1ENrQGvRJmX",
+      "status": "pending"
+    },
+    {
+      "id": 214,
+      "topic": "변경관리 사후관리(Feed Back)",
+      "filename": "214_QA+_변경관리 사후관리(Feed Back).png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\214_QA+_변경관리 사후관리(Feed Back).png",
+      "drive_file_id": "1DWknW_c3ObmBZ_edJmulzEMdCsnuSWDi",
+      "status": "pending"
+    },
+    {
+      "id": 215,
+      "topic": "NMN(니코틴아마이드 모노튜클레오타이드)",
+      "filename": "215_QA+_NMN(니코틴아마이드 모노튜클레오타이드).png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\215_QA+_NMN(니코틴아마이드 모노튜클레오타이드).png",
+      "drive_file_id": "1vY_QWW5krSgPCUdKomPO4gZhZBWhVoiY",
+      "status": "pending"
+    },
+    {
+      "id": 216,
+      "topic": "이물관리 6시그마 5단계",
+      "filename": "216_QA+_이물관리 6시그마 5단계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\216_QA+_이물관리 6시그마 5단계.png",
+      "drive_file_id": "17fZdB0SrTJTMeznM9LZd313QYJidI4-3",
+      "status": "pending"
+    },
+    {
+      "id": 217,
+      "topic": "이물(머리카락) 저감 체크리스트",
+      "filename": "217_QA+_이물(머리카락) 저감 체크리스트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\217_QA+_이물(머리카락) 저감 체크리스트.png",
+      "drive_file_id": "1R4_YWgB_LBvDm22N4hGS6rxj6hmjL9Og",
+      "status": "pending"
+    },
+    {
+      "id": 218,
+      "topic": "SQM(표준품질생산방식) 정의 & 4대 구성요소",
+      "filename": "218_QA+_SQM(표준품질생산방식) 정의 & 4대 구성요소.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\218_QA+_SQM(표준품질생산방식) 정의 & 4대 구성요소.png",
+      "drive_file_id": "1Dbs3RSg5_pBH-1Aoty9CmmczDs-UAi0q",
+      "status": "pending"
+    },
+    {
+      "id": 219,
+      "topic": "SQM 추진 7단계 프로세스",
+      "filename": "219_QA+_SQM 추진 7단계 프로세스.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\219_QA+_SQM 추진 7단계 프로세스.png",
+      "drive_file_id": "1XdRuxiv1NbZLuSApcyWJJqEi8nhngEbV",
+      "status": "pending"
+    },
+    {
+      "id": 220,
+      "topic": "SQM와 QCM 관계 신경망 비유",
+      "filename": "220_QA+_SQM와 QCM 관계_신경망 비유.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\220_QA+_SQM와 QCM 관계_신경망 비유.png",
+      "drive_file_id": "1FiWysfNvvGztgwDPQcYi2SNX9zA0y5W-",
+      "status": "pending"
+    },
+    {
+      "id": 221,
+      "topic": "SQIS 협력업체 품질혁신 시스템",
+      "filename": "221_QA+_SQIS 협력업체 품질혁신 시스템.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\221_QA+_SQIS 협력업체 품질혁신 시스템.png",
+      "drive_file_id": "1RJiGMeEs-rswcOypZqjwPHm5LdVikiLZ",
+      "status": "pending"
+    },
+    {
+      "id": 222,
+      "topic": "표준작업서 필수 양식 요소",
+      "filename": "222_QA+_표준작업서 필수 양식 요소.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\222_QA+_표준작업서 필수 양식 요소.png",
+      "drive_file_id": "1k9I3qiaVfESzz0bITd4pgQB-h8BOGWfX",
+      "status": "pending"
+    },
+    {
+      "id": 223,
+      "topic": "클레임 개선 프로세스 9단계",
+      "filename": "223_QA+_클레임 개선 프로세스 9단계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\223_QA+_클레임 개선 프로세스 9단계.png",
+      "drive_file_id": "1uuEhGYH5PCCq7sPnyiAgSFfdGfc0tTL2",
+      "status": "pending"
+    },
+    {
+      "id": 224,
+      "topic": "협력업체 품질개선 4단계",
+      "filename": "224_QA+_협력업체 품질개선 4단계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\224_QA+_협력업체 품질개선 4단계.png",
+      "drive_file_id": "1lhcYDA2sPjjDBocXCg1niw2sBKq6a9kh",
+      "status": "pending"
+    },
+    {
+      "id": 225,
+      "topic": "신제품 3종 보고서 체계",
+      "filename": "225_QA+_신제품 3종 보고서 체계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\225_QA+_신제품 3종 보고서 체계.png",
+      "drive_file_id": "1U0o3zuouX70j_4Gj3ju3izvOEbMVMhkg",
+      "status": "pending"
+    },
+    {
+      "id": 226,
+      "topic": "신제품 공정적용 체크리스트",
+      "filename": "226_QA+_신제품 공정적용 체크리스트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\226_QA+_신제품 공정적용 체크리스트.png",
+      "drive_file_id": "1EnFOCNbxh3nfN0wieJrzbWRE1CWmPhZ7",
+      "status": "pending"
+    },
+    {
+      "id": 227,
+      "topic": "신제품 초품(初品) 품질점검 체크리스트",
+      "filename": "227_QA+_신제품 초품(初品) 품질점검 체크리스트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\227_QA+_신제품 초품(初品) 품질점검 체크리스트.png",
+      "drive_file_id": "1NjO0CncIAbUwquwl6yZxGfcIb-OQIhfs",
+      "status": "pending"
+    },
+    {
+      "id": 228,
+      "topic": "레토르트 공정점검 체크리스트",
+      "filename": "228_QA+_레토르트 공정점검 체크리스트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\228_QA+_레토르트 공정점검 체크리스트.png",
+      "drive_file_id": "1x_isn5536MLBDzxZYq5gouoVW0PNK8zn",
+      "status": "pending"
+    },
+    {
+      "id": 229,
+      "topic": "제조물책임법(PL) 대응체계",
+      "filename": "229_QA+_제조물책임법(PL) 대응체계.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\229_QA+_제조물책임법(PL) 대응체계.png",
+      "drive_file_id": "1V-g23kWLmCEf_VKespKo-Fvt5ZvLaRmT",
+      "status": "pending"
+    },
+    {
+      "id": 230,
+      "topic": "살균조건 설정 & 미생물 검증(MCT)",
+      "filename": "230_QA+_살균조건 설정 & 미생물 검증(MCT).png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\230_QA+_살균조건 설정 & 미생물 검증(MCT).png",
+      "drive_file_id": "1OXK6YKrOAEBGKv94Zkznv1NqxC03clLo",
+      "status": "pending"
+    },
+    {
+      "id": 231,
+      "topic": "JMS란 무엇인가",
+      "filename": "231_QA+_JMS란 무엇인가.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\231_QA+_JMS란 무엇인가.png",
+      "drive_file_id": "1zZwcFynHB5J-OEemLkfmmQ9OdKr9cr2o",
+      "status": "pending"
+    },
+    {
+      "id": 232,
+      "topic": "올바른 작업자 위생 복장 및 손씻기 절차",
+      "filename": "232_QA+_올바른 작업자 위생 복장 및 손씻기 절차.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\232_QA+_올바른 작업자 위생 복장 및 손씻기 절차.png",
+      "drive_file_id": "1MJDvAiop7ENnq-wCsS5aO9QxeEd4cWHc",
+      "status": "pending"
+    },
+    {
+      "id": 233,
+      "topic": "표준화된 공정 관리 절차 흐름도",
+      "filename": "233_QA+_표준화된 공정 관리 절차 흐름도.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\233_QA+_표준화된 공정 관리 절차 흐름도.png",
+      "drive_file_id": "1GhA9v-hY0s1OEP2rdRsTCDtiASmdKOYX",
+      "status": "pending"
+    },
+    {
+      "id": 234,
+      "topic": "장기 휴일 전 후 식품공장 품질관리 체크리스트",
+      "filename": "234_QA+_장기 휴일 전 후 식품공장 품질관리 체크리스트.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\234_QA+_장기 휴일 전 후 식품공장 품질관리 체크리스트.png",
+      "drive_file_id": "1fhvyWsKzBXweCtTwd6UEVNyzr-1Fg2F9",
+      "status": "pending"
+    },
+    {
+      "id": 235,
+      "topic": "식품 유형별 자가품질검사 항목과 주기",
+      "filename": "235_QA+_식품 유형별 자가품질검사 항목과 주기.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\235_QA+_식품 유형별 자가품질검사 항목과 주기.png",
+      "drive_file_id": "1xBAj4KvH6lrAARpanlcc71cigbW0m4nD",
+      "status": "pending"
+    },
+    {
+      "id": 236,
+      "topic": "금속검출기 CCP 모니터링",
+      "filename": "236_QA+_금속검출기 CCP 모니터링.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\236_QA+_금속검출기 CCP 모니터링.png",
+      "drive_file_id": "1HszH5xkfoaHWX4OrUTk4DGALE_l_ZHkG",
+      "status": "pending"
+    },
+    {
+      "id": 237,
+      "topic": "소규모HACCP와 일반HACCP의 GAP",
+      "filename": "237_QA+_소규모HACCP와 일반HACCP의 GAP.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\237_QA+_소규모HACCP와 일반HACCP의 GAP.png",
+      "drive_file_id": "1uUjSxrI0x2ILPZetoL7Y6Q17Tn-GUEje",
+      "status": "pending"
+    },
+    {
+      "id": 238,
+      "topic": "일반HACCP vs 소규모HACCP",
+      "filename": "238_QA+_일반HACCP vs 소규모HACCP.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\238_QA+_일반HACCP vs 소규모HACCP.png",
+      "drive_file_id": "1BcjYKdAdDDmAsSIIcuuSFc5R5a2_v60e",
+      "status": "pending"
+    },
+    {
+      "id": 239,
+      "topic": "자가품질검사, 생산이 없으면 꼭 검사해야 할까요",
+      "filename": "239_QA+_자가품질검사, 생산이 없으면 꼭 검사해야 할까요.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\239_QA+_자가품질검사, 생산이 없으면 꼭 검사해야 할까요.png",
+      "drive_file_id": "1ns95JNXvXCtVsPGI_WC14vJH8HpkD4YC",
+      "status": "pending"
+    },
+    {
+      "id": 240,
+      "topic": "식품회사 용수관리 한장 정리",
+      "filename": "240_QA+_식품회사 용수관리 한장 정리.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\240_QA+_식품회사 용수관리 한장 정리.png",
+      "drive_file_id": "1nKt9l2AWkA8-Sxt0Phb3nVaYJszPbt4j",
+      "status": "pending"
+    },
+    {
+      "id": 241,
+      "topic": "식품 HACCP, QA, QC 도메인지식",
+      "filename": "241_QA+_식품 HACCP, QA, QC 도메인지식.png",
+      "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\241_QA+_식품 HACCP, QA, QC 도메인지식.png",
+      "drive_file_id": "1fpg8pWusPhEo_4RcxlclHTKr9T3KSmtr",
+      "status": "pending"
     }
-  ]
+  ],
+  "drive_folder_id": "1thOAFwccj16mbmHOXxc27JbZdgwrWWmn"
 }
