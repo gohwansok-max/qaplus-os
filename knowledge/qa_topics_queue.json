@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-01 21:57:54",
+  "last_run": "2026-10-05 11:09:05",
   "total_topics": 95,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -576,7 +576,8 @@
       "topic": "EQ009 우유균질화 중요성과효과",
       "filename": "72_QA+_V2_EQ009_우유균질화_중요성과효과_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\72_QA+_V2_EQ009_우유균질화_중요성과효과_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-05_EQ009_우유균질화_중요성과효과_shorts.mp4"
     },
     {
       "id": 73,
