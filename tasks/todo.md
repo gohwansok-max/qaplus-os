@@ -56,5 +56,4 @@
 - [x] Remotion 템플릿 6종(hook/stat/flow/compare/checklist/outro) + 렌더 검증
 - [x] 대본 엔진(구독형 Claude/ChatGPT CLI → CHIPSUB 폴백) + 검증기
 - [x] 워크플로우 교체(Node·폰트·Chrome 라이브러리·CLI 설치)
-- [ ] 운영 활성화: GitHub Secret `CLAUDE_CODE_OAUTH_TOKEN`(`claude setup-token`) 등록 → workflow_dispatch 1회 실제 실행(Edge-TTS·LLM 실호출 검증)
-- [ ] (선택) `CODEX_AUTH_JSON` 등록 시 ChatGPT 구독 폴백 활성
+- [ ] 운영 활성화(필수): GitHub Secret `CLAUDE_CODE_OAUTH_TOKEN`(`claude setup-token`) 등록 — 없으면 워크플로우가 실패하도록 변경됨

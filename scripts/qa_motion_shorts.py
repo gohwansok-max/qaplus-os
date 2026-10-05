@@ -3,11 +3,10 @@
 
 주제 1개 → (LLM) 모션 씬 JSON → Edge-TTS 음성·자막 타이밍 → Remotion 렌더 → MP4(40~60초, 1080x1920)
 
-LLM 호출 우선순위 (QA_LLM_PROVIDERS, 쉼표 구분, 기본 "claude_cli,codex_cli,cheapai")
-  1. claude_cli : Claude 구독(Claude Code CLI). env CLAUDE_CODE_OAUTH_TOKEN  (`claude setup-token`으로 발급)
-  2. codex_cli  : ChatGPT 구독(Codex CLI).   env CODEX_AUTH_JSON (로컬 ~/.codex/auth.json 내용)
-  3. cheapai    : 기존 CHIPSUB_API(OpenAI 호환)
-  4. local      : 안전한 로컬 대체 대본 (항상 마지막)
+대본 작성 LLM (QA_LLM_PROVIDERS, 기본 "claude_cli" — Claude 구독 모델 전용)
+  - claude_cli : Claude 구독(Claude Code CLI). env CLAUDE_CODE_OAUTH_TOKEN  (`claude setup-token`으로 발급)
+  - 다른 모델(codex_cli/cheapai)·로컬 대체 대본은 기본 비활성. 대본이 Claude로 생성되지 않으면
+    조용히 대체하지 않고 실패(→ 텔레그램 실패 알림)한다. 대체 허용: QA_ALLOW_FALLBACK=1
 법령·수치는 공식 출처 문맥에 있는 것만 쓰도록 프롬프트·검증으로 강제한다.
 """
 from __future__ import annotations
@@ -51,9 +50,15 @@ SYSTEM_PROMPT = """당신은 식품 품질관리 20년 차 실무자의 목소�
 - 전문 용어 뒤에는 '쉽게 말하면'으로 일상어 풀이를 한 번 넣으세요. 말투는 존댓말의 든든한 선배.
 - 매번 다른 구성: 아래 '이번 앵글'과 '피해야 할 최근 주제'를 반영하세요.
 
+[인포그래픽 본문 규칙] (아래 '대표 인포그래픽 본문'이 주어진 경우)
+- 이 본문은 대표(20년 차 실무자)가 작성·검수한 1차 자료입니다. 공식 출처 문맥과 함께 근거로 사용하고, 본문의 결론과 어긋나는 내용은 쓰지 마세요.
+- 인포그래픽을 처음부터 끝까지 읽어 내리지 말고, 신입 QA에게 가장 쓸모 있는 핵심 1가지를 골라 40~55초 쇼츠로 재구성하세요.
+- 본문에 있는 수치·조항·기준값은 인용할 수 있지만, 본문에 없는 수치·조항은 추가하지 마세요.
+- 본문은 이미지 OCR 결과라 오탈자·줄 끊김·잡음이 있습니다. 의미가 명확한 오탈자만 바로잡고, 의미가 불분명한 구절과 숫자는 쓰지 마세요.
+
 [구조 규칙]
 - scenes 6~7개. 첫 씬 type=hook, 마지막 씬 type=outro, 가운데 4~5개는 stat/flow/compare/checklist 중 3종류 이상 사용.
-- 씬마다 narration(낭독문) 필수. 1~2문장, 28~85자. 전체 narration 합계 260~380자.
+- 씬마다 narration(낭독문) 필수. 1~2문장, 28~85자. 전체 narration 합계 260~340자.
 - hook 첫 narration은 30자 이내.
 - 화면 텍스트는 짧게: headline 줄당 12자 이내(\\n으로 2줄), 항목 문구 22자 이내.
 
@@ -68,12 +73,46 @@ outro:     {"type":"outro","takeaway":"오늘의 한 줄 결론 30자 이내","n
 반드시 JSON 객체 하나만 반환: {"badge":"상단 배지 8자 이내","scenes":[...]}  (마크다운·설명 금지)"""
 
 
+# ───────────────────────── 인포그래픽 본문(1차 자료) ─────────────────────────
+INFOGRAPHIC_FILE = BASE_DIR / "knowledge" / "infographic_texts.json"
+INFOGRAPHIC_MAX_CHARS = 5500
+INFOGRAPHIC_MIN_CHARS = 80  # OCR이 비었거나 너무 짧으면 근거로 쓰지 않는다
+
+
+def _norm(v: str) -> str:
+    return re.sub(r"[^0-9A-Za-z가-힣]+", "", v).lower()
+
+
+def load_infographic(topic: str, topic_id: int | None = None) -> dict | None:
+    """큐 id(우선) 또는 주제명 유사 일치로 인포그래픽 OCR 본문을 찾는다. 없으면 None."""
+    try:
+        data = json.loads(INFOGRAPHIC_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    item = data.get(str(topic_id)) if topic_id is not None else None
+    if item is None and topic:
+        key = _norm(re.sub(r"^[A-Z]{2,4}\d{3}\s+", "", topic))  # 'FSC008 ' 같은 분류코드 제거
+        if len(key) >= 6:
+            for k, v in data.items():
+                title = _norm(re.sub(r"^\d+_QA\+_", "", v["title"]))
+                if key in title or title in key:
+                    item, topic_id = v, int(k)
+                    break
+    if not item or len(item.get("text", "")) < INFOGRAPHIC_MIN_CHARS:
+        return None
+    return {"id": topic_id, "title": item["title"], "text": item["text"][:INFOGRAPHIC_MAX_CHARS]}
+
+
 # ───────────────────────── LLM 공급자 ─────────────────────────
-def _user_prompt(topic: str, angle: dict, sources: list, avoid: list[str]) -> str:
+def _user_prompt(topic: str, angle: dict, sources: list, avoid: list[str], info: dict | None = None) -> str:
+    info_block = (
+        f"\n\n대표 인포그래픽 본문 (OCR, 파일: {info['title']}):\n{info['text']}" if info else
+        "\n\n대표 인포그래픽 본문: 없음 (공식 출처 문맥만 근거로 사용)"
+    )
     return (
         f"주제: {topic}\n이번 앵글: {angle['id']} — {angle['opening'].format(topic=topic)}\n"
         f"피해야 할 최근 주제: {', '.join(avoid) if avoid else '없음'}\n"
-        f"오늘 날짜: {dt.date.today().isoformat()}\n\n공식 출처 문맥:\n{eng._source_context(sources)}"
+        f"오늘 날짜: {dt.date.today().isoformat()}\n\n공식 출처 문맥:\n{eng._source_context(sources)}{info_block}"
     )
 
 
@@ -148,14 +187,14 @@ def _list(v: Any, lo: int, hi: int, n: int) -> list[str] | None:
     return items[:hi] if len(items) >= lo else None
 
 
-def validate_script(raw: Any, sources: list) -> dict | None:
+def validate_script(raw: Any, sources: list, extra_source_text: str = "") -> dict | None:
     """스키마·분량·금지표현·수치 근거를 검사하고 정규화한다. 실패 시 None."""
     if not isinstance(raw, dict) or not isinstance(raw.get("scenes"), list):
         return None
     scenes_in = raw["scenes"]
     if not 6 <= len(scenes_in) <= 7 or scenes_in[0].get("type") != "hook" or scenes_in[-1].get("type") != "outro":
         return None
-    source_text = " ".join(s["snippet"] + s["title"] for s in sources)
+    source_text = " ".join(s["snippet"] + s["title"] for s in sources) + " " + extra_source_text
     out: list[dict] = []
     for sc in scenes_in:
         t = sc.get("type")
@@ -198,7 +237,7 @@ def validate_script(raw: Any, sources: list) -> dict | None:
             return None
         out.append(o)
     total = sum(len(x["narration"]) for x in out)
-    if not 240 <= total <= 400 or len({x["type"] for x in out[1:-1]}) < 3:
+    if not 240 <= total <= 380 or len({x["type"] for x in out[1:-1]}) < 3:
         return None
     return {"badge": _s(raw.get("badge"), 10) or "품질 실무", "scenes": out}
 
@@ -225,20 +264,22 @@ def _local_fallback(topic: str, angle: dict, story_id: str) -> dict:
     return {"badge": "품질 실무", "scenes": sc}
 
 
-def generate_motion_script(topic: str) -> tuple[dict, dict]:
+def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dict, dict]:
     topic = eng._topic(topic)
     story_id = eng._story_id()
     angle = eng._angle(topic, story_id)
     recent = eng._recent_story_fingerprints()
     sources = eng.fetch_official_sources(topic)
     avoid = _recent_topics()
-    user = _user_prompt(topic, angle, sources, avoid)
+    info = load_infographic(topic, topic_id)
+    print(f"  [인포그래픽] {'본문 ' + str(len(info['text'])) + '자 반영 (' + info['title'] + ')' if info else '본문 없음 — 공식 출처만 사용'}")
+    user = _user_prompt(topic, angle, sources, avoid, info)
     script, provider = None, "local_verified_fallback"
-    for name in [p.strip() for p in os.environ.get("QA_LLM_PROVIDERS", "claude_cli,codex_cli,cheapai").split(",") if p.strip()]:
+    for name in [p.strip() for p in os.environ.get("QA_LLM_PROVIDERS", "claude_cli").split(",") if p.strip()]:
         fn = PROVIDERS.get(name)
         if not fn:
             continue
-        for attempt in (1, 2):
+        for attempt in (1, 2, 3):
             try:
                 raw = fn(SYSTEM_PROMPT, user + f"\n\n생성 시도 {attempt}: 직전 시도와 다르게 새로 작성.")
             except (subprocess.SubprocessError, OSError) as exc:
@@ -247,7 +288,7 @@ def generate_motion_script(topic: str) -> tuple[dict, dict]:
             if raw is None:
                 break
             try:
-                cand = validate_script(json.loads(eng._strip_json_fence(raw)), sources)
+                cand = validate_script(json.loads(eng._strip_json_fence(raw)), sources, info["text"] if info else "")
             except ValueError:
                 cand = None
             if cand and _fingerprint(cand) not in recent:
@@ -257,10 +298,16 @@ def generate_motion_script(topic: str) -> tuple[dict, dict]:
         if script:
             break
     if not script:
+        if os.environ.get("QA_ALLOW_FALLBACK") != "1":
+            raise RuntimeError(
+                "Claude 구독 모델로 대본을 생성하지 못했습니다. CLAUDE_CODE_OAUTH_TOKEN(claude setup-token) 시크릿과 "
+                "Claude Code CLI 설치를 확인하세요. (다른 모델·로컬 대본으로 대체하지 않습니다)"
+            )
         script = _local_fallback(topic, angle, story_id)
     meta = {"story_id": story_id, "topic": topic, "story_angle": angle["id"], "generation_mode": provider,
             "renderer": "remotion", "script_fingerprint": _fingerprint(script),
             "official_sources": sources, "source_count": len(sources),
+            "infographic_id": info["id"] if info else None, "infographic_chars": len(info["text"]) if info else 0,
             "generated_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
             "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요."}
     eng.METADATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -366,14 +413,14 @@ def render(props: dict, out: Path) -> None:
     subprocess.run(cmd, cwd=PROJ, check=True)
 
 
-def build_motion_short(topic: str) -> dict:
+def build_motion_short(topic: str, topic_id: int | None = None) -> dict:
     """주제 → MP4. 반환: {path, filename, scenes(메타용), meta}"""
     VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
     stamp = dt.datetime.now().strftime("%H%M%S")
     run = RUN_DIR / stamp
     run.mkdir(parents=True, exist_ok=True)
     print("\n[1/3] 모션 대본 생성")
-    script, meta = generate_motion_script(topic)
+    script, meta = generate_motion_script(topic, topic_id)
     print("[2/3] Edge-TTS 음성 · 자막 타이밍")
     props = build_props(script, run)
     props["topic"] = topic

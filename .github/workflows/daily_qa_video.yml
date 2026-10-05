@@ -63,13 +63,16 @@ jobs:
           npm ci --no-audit --no-fund
           npx remotion browser ensure
 
-      - name: 구독형 LLM CLI 설치 (Claude Code / Codex — 시크릿이 있는 것만)
+      - name: Claude 구독 CLI 설치 및 시크릿 점검 (대본은 Claude 구독 모델만 작성)
         env:
-          HAS_CLAUDE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
-          HAS_CODEX: ${{ secrets.CODEX_AUTH_JSON != '' }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
-          if [ "$HAS_CLAUDE" = "true" ]; then npm install -g @anthropic-ai/claude-code; fi
-          if [ "$HAS_CODEX" = "true" ]; then npm install -g @openai/codex; fi
+          if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+            echo "::error::CLAUDE_CODE_OAUTH_TOKEN 시크릿이 없습니다. 로컬에서 'claude setup-token'으로 발급해 등록하세요."
+            exit 1
+          fi
+          npm install -g @anthropic-ai/claude-code
+          claude --version
 
       - name: 파이썬 라이브러리 설치 (Pillow, Edge-TTS, Requests)
         run: |
@@ -92,13 +95,11 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           # 칩섭을 우선 사용합니다. 값은 로그에 남지 않는 GitHub Secret으로만 전달합니다.
-          # ── 대본 생성 LLM 우선순위: Claude 구독 → ChatGPT 구독 → 칩섭(CHIPSUB_API) → 로컬 대체 ──
+          # ── 대본은 Claude 구독 모델(Claude Code CLI)만 작성합니다. 실패 시 대체 없이 워크플로우 실패 ──
           # CLAUDE_CODE_OAUTH_TOKEN : 로컬에서 `claude setup-token` 으로 발급한 구독용 토큰
-          # CODEX_AUTH_JSON         : 로컬 ~/.codex/auth.json 파일 내용 전체 (ChatGPT 로그인 상태)
           QA_RENDERER: remotion
-          QA_LLM_PROVIDERS: claude_cli,codex_cli,cheapai
+          QA_LLM_PROVIDERS: claude_cli
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          CODEX_AUTH_JSON: ${{ secrets.CODEX_AUTH_JSON }}
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}
           CHEAPAI_BASE_URL: https://api.cheapai.im/v1
           CHEAPAI_STORY_MODEL: gpt-5.6-sol

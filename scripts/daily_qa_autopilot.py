@@ -1426,7 +1426,7 @@ def run_daily_autopilot(custom_topic=None):
     if USE_MOTION:
         # Remotion 모션그래픽 렌더 — 40~60초, 씬 6종, Edge-TTS 유지
         from qa_motion_shorts import build_motion_short
-        _res = build_motion_short(topic_name)
+        _res = build_motion_short(topic_name, next_item['id'] if next_item else None)
         master_mp4, out_filename, scenes = _res['path'], _res['filename'], _res['scenes']
         print(f"  🎉 [완성] 모션그래픽 쇼츠 {_res['duration_sec']:.1f}s: {master_mp4}")
     else:
