@@ -33,9 +33,12 @@ jobs:
     timeout-minutes: 40
     steps:
       - name: 저장소 체크아웃
+        # [2026-10-05] run #94가 체크아웃에서 45분간 멈춰 취소됨 → 단계 타임아웃 5분 + 얕은 clone으로
+        # 멈춤 시 즉시 실패 알림이 가도록 함. (scripts/에 git 이력 의존 코드 없음 확인)
+        timeout-minutes: 5
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: 파이썬 3.11 설정
         uses: actions/setup-python@v5
