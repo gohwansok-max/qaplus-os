@@ -135,3 +135,7 @@
 - 해결: `qa-shorts/`(Remotion, 씬 6종) + `scripts/qa_motion_shorts.py`(대본 JSON→Edge-TTS→렌더, 40~60초 게이트).
 - 규칙: stat(수치) 씬은 공식 출처 문맥에 있는 숫자만 허용 / 렌더 시 외부 폰트 다운로드 금지(시스템 `fonts-noto-cjk`).
 - LLM 우선순위: Claude 구독(CLAUDE_CODE_OAUTH_TOKEN) → ChatGPT 구독(CODEX_AUTH_JSON) → CHIPSUB_API → 로컬 대체. 롤백: `QA_RENDERER=legacy`.
+
+### 2026-10-05 — 대본은 Claude 구독 모델만 작성 (CEO 지시)
+- 다른 LLM·로컬 대체 대본으로 조용히 넘어가지 않는다. 실패 시 워크플로우 실패 + 텔레그램 알림.
+- 인포그래픽 OCR 본문(`knowledge/infographic_texts.json`)을 1차 자료로 주입. OCR 오탈자는 의미가 명확할 때만 교정, 불명확한 수치는 사용 금지.

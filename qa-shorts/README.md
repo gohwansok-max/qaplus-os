@@ -16,10 +16,7 @@
 - 스키마 예시: `sample/script.json` / 스튜디오 미리보기: `npm run dev`
 - 폰트는 시스템 `fonts-noto-cjk` 사용 (렌더 시 외부 다운로드 없음)
 
-## LLM 연결 (구독형)
-| 순서 | 공급자 | 시크릿 |
-|:--|:--|:--|
-| 1 | Claude 구독 (Claude Code CLI) | `CLAUDE_CODE_OAUTH_TOKEN` ← 로컬에서 `claude setup-token` |
-| 2 | ChatGPT 구독 (Codex CLI) | `CODEX_AUTH_JSON` ← 로컬 `~/.codex/auth.json` 내용 |
-| 3 | 칩섭 | `CHIPSUB_API` (기존) |
-| 4 | 로컬 대체 대본 | 없음 |
+## LLM 연결 (Claude 구독 전용)
+- 대본은 **Claude 구독 모델(Claude Code CLI)만** 작성합니다. 시크릿: `CLAUDE_CODE_OAUTH_TOKEN` ← 로컬에서 `claude setup-token`
+- 다른 모델·로컬 대체 대본으로 조용히 넘어가지 않습니다. Claude 생성이 실패하면 워크플로우가 실패하고 텔레그램 알림이 갑니다. (임시 허용: `QA_ALLOW_FALLBACK=1`)
+- 인포그래픽 본문: `knowledge/infographic_texts.json`(Drive OCR, 큐 id별)을 1차 자료로 대본 프롬프트에 주입. 본문이 없거나 80자 미만이면 공식 출처만 사용.
