@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-05 22:27:26",
+  "last_run": "2026-10-06 21:21:44",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -600,7 +600,8 @@
       "topic": "REG001 인도 FSSAI 등록허가조건",
       "filename": "75_QA+_V2_REG001_인도_FSSAI_등록허가조건_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\75_QA+_V2_REG001_인도_FSSAI_등록허가조건_202608.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-06_REG001_인도_FSSAI_등록허가조건_shorts.mp4"
     },
     {
       "id": 76,

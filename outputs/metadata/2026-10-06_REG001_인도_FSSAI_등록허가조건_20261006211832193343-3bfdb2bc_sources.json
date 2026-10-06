@@ -1,0 +1,92 @@
+{
+  "story_id": "20261006211832193343-3bfdb2bc",
+  "topic": "REG001 인도 FSSAI 등록허가조건",
+  "story_angle": "field-troubleshooting",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "8c487d581fe410a571e7ea528d01022f83dca4c2d8a9745e3a7063cb8d7a0809",
+  "official_sources": [],
+  "source_count": 0,
+  "infographic_id": 75,
+  "infographic_chars": 1138,
+  "generated_at": "2026-10-06T21:19:07+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "FSSAI 참고",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "같은 이상 신호가 또 떴나요? 장비 교체는 잠깐만요.",
+        "kicker": "현장 트러블",
+        "headline": "같은 이상,\n또 떴나요?",
+        "sub": "교체 전에 볼 현장 단서"
+      },
+      {
+        "type": "compare",
+        "narration": "인도 FSSAI 요건을 참고해 보면, 반복 이상은 장비보다 세척·방제 기록의 빈칸에서 먼저 보이는 경우가 많습니다.",
+        "title": "장비부터 vs 기록부터",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "고장이라고 단정",
+            "교체 견적부터 요청"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "기록 빈칸부터 확인",
+            "현장 상태와 대조"
+          ]
+        }
+      },
+      {
+        "type": "checklist",
+        "narration": "먼저 볼 단서는 네 가지입니다. 세척·방제 기록, 용수 관리, 손 위생, 교육 기록이에요. 쉽게 말하면 사람과 습관부터 보라는 겁니다.",
+        "title": "장비 전에 볼 단서 4가지",
+        "items": [
+          "세척·방제 기록 누락",
+          "용수 관리 상태",
+          "손 위생·작업복",
+          "교육 기록 최신화"
+        ]
+      },
+      {
+        "type": "flow",
+        "narration": "순서는 간단합니다. 언제부터 반복됐는지 보고, 기록과 현장을 맞춰 본 뒤, 원인을 적고, 개선 조치를 이행하세요.",
+        "title": "반복 신호 점검 순서",
+        "steps": [
+          "반복 시점 확인",
+          "기록·현장 대조",
+          "원인 기록",
+          "개선 이행"
+        ]
+      },
+      {
+        "type": "compare",
+        "narration": "인도 제도 개요에서도 개선명령 불이행과 요구사항 반복 위반은 허가 정지·취소 사유로 소개됩니다. 반복은 방치하지 마세요.",
+        "title": "반복 방치 vs 개선 이행",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "원인 기록 없이 교체",
+            "같은 조치만 반복"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "원인과 조치를 기록",
+            "개선 이행 여부 확인"
+          ]
+        }
+      },
+      {
+        "type": "outro",
+        "narration": "국내 적용은 국내 법령과 최신 고시, 사업장 기준을 꼭 확인하세요. 기록이 쌓이면 현장이 달라집니다.",
+        "takeaway": "장비보다 기록부터 보세요",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}
