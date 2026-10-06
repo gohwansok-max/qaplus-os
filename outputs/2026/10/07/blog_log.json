@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-07",
+    "topic": "식품안전 상위10대 신속검사",
+    "title": "식품안전 상위 10대 신속검사 총정리: 법적 효력부터 공정 적용·트러블슈팅 노하우까지",
+    "file": "outputs/2026/10/07/[블로그최종]_식품안전_상위10대_신속검사.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6005867217250873753",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
