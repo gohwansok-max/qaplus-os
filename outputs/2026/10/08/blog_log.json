@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-08",
+    "topic": "스테인리스 식품가공 핵심소재",
+    "title": "식품공장 스테인리스 설비 녹 발생 원인과 종결 가이드: SUS304 vs SUS316L 재질 선정, 표면 조도(Ra), CIP 패시베이션 프로토콜",
+    "file": "outputs/2026/10/08/[블로그최종]_스테인리스_식품가공_핵심소재.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1900479221686359464",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
