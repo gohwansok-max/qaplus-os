@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-09",
+    "topic": "식품공장 에폭시바닥",
+    "title": "에폭시 vs 크리트? 20년 차 품질선배가 정리한 식품공장 바닥재 시공·보수 완벽 실무 가이드 (HACCP 심사 대비)",
+    "file": "outputs/2026/10/09/[블로그최종]_식품공장_에폭시바닥.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "5461380897438632635",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
