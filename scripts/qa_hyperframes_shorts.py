@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import html
 import json
 import re
@@ -46,7 +47,11 @@ def _scene_markup(scene: dict, index: int, start: float, audio: str | None) -> s
         steps = scene.get("steps", [])
         body = '<div class="flow">' + "".join(f'<div class="flow-step"><b>0{i+1}</b><span>{_esc(v)}</span></div>' for i, v in enumerate(steps)) + "</div>"
     elif typ == "compare":
-        body = f'<div class="compare"><div class="bad"><small>흔한 실수</small><ul>{_items(scene.get("bad", []))}</ul></div><div class="good"><small>이렇게 기록</small><ul>{_items(scene.get("good", []))}</ul></div></div>'
+        bad = scene.get("bad", [])
+        good = scene.get("good", [])
+        bad = bad.get("items", []) if isinstance(bad, dict) else bad
+        good = good.get("items", []) if isinstance(good, dict) else good
+        body = f'<div class="compare"><div class="bad"><small>흔한 실수</small><ul>{_items(bad)}</ul></div><div class="good"><small>이렇게 기록</small><ul>{_items(good)}</ul></div></div>'
     elif typ == "checklist":
         body = f'<ul class="checklist">{_items(scene.get("items", []))}</ul>'
     else:
@@ -88,6 +93,44 @@ def render_demo() -> Path:
     subprocess.run(["npx", "--yes", "hyperframes", "check"], cwd=HF_DIR, check=True)
     subprocess.run(["npx", "--yes", "hyperframes", "render", "--resolution", "portrait", "--quality", "high", "--workers", "1", "-o", str(output)], cwd=HF_DIR, check=True)
     return output
+
+
+def build_hyperframes_short(topic: str, topic_id: int | None = None) -> dict:
+    """기존 공식근거 대본·Edge-TTS 결과를 HyperFrames MP4로 렌더링한다."""
+    from qa_motion_shorts import build_props, generate_motion_script
+
+    run_name = f"hf_{dt.datetime.now().strftime('%H%M%S')}"
+    run = BASE_DIR / "qa-shorts" / "public" / "run" / run_name
+    run.mkdir(parents=True, exist_ok=True)
+    print("\n[HyperFrames 1/3] 공식근거 대본·중복검사")
+    script, meta = generate_motion_script(topic, topic_id)
+    print("[HyperFrames 2/3] Edge-TTS 음성·장면 타이밍")
+    props = build_props(script, run)
+    scenes = []
+    audio_paths = []
+    for scene in props["scenes"]:
+        item = dict(scene)
+        item["duration"] = scene["durationFrames"] / FPS
+        scenes.append(item)
+        audio = scene.get("audio")
+        if audio:
+            source = BASE_DIR / "qa-shorts" / "public" / audio
+            staged_name = f"{run_name}_{source.name}"
+            staged = ASSET_DIR / staged_name
+            shutil.copyfile(source, staged)
+            audio_paths.append(f"assets/{staged_name}")
+        else:
+            audio_paths.append(None)
+    write_html(scenes, topic, audio_paths)
+    clean = re.sub(r"[^0-9A-Za-z가-힣_-]+", "_", topic).strip("_")[:30] or "topic"
+    output = OUT_DIR / f"{dt.date.today().isoformat()}_{clean}_hyperframes_shorts.mp4"
+    print(f"[HyperFrames 3/3] 렌더링 ({props['totalFrames'] / FPS:.1f}s, {len(scenes)}씬)")
+    subprocess.run(["npx", "--yes", "hyperframes", "check", "--strict"], cwd=HF_DIR, check=True)
+    subprocess.run(["npx", "--yes", "hyperframes", "render", "--resolution", "portrait", "--quality", "high", "--workers", "1", "-o", str(output)], cwd=HF_DIR, check=True)
+    shutil.rmtree(run, ignore_errors=True)
+    for staged in ASSET_DIR.glob(f"{run_name}_*"):
+        staged.unlink(missing_ok=True)
+    return {"path": str(output), "filename": output.name, "scenes": scenes, "meta": meta, "duration_sec": props["totalFrames"] / FPS}
 
 
 if __name__ == "__main__":

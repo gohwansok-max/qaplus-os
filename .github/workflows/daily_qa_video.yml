@@ -45,7 +45,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Node 22 설정 (Remotion 모션그래픽 렌더러)
+      - name: Node 22 설정 (HyperFrames HTML 모션그래픽 렌더러)
         uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -60,11 +60,11 @@ jobs:
             libxrandr2 libxkbcommon-x11-0 libxfixes3 libxcomposite1 libxdamage1 libcups2 libpango-1.0-0
           fc-cache -fv
 
-      - name: Remotion 의존성 설치 및 브라우저 준비
+      - name: HyperFrames CLI 설치 및 브라우저·렌더 환경 점검
         working-directory: qa-shorts
         run: |
-          npm ci --no-audit --no-fund
-          npx remotion browser ensure
+          npx --yes hyperframes --version
+          npx --yes hyperframes browser --help >/dev/null
 
       - name: Claude 구독 CLI 설치 및 시크릿 점검 (대본은 Claude 구독 모델만 작성)
         env:
@@ -100,7 +100,7 @@ jobs:
           # 칩섭을 우선 사용합니다. 값은 로그에 남지 않는 GitHub Secret으로만 전달합니다.
           # ── 대본은 Claude 구독 모델(Claude Code CLI)만 작성합니다. 실패 시 대체 없이 워크플로우 실패 ──
           # CLAUDE_CODE_OAUTH_TOKEN : 로컬에서 `claude setup-token` 으로 발급한 구독용 토큰
-          QA_RENDERER: remotion
+          QA_RENDERER: hyperframes
           QA_LLM_PROVIDERS: claude_cli
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           CHEAPAI_API_KEY: ${{ secrets.CHIPSUB_API }}

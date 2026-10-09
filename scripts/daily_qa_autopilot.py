@@ -1268,7 +1268,9 @@ def mix_scene_audio_with_sfx(tts_file, duration, scene_id):
     subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return mixed_audio if os.path.exists(mixed_audio) else tts_file
 
-USE_MOTION = os.environ.get("QA_RENDERER", "remotion").lower() != "legacy"
+RENDERER = os.environ.get("QA_RENDERER", "remotion").lower()
+USE_HYPERFRAMES = RENDERER == "hyperframes"
+USE_MOTION = RENDERER == "remotion"
 
 
 def _render_legacy(scenes, topic_name, today_str):
@@ -1423,7 +1425,13 @@ def run_daily_autopilot(custom_topic=None):
             else:
                 scenes = generate_dynamic_scenes_for_custom_topic(topic_name)
 
-    if USE_MOTION:
+    if USE_HYPERFRAMES:
+        # HyperFrames HTML/GSAP 렌더 — 기존 공식근거 대본·Edge-TTS·Telegram 흐름 재사용
+        from qa_hyperframes_shorts import build_hyperframes_short
+        _res = build_hyperframes_short(topic_name, next_item['id'] if next_item else None)
+        master_mp4, out_filename, scenes = _res['path'], _res['filename'], _res['scenes']
+        print(f"  🎉 [완성] HyperFrames 쇼츠 {_res['duration_sec']:.1f}s: {master_mp4}")
+    elif USE_MOTION:
         # Remotion 모션그래픽 렌더 — 40~60초, 씬 6종, Edge-TTS 유지
         from qa_motion_shorts import build_motion_short
         _res = build_motion_short(topic_name, next_item['id'] if next_item else None)
