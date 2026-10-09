@@ -76,6 +76,9 @@ jobs:
           fi
           npm install -g @anthropic-ai/claude-code
           claude --version
+          # Mark this ephemeral checkout trusted for non-interactive Claude Code runs.
+          claude config set hasTrustDialogAccepted true
+          claude config set hasCompletedProjectOnboarding true
 
       - name: 파이썬 라이브러리 설치 (Pillow, Edge-TTS, Requests)
         run: |
