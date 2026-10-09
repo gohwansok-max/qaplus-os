@@ -1365,6 +1365,54 @@ def _render_legacy(scenes, topic_name, today_str):
     return master_mp4, out_filename, scenes
 
 
+
+def _persist_daily_upload_entry(upload_day, entry):
+    """Persist reservation/result before other channels or artifact pushes."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    import base64
+    import time
+    import requests
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    branch = os.environ.get("GITHUB_REF_NAME", "main")
+    if not token or not repo:
+        raise RuntimeError("Daily ledger persistence credentials missing.")
+    url = "https://api.github.com/repos/" + repo + "/contents/knowledge/youtube_daily_uploads.json"
+    headers = {"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json"}
+    for attempt in range(3):
+        response = requests.get(url, headers=headers, params={"ref": branch}, timeout=30)
+        sha = None
+        remote = {"uploads": {}}
+        if response.status_code == 200:
+            data = response.json()
+            sha = data["sha"]
+            remote = json.loads(base64.b64decode(data["content"]).decode("utf-8"))
+        elif response.status_code != 404:
+            raise RuntimeError("Daily ledger read HTTP " + str(response.status_code))
+        if not isinstance(remote, dict) or not isinstance(remote.get("uploads"), dict):
+            raise RuntimeError("Remote daily ledger invalid.")
+        prior = remote["uploads"].get(upload_day)
+        if prior and prior.get("run_id") != os.environ.get("GITHUB_RUN_ID"):
+            raise RuntimeError("Another run already reserved or uploaded this KST day.")
+        remote["uploads"][upload_day] = entry
+        payload = {
+            "message": "chore(auto): persist private YouTube daily upload slot " + upload_day,
+            "branch": branch,
+            "content": base64.b64encode((json.dumps(remote, ensure_ascii=False, indent=2) + "\n").encode("utf-8")).decode("ascii"),
+        }
+        if sha:
+            payload["sha"] = sha
+        saved = requests.put(url, headers=headers, json=payload, timeout=30)
+        if saved.status_code in (200, 201):
+            print("  [YouTube ledger] Remote daily slot persisted: " + upload_day)
+            return
+        if saved.status_code not in (409, 422):
+            raise RuntimeError("Daily ledger write HTTP " + str(saved.status_code))
+        time.sleep(attempt + 1)
+    raise RuntimeError("Daily ledger write conflict; do not blindly re-upload.")
+
+
 def run_daily_autopilot(custom_topic=None):
     from zoneinfo import ZoneInfo
     upload_day = datetime.datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
@@ -1395,7 +1443,7 @@ def run_daily_autopilot(custom_topic=None):
         except Exception:
             pass
 
-    today_str = datetime.date.today().strftime("%Y-%m-%d")
+    today_str = upload_day
     next_item = None
     scenes = None
     topic_name = ""
@@ -1404,7 +1452,7 @@ def run_daily_autopilot(custom_topic=None):
         topic_name = custom_topic
         print(f"\n[사용자 지정 토픽 수신] {topic_name}")
         try:
-            scenes = None if USE_MOTION else generate_live_web_scenes_for_custom_topic(topic_name)
+            scenes = None if (USE_MOTION or USE_HYPERFRAMES) else generate_live_web_scenes_for_custom_topic(topic_name)
         except Exception as e:
             # 실시간 웹 검색/LLM 생성이 실패하면 방송을 멈추는 대신 고정 템플릿으로
             # 대체한다. 단, 이 경우 캡션에서 바로 티가 나도록 로그를 남긴다.
@@ -1433,7 +1481,7 @@ def run_daily_autopilot(custom_topic=None):
         # 고정 문구로 나갔었다. /make와 동일하게 실시간 웹검색+LLM을 우선 시도하고,
         # 실패할 때만 (12개짜리) 사전 제작 템플릿 → 그래도 없으면 범용 폴백 순으로 내려간다.
         try:
-            scenes = None if USE_MOTION else generate_live_web_scenes_for_custom_topic(topic_name)
+            scenes = None if (USE_MOTION or USE_HYPERFRAMES) else generate_live_web_scenes_for_custom_topic(topic_name)
         except Exception as e:
             print(f"  [실시간 웹 대본 실패] 사전 제작 템플릿으로 대체합니다: {e}")
             template_data = TOPIC_TEMPLATES.get(topic_id)
@@ -1510,7 +1558,7 @@ def run_daily_autopilot(custom_topic=None):
         from youtube_uploader import build_short_metadata, is_configured as yt_configured, upload_short
 
         upload_now = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
-        upload_day = upload_now.date().isoformat()
+        # Keep the KST slot selected at run start across midnight.
         ledger_path = os.path.join(BASE_DIR, "knowledge", "youtube_daily_uploads.json")
         os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
         try:
@@ -1532,6 +1580,7 @@ def run_daily_autopilot(custom_topic=None):
             yt_meta = build_short_metadata(topic_name, scenes)
             print(f"  [YouTube SEO] 핵심 검색어: {yt_meta['primary_keyword']}")
             print(f"  [YouTube SEO] 제목: {yt_meta['title']}")
+            _persist_daily_upload_entry(upload_day, {"status": "uploading", "privacy_status": "private", "run_id": os.environ.get("GITHUB_RUN_ID"), "topic": topic_name, "reserved_at_kst": upload_now.isoformat(timespec="seconds")})
             yt_result = upload_short(
                 master_mp4,
                 yt_meta["title"],
@@ -1543,6 +1592,8 @@ def run_daily_autopilot(custom_topic=None):
                 safe_error = yt_result.get("error", "unknown") if isinstance(yt_result, dict) else "invalid_response"
                 raise RuntimeError("YouTube API upload unsuccessful: " + str(safe_error))
             ledger.setdefault("uploads", {})[upload_day] = {
+                "status": "uploaded",
+                "run_id": os.environ.get("GITHUB_RUN_ID"),
                 "video_id": yt_result["video_id"],
                 "url": yt_result.get("url", ""),
                 "topic": topic_name,
@@ -1555,6 +1606,7 @@ def run_daily_autopilot(custom_topic=None):
                 json.dump(ledger, ledger_file, ensure_ascii=False, indent=2)
                 ledger_file.write("\n")
             os.replace(temporary_ledger, ledger_path)
+            _persist_daily_upload_entry(upload_day, ledger["uploads"][upload_day])
             print("  ✓ [YouTube 업로드 완료 · 비공개] " + yt_result.get("url", ""))
     except Exception as e:
         print("  [!] YouTube 필수 업로드 실패: " + type(e).__name__)

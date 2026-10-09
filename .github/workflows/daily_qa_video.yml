@@ -154,6 +154,8 @@ jobs:
           # 칩섭을 우선 사용합니다. 값은 로그에 남지 않는 GitHub Secret으로만 전달합니다.
           # ── 대본은 Claude 구독 모델(Claude Code CLI)만 작성합니다. 실패 시 대체 없이 워크플로우 실패 ──
           # CLAUDE_CODE_OAUTH_TOKEN : 로컬에서 `claude setup-token` 으로 발급한 구독용 토큰
+          PYTHONUNBUFFERED: "1"
+          GH_TOKEN: ${{ github.token }}
           QA_RENDERER: hyperframes
           QA_LLM_PROVIDERS: claude_cli
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -206,14 +208,30 @@ jobs:
 
       - name: 변경사항 Git 커밋 및 푸시 (outputs/videos & 토픽 큐 갱신)
         run: |
+          # Ledger is persisted immediately through the Contents API, not this artifact commit.
+          if git ls-files --error-unmatch knowledge/youtube_daily_uploads.json >/dev/null 2>&1; then
+            git restore --worktree knowledge/youtube_daily_uploads.json
+          else
+            rm -f knowledge/youtube_daily_uploads.json
+          fi
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add outputs/videos/ outputs/metadata/ knowledge/qa_topics_queue.json knowledge/youtube_daily_uploads.json outputs/frames/ outputs/audio/ || true
+          git add outputs/videos/ outputs/metadata/ knowledge/qa_topics_queue.json outputs/frames/ outputs/audio/ || true
           if git status --porcelain | grep -q .; then
             git commit -m "chore(auto): 일일 큐에이플러스 숏츠 영상 자동 렌더링 완료"
-            git pull --rebase origin "${GITHUB_REF_NAME}" || true
-            if ! git push origin "HEAD:${GITHUB_REF_NAME}"; then
-              echo "::error::Git push failed; the daily upload ledger was not persisted."
+            pushed=false
+            for attempt in 1 2 3; do
+              if git pull --rebase --autostash origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"; then
+                pushed=true
+                break
+              fi
+              if test -d .git/rebase-merge || test -d .git/rebase-apply; then
+                git rebase --abort
+              fi
+              sleep "$attempt"
+            done
+            if [ "$pushed" != true ]; then
+              echo "::error::Artifact push failed; YouTube daily ledger is persisted separately. Do not re-upload blindly."
               exit 1
             fi
           else
@@ -239,7 +257,7 @@ jobs:
           결과: ${RESULT}
           트리거: ${{ github.event_name }}
           로그: ${RUN_URL}
-          로그에서 실패 단계를 확인한 뒤 다시 실행해 주세요."
+          로그에서 실패 단계를 확인해 주세요. 업로드 예약 기록이 있으면 재업로드 전 확인이 필요합니다."
           curl --retry 2 --retry-delay 2 --fail --silent --show-error \
             -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
