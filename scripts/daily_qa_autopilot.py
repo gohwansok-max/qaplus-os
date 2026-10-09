@@ -1499,7 +1499,7 @@ def run_daily_autopilot(custom_topic=None):
                 yt_meta["title"],
                 yt_meta["description"],
                 tags=yt_meta["tags"],
-                privacy_status="public",
+                privacy_status=os.environ.get("YOUTUBE_PRIVACY_STATUS", "private"),
             )
             if yt_result.get("ok"):
                 print(f"  ✓ [YouTube 업로드 완료] {yt_result['url']}")
