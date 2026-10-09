@@ -1,0 +1,37 @@
+name: YouTube OAuth safe diagnostic
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  oauth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check OAuth credential match without revealing secrets
+        env:
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os, json, urllib.request, urllib.error
+          from urllib.parse import urlencode
+          values = {k: os.environ[k] for k in ("YOUTUBE_CLIENT_ID", "YOUTUBE_CLIENT_SECRET", "YOUTUBE_REFRESH_TOKEN")}
+          for k,v in values.items():
+              print(k + ": present=" + str(bool(v)) + ", surrounding_whitespace=" + str(v != v.strip()) + ", multiline=" + str("\n" in v or "\r" in v))
+          body = urlencode({"client_id":values["YOUTUBE_CLIENT_ID"].strip(), "client_secret":values["YOUTUBE_CLIENT_SECRET"].strip(), "refresh_token":values["YOUTUBE_REFRESH_TOKEN"].strip(), "grant_type":"refresh_token"}).encode()
+          req = urllib.request.Request("https://oauth2.googleapis.com/token",data=body)
+          try:
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  payload=json.load(r)
+              print("OAuth refresh success=" + str(bool(payload.get("access_token"))))
+          except urllib.error.HTTPError as e:
+              payload=json.load(e)
+              error=payload.get("error", "unknown")
+              allowed={"invalid_client", "invalid_grant", "unauthorized_client", "invalid_request", "invalid_scope", "access_denied"}
+              print("OAuth HTTP=" + str(e.code) + "; safe_error=" + (error if error in allowed else "unknown"))
+              raise SystemExit(1)
+          PY
