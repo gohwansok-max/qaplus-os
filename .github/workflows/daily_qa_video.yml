@@ -170,10 +170,11 @@ jobs:
           OFFICIAL_OPENAI_BASE_URL: https://api.openai.com/v1
           OFFICIAL_OPENAI_STORY_MODEL: gpt-4.1-mini
           # YouTube 쇼츠 자동 업로드 — Blogger와 동일한 OAuth 클라이언트(ID/보안 비밀) 재사용,
-          # 리프레시 토큰만 YouTube 업로드 스코프로 별도 발급받아 등록. 없으면 업로드 단계는 조용히 스킵됨.
+          # 리프레시 토큰은 업로드 전 검증하고, 모든 영상은 비공개로만 등록합니다.
           YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
           YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
           YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+          YOUTUBE_PRIVACY_STATUS: private
           # 페이스북/인스타그램 릴스 자동 업로드 (Meta Graph API) — 미설정 시 조용히 스킵됨.
           META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
           META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
