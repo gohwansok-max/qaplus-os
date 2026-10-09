@@ -1366,6 +1366,23 @@ def _render_legacy(scenes, topic_name, today_str):
 
 
 def run_daily_autopilot(custom_topic=None):
+    from zoneinfo import ZoneInfo
+    upload_day = datetime.datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat()
+    ledger_path = os.path.join(BASE_DIR, "knowledge", "youtube_daily_uploads.json")
+    if os.path.exists(ledger_path):
+        try:
+            with open(ledger_path, "r", encoding="utf-8") as ledger_file:
+                ledger = json.load(ledger_file)
+        except (OSError, ValueError):
+            raise RuntimeError("Cannot read YouTube daily upload ledger; refusing to risk a duplicate upload.") from None
+        if not isinstance(ledger, dict) or not isinstance(ledger.get("uploads", {}), dict):
+            raise RuntimeError("YouTube daily upload ledger has an invalid format.")
+        prior_upload = ledger.get("uploads", {}).get(upload_day)
+        if prior_upload:
+            if not isinstance(prior_upload, dict) or prior_upload.get("privacy_status") != "private" or not prior_upload.get("video_id"):
+                raise RuntimeError("YouTube daily upload ledger entry is incomplete or not private.")
+            print("  ✓ [YouTube 일일 제한] KST " + upload_day + " 등록 완료, 추가 생성·발송을 건너뜁니다.")
+            return
     print("==================================================================")
     print("  🚀 [큐에이플러스 AI CEO OS] 쇼츠 영상 5대 고도화 엔진 가동")
     print("==================================================================")
