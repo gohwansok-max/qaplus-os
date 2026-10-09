@@ -76,9 +76,20 @@ jobs:
           fi
           npm install -g @anthropic-ai/claude-code
           claude --version
-          # Mark this ephemeral checkout trusted for non-interactive Claude Code runs.
-          claude config set hasTrustDialogAccepted true
-          claude config set hasCompletedProjectOnboarding true
+          # Mark this ephemeral checkout trusted in Claude Code project state.
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          config_path = Path.home() / ".claude.json"
+          try:
+              config = json.loads(config_path.read_text())
+          except (FileNotFoundError, json.JSONDecodeError):
+              config = {}
+          project = config.setdefault("projects", {}).setdefault(str(Path.cwd()), {})
+          project["hasTrustDialogAccepted"] = True
+          project["hasCompletedProjectOnboarding"] = True
+          config_path.write_text(json.dumps(config))
+          PY
 
       - name: 파이썬 라이브러리 설치 (Pillow, Edge-TTS, Requests)
         run: |
