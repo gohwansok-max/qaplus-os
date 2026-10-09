@@ -56,7 +56,8 @@ def _scene_markup(scene: dict, index: int, start: float, audio: str | None) -> s
         body = f'<ul class="checklist">{_items(scene.get("items", []))}</ul>'
     else:
         body = f'<div class="accent-line"></div><p class="sub">{sub}</p>'
-    audio_tag = f'<audio id="audio-scene-{index+1}" src="{_esc(audio)}" data-start="0" data-duration="{scene["duration"]:.3f}" preload="auto"></audio>' if audio else ""
+    audio_duration = float(scene.get("audio_duration", scene["duration"]))
+    audio_tag = f'<audio id="audio-scene-{index+1}" src="{_esc(audio)}" data-start="0" data-duration="{audio_duration:.3f}" preload="auto"></audio>' if audio else ""
     return f'''<section id="scene-{index+1}-{typ}" class="scene scene-{typ}" data-composition-id="scene-{index}" data-start="{start:.3f}" data-duration="{scene["duration"]:.3f}" data-width="1080" data-height="1920">\n      <div class="scene-inner"><span class="scene-no">0{index + 1} / 05</span><h1>{headline.replace(chr(10), "<br>")}</h1>{body}</div>{audio_tag}\n    </section>'''
 
 
@@ -97,7 +98,7 @@ def render_demo() -> Path:
 
 def build_hyperframes_short(topic: str, topic_id: int | None = None) -> dict:
     """기존 공식근거 대본·Edge-TTS 결과를 HyperFrames MP4로 렌더링한다."""
-    from qa_motion_shorts import build_props, generate_motion_script
+    from qa_motion_shorts import _probe, build_props, generate_motion_script
 
     run_name = f"hf_{dt.datetime.now().strftime('%H%M%S')}"
     run = BASE_DIR / "qa-shorts" / "public" / "run" / run_name
@@ -118,6 +119,7 @@ def build_hyperframes_short(topic: str, topic_id: int | None = None) -> dict:
             staged_name = f"{run_name}_{source.name}"
             staged = ASSET_DIR / staged_name
             shutil.copyfile(source, staged)
+            item["audio_duration"] = _probe(source)
             audio_paths.append(f"assets/{staged_name}")
         else:
             audio_paths.append(None)
