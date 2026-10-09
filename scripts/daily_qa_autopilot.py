@@ -1558,7 +1558,8 @@ def run_daily_autopilot(custom_topic=None):
         from youtube_uploader import build_short_metadata, is_configured as yt_configured, upload_short
 
         upload_now = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
-        # Keep the KST slot selected at run start across midnight.
+        # Recheck the actual upload date after rendering; the remote reservation prevents midnight duplicates.
+        upload_day = upload_now.date().isoformat()
         ledger_path = os.path.join(BASE_DIR, "knowledge", "youtube_daily_uploads.json")
         os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
         try:
