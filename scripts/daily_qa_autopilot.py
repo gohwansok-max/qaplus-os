@@ -1487,10 +1487,31 @@ def run_daily_autopilot(custom_topic=None):
         print(f"  [텔레그램 발송 실패] {e}")
         raise
     
-    # 7. YouTube Shorts 자동 업로드 (YOUTUBE_REFRESH_TOKEN 설정된 경우에만 동작, 없으면 조용히 스킵)
+    # 7. YouTube Shorts 필수 자동 업로드. KST 날짜별 1건만 등록하고 기본 공개 상태는 비공개.
     try:
+        from zoneinfo import ZoneInfo
         from youtube_uploader import build_short_metadata, is_configured as yt_configured, upload_short
-        if yt_configured():
+
+        upload_now = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
+        upload_day = upload_now.date().isoformat()
+        ledger_path = os.path.join(BASE_DIR, "knowledge", "youtube_daily_uploads.json")
+        os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
+        try:
+            with open(ledger_path, "r", encoding="utf-8") as ledger_file:
+                ledger = json.load(ledger_file)
+        except FileNotFoundError:
+            ledger = {"uploads": {}}
+        if not isinstance(ledger, dict) or not isinstance(ledger.get("uploads", {}), dict):
+            raise RuntimeError("YouTube daily upload ledger has an invalid format.")
+
+        prior_upload = ledger.get("uploads", {}).get(upload_day)
+        if prior_upload:
+            if prior_upload.get("privacy_status") != "private" or not prior_upload.get("video_id"):
+                raise RuntimeError("YouTube daily upload ledger entry is incomplete or not private.")
+            print("  ✓ [YouTube 일일 업로드] KST " + upload_day + " 등록 완료 기록 확인, 중복 업로드 방지")
+        else:
+            if not yt_configured():
+                raise RuntimeError("Required YouTube OAuth credentials are not configured.")
             yt_meta = build_short_metadata(topic_name, scenes)
             print(f"  [YouTube SEO] 핵심 검색어: {yt_meta['primary_keyword']}")
             print(f"  [YouTube SEO] 제목: {yt_meta['title']}")
@@ -1499,16 +1520,28 @@ def run_daily_autopilot(custom_topic=None):
                 yt_meta["title"],
                 yt_meta["description"],
                 tags=yt_meta["tags"],
-                privacy_status=os.environ.get("YOUTUBE_PRIVACY_STATUS", "private"),
+                privacy_status="private",
             )
-            if yt_result.get("ok"):
-                print(f"  ✓ [YouTube 업로드 완료] {yt_result['url']}")
-            else:
-                print(f"  [!] YouTube 업로드 실패 (텔레그램으로는 이미 전송됨): {yt_result.get('error')}")
-        else:
-            print("  [*] YouTube 자동 업로드 미설정 — 텔레그램 발송만 진행합니다.")
+            if not isinstance(yt_result, dict) or not yt_result.get("ok") or not yt_result.get("video_id"):
+                safe_error = yt_result.get("error", "unknown") if isinstance(yt_result, dict) else "invalid_response"
+                raise RuntimeError("YouTube API upload unsuccessful: " + str(safe_error))
+            ledger.setdefault("uploads", {})[upload_day] = {
+                "video_id": yt_result["video_id"],
+                "url": yt_result.get("url", ""),
+                "topic": topic_name,
+                "title": yt_meta["title"],
+                "privacy_status": "private",
+                "uploaded_at_kst": upload_now.isoformat(timespec="seconds"),
+            }
+            temporary_ledger = ledger_path + ".tmp"
+            with open(temporary_ledger, "w", encoding="utf-8") as ledger_file:
+                json.dump(ledger, ledger_file, ensure_ascii=False, indent=2)
+                ledger_file.write("\n")
+            os.replace(temporary_ledger, ledger_path)
+            print("  ✓ [YouTube 업로드 완료 · 비공개] " + yt_result.get("url", ""))
     except Exception as e:
-        print(f"  [!] YouTube 업로드 모듈 오류 (텔레그램으로는 이미 전송됨): {e}")
+        print("  [!] YouTube 필수 업로드 실패: " + type(e).__name__)
+        raise RuntimeError("YouTube required upload failed: " + type(e).__name__) from None
 
     # 8. 페이스북 릴스 자동 업로드 (META_PAGE_* 설정된 경우에만 동작)
     fb_caption = f"{topic_name}\n\n식품 품질관리/HACCP/FSSC22000 실무 노하우 — 큐에이플러스"
