@@ -12,11 +12,14 @@
       "recovered_from_run": "37942468325"
     },
     "2026-10-10": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "37992498004",
+      "video_id": "8l1UOVJAXkk",
+      "url": "https://youtube.com/shorts/8l1UOVJAXkk",
       "topic": "HACCP 법규 개정(8월 11일), 교육 관련",
-      "reserved_at_kst": "2026-10-10T06:21:45+09:00"
+      "title": "[HACCP CCP 관리] HACCP 법규 개정(8월 11일), 교육 관련 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-10T06:21:45+09:00"
     }
   }
 }
