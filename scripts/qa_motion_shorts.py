@@ -187,58 +187,71 @@ def _list(v: Any, lo: int, hi: int, n: int) -> list[str] | None:
     return items[:hi] if len(items) >= lo else None
 
 
-def validate_script(raw: Any, sources: list, extra_source_text: str = "") -> dict | None:
-    """스키마·분량·금지표현·수치 근거를 검사하고 정규화한다. 실패 시 None."""
+def validate_script(raw: Any, sources: list, extra_source_text: str = "", diagnostics: list[str] | None = None) -> dict | None:
+    """스키마·분량·금지표현·수치 근거를 검사하고 정규화한다. 실패 사유는 코드로만 기록한다."""
+    def reject(code: str) -> None:
+        if diagnostics is not None:
+            diagnostics.append(code)
+        return None
+
     if not isinstance(raw, dict) or not isinstance(raw.get("scenes"), list):
-        return None
+        return reject("root_schema")
     scenes_in = raw["scenes"]
-    if not 6 <= len(scenes_in) <= 7 or scenes_in[0].get("type") != "hook" or scenes_in[-1].get("type") != "outro":
-        return None
+    if not 6 <= len(scenes_in) <= 7:
+        return reject("scene_count")
+    if any(not isinstance(scene, dict) for scene in scenes_in):
+        return reject("scene_shape")
+    if scenes_in[0].get("type") != "hook" or scenes_in[-1].get("type") != "outro":
+        return reject("scene_order")
     source_text = " ".join(s["snippet"] + s["title"] for s in sources) + " " + extra_source_text
     out: list[dict] = []
     for sc in scenes_in:
         t = sc.get("type")
         if t not in SCENE_TYPES:
-            return None
+            return reject("unsupported_scene_type")
         nar = _s(sc.get("narration"), 120)
         if not 15 <= len(nar) <= 100:
-            return None
+            return reject("narration_length")
         o: dict[str, Any] = {"type": t, "narration": nar}
         if t == "hook":
             o.update(kicker=_s(sc.get("kicker"), 12), headline="\n".join(_s(x, 14) for x in str(sc.get("headline", "")).splitlines()[:2]), sub=_s(sc.get("sub"), 32))
             if not (o["kicker"] and o["headline"] and o["sub"]):
-                return None
+                return reject("hook_fields")
         elif t == "stat":
             o.update(label=_s(sc.get("label"), 18), value=_s(sc.get("value"), 12), caption=_s(sc.get("caption"), 30), note=_s(sc.get("note"), 40))
             nums = re.findall(r"\d+(?:\.\d+)?", o["value"])
             if not (o["label"] and o["value"] and o["caption"]) or not nums or not any(n in source_text for n in nums):
-                return None  # 출처에 없는 숫자는 stat으로 쓰지 않는다 (Zero-Inference)
+                return reject("stat_source_number")
         elif t == "flow":
             steps = _list(sc.get("steps"), 3, 4, 22)
             o.update(title=_s(sc.get("title"), 22), steps=steps)
             if not (o["title"] and steps):
-                return None
+                return reject("flow_fields")
         elif t == "compare":
             bad, good = sc.get("bad") or {}, sc.get("good") or {}
+            if not isinstance(bad, dict) or not isinstance(good, dict):
+                return reject("compare_shape")
             bi, gi = _list(bad.get("items"), 2, 3, 24), _list(good.get("items"), 2, 3, 24)
             o.update(title=_s(sc.get("title"), 22), bad={"label": _s(bad.get("label"), 10), "items": bi}, good={"label": _s(good.get("label"), 10), "items": gi})
             if not (o["title"] and bi and gi and o["bad"]["label"] and o["good"]["label"]):
-                return None
+                return reject("compare_fields")
         elif t == "checklist":
             items = _list(sc.get("items"), 3, 4, 24)
             o.update(title=_s(sc.get("title"), 22), items=items)
             if not (o["title"] and items):
-                return None
+                return reject("checklist_fields")
         elif t == "outro":
             o.update(takeaway=_s(sc.get("takeaway"), 34), cta=CTA)
             if not o["takeaway"]:
-                return None
+                return reject("outro_field")
         if any(eng._has_banned_phrase(v) for v in json.dumps(o, ensure_ascii=False).split('"')):
-            return None
+            return reject("banned_phrase")
         out.append(o)
     total = sum(len(x["narration"]) for x in out)
-    if not 240 <= total <= 380 or len({x["type"] for x in out[1:-1]}) < 3:
-        return None
+    if not 240 <= total <= 380:
+        return reject("total_narration_length")
+    if len({x["type"] for x in out[1:-1]}) < 3:
+        return reject("scene_variety")
     return {"badge": _s(raw.get("badge"), 10) or "품질 실무", "scenes": out}
 
 
@@ -274,27 +287,67 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
     info = load_infographic(topic, topic_id)
     print(f"  [인포그래픽] {'본문 ' + str(len(info['text'])) + '자 반영 (' + info['title'] + ')' if info else '본문 없음 — 공식 출처만 사용'}")
     user = _user_prompt(topic, angle, sources, avoid, info)
+    try:
+        max_attempts = int(os.environ.get("QA_LLM_MAX_ATTEMPTS_PER_MODEL", "5"))
+    except (TypeError, ValueError):
+        max_attempts = 5
+    max_attempts = min(max(1, max_attempts), 5)
     script, provider = None, "local_verified_fallback"
+    feedback_by_code = {
+        "invalid_json": "마크다운이나 설명 없이 파싱 가능한 JSON 객체 하나만 반환하세요.",
+        "root_schema": "최상위 JSON은 badge 문자열과 scenes 배열을 포함해야 합니다.",
+        "scene_count": "씬은 6~7개로 구성하세요.",
+        "scene_shape": "scenes 배열의 모든 항목은 JSON 객체여야 합니다.",
+        "scene_order": "첫 씬은 hook, 마지막 씬은 outro여야 합니다.",
+        "unsupported_scene_type": "씬 type은 hook/stat/flow/compare/checklist/outro 중 하나만 사용하세요.",
+        "narration_length": "각 narration은 15~100자 범위로 작성하세요.",
+        "hook_fields": "hook은 kicker, headline, sub 필수 항목을 모두 채우세요.",
+        "stat_source_number": "stat은 숫자가 공식 출처 문맥에 실제로 있을 때만 사용하고, 없으면 다른 씬 유형을 쓰세요.",
+        "flow_fields": "flow는 title과 3~4개의 steps를 채우세요.",
+        "compare_shape": "compare의 bad와 good은 각각 객체여야 합니다.",
+        "compare_fields": "compare는 title, bad/good label, 각 2~3개 항목을 채우세요.",
+        "checklist_fields": "checklist는 title과 3~4개 items를 채우세요.",
+        "outro_field": "outro는 takeaway를 채우세요.",
+        "banned_phrase": "보장·과장 표현 및 금지 문구를 제거하세요.",
+        "total_narration_length": "전체 narration 합계는 240~380자 범위로 맞추세요.",
+        "scene_variety": "hook/outro 사이에서 서로 다른 가운데 씬 유형을 3종 이상 사용하세요.",
+        "duplicate_fingerprint": "최근 대본과 문장·표현을 겹치지 않도록 새 앵글과 완전히 새로운 narration으로 작성하세요.",
+        "malformed_response": "필수 필드와 자료형을 확인하고 JSON 스키마에 맞춰 작성하세요.",
+    }
     for name in [p.strip() for p in os.environ.get("QA_LLM_PROVIDERS", "claude_cli").split(",") if p.strip()]:
         fn = PROVIDERS.get(name)
         if not fn:
             continue
-        for attempt in (1, 2, 3):
+        retry_feedback = ""
+        for attempt in range(1, max_attempts + 1):
             try:
-                raw = fn(SYSTEM_PROMPT, user + f"\n\n생성 시도 {attempt}: 직전 시도와 다르게 새로 작성.")
+                raw = fn(SYSTEM_PROMPT, user + retry_feedback + "\n\n생성 시도 " + str(attempt) + ": 직전 시도와 다르게 새로 작성.")
             except (subprocess.SubprocessError, OSError) as exc:
                 print(f"  [LLM] {name} 호출 실패: {type(exc).__name__}")
                 break
             if raw is None:
                 break
+            diagnostics: list[str] = []
             try:
-                cand = validate_script(json.loads(eng._strip_json_fence(raw)), sources, info["text"] if info else "")
-            except ValueError:
+                parsed = json.loads(eng._strip_json_fence(raw))
+                cand = validate_script(parsed, sources, info["text"] if info else "", diagnostics)
+            except json.JSONDecodeError:
                 cand = None
-            if cand and _fingerprint(cand) not in recent:
-                script, provider = cand, name
-                break
-            print(f"  [LLM] {name} 응답이 검증을 통과하지 못했습니다 (시도 {attempt})")
+                diagnostics.append("invalid_json")
+            except (ValueError, TypeError, AttributeError, KeyError) as exc:
+                cand = None
+                diagnostics.append("malformed_response")
+            if cand is not None:
+                if _fingerprint(cand) not in recent:
+                    script, provider = cand, name
+                    break
+                diagnostics = ["duplicate_fingerprint"]
+            if not diagnostics:
+                diagnostics = ["malformed_response"]
+            reason_codes = list(dict.fromkeys(diagnostics))
+            print("  [LLM] " + name + " 검증 실패 코드: " + ",".join(reason_codes) + " (시도 " + str(attempt) + "/" + str(max_attempts) + ")")
+            guidance = " ".join(feedback_by_code.get(code, "JSON 스키마와 모든 검증 조건을 다시 확인하세요.") for code in reason_codes)
+            retry_feedback = "\n\n[직전 응답 수정 요청]\n" + guidance + " 안전·근거·중복검사 기준은 완화하지 말고, JSON 객체 하나만 반환하세요."
         if script:
             break
     if not script:
