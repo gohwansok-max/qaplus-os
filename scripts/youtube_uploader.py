@@ -130,7 +130,7 @@ def get_access_token():
     }, timeout=30)
 
     if resp.status_code != 200:
-        print(f"[!] YouTube 액세스 토큰 발급 실패: {resp.status_code} {resp.text}")
+        print(f"[!] YouTube 액세스 토큰 발급 실패: HTTP {resp.status_code}")
         return None
 
     return resp.json().get("access_token")
@@ -143,14 +143,16 @@ def is_configured():
     return bool(has_client and os.environ.get("YOUTUBE_REFRESH_TOKEN"))
 
 
-def upload_short(video_path, title, description, tags=None, privacy_status="public"):
+def upload_short(video_path, title, description, tags=None, privacy_status="private"):
     """
     쇼츠(세로형 짧은 영상)를 유튜브에 업로드한다.
     privacy_status: "public"(즉시 공개) | "unlisted"(링크 공개) | "private"(비공개, 검수 후 수동 공개)
     설명에 #Shorts를 포함하되, 검색 적합도는 정확한 제목·설명·영상 내용으로 확보한다.
     """
+    if privacy_status not in {"private", "unlisted", "public"}:
+        return {"ok": False, "error": "invalid privacy status"}
     if not os.path.exists(video_path):
-        return {"ok": False, "error": f"영상 파일을 찾을 수 없습니다: {video_path}"}
+        return {"ok": False, "error": "video file not found"}
 
     access_token = get_access_token()
     if not access_token:
@@ -188,7 +190,7 @@ def upload_short(video_path, title, description, tags=None, privacy_status="publ
         timeout=30,
     )
     if init_resp.status_code != 200:
-        return {"ok": False, "error": f"업로드 세션 시작 실패: {init_resp.status_code} {init_resp.text}"}
+        return {"ok": False, "error": f"upload session HTTP {init_resp.status_code}"}
 
     upload_url = init_resp.headers.get("Location")
     if not upload_url:
@@ -214,7 +216,7 @@ def upload_short(video_path, title, description, tags=None, privacy_status="publ
             "url": f"https://youtube.com/shorts/{video_id}",
             "status": privacy_status,
         }
-    return {"ok": False, "error": f"{upload_resp.status_code} {upload_resp.text[:500]}"}
+    return {"ok": False, "error": f"upload HTTP {upload_resp.status_code}"}
 
 
 def _load_dotenv_into_environ():
@@ -239,7 +241,7 @@ if __name__ == "__main__":
     parser.add_argument("--video", required=True, help="업로드할 mp4 파일 경로")
     parser.add_argument("--title", required=True)
     parser.add_argument("--description", default="")
-    parser.add_argument("--privacy", default="public", choices=["public", "unlisted", "private"])
+    parser.add_argument("--privacy", default="private", choices=["public", "unlisted", "private"])
     args = parser.parse_args()
 
     if not is_configured():
