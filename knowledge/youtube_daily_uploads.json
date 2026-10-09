@@ -10,6 +10,13 @@
       "privacy_status": "private",
       "upload_confirmed_in_log_at_kst": "2026-10-09T23:19:06+09:00",
       "recovered_from_run": "37942468325"
+    },
+    "2026-10-10": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "37992498004",
+      "topic": "HACCP 법규 개정(8월 11일), 교육 관련",
+      "reserved_at_kst": "2026-10-10T06:21:45+09:00"
     }
   }
 }
