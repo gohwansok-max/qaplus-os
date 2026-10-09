@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-09 23:19:06",
+  "last_run": "2026-10-09 21:21:42",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -648,7 +648,8 @@
       "topic": "HACCP 법규 개정(8월 11일), 교육 관련",
       "filename": "81_HACCP 법규 개정(8월 11일),_교육 관련.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\81_HACCP 법규 개정(8월 11일),_교육 관련.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-09_HACCP_법규_개정_8월_11일_교육_관련_hyperframes_shorts.mp4"
     },
     {
       "id": 82,
