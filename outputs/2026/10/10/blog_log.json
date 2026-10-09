@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-10",
+    "topic": "위험한식중독균 5종",
+    "title": "가열하면 다 죽는다? 식품공장 품질관리팀이 반드시 알아야 할 고위험 식중독균 5종 실무 가이드 (HACCP·EMP 대응)",
+    "file": "outputs/2026/10/10/[블로그최종]_위험한식중독균_5종.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "5957063535893825990",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
