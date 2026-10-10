@@ -22,11 +22,14 @@
       "uploaded_at_kst": "2026-10-10T06:21:45+09:00"
     },
     "2026-10-11": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "38087024128",
+      "video_id": "u88ppVSeKbM",
+      "url": "https://youtube.com/shorts/u88ppVSeKbM",
       "topic": "FATTOM 관련 인포그래픽",
-      "reserved_at_kst": "2026-10-11T06:21:52+09:00"
+      "title": "[HACCP 실무] FATTOM 관련 인포그래픽 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-11T06:21:52+09:00"
     }
   }
 }
