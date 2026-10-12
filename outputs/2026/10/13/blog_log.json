@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-13",
+    "topic": "식품과학 식품기술 핵심용어",
+    "title": "식품 전공자도 헷갈리는 식품과학·식품기술 핵심용어 총정리 (QA/QC 20년 선배의 실무 사전)",
+    "file": "outputs/2026/10/13/[블로그최종]_식품과학_식품기술_핵심용어.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1933609366813501820",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
