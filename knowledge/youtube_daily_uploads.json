@@ -40,6 +40,13 @@
       "title": "[HACCP 실무] 푸드 QR 표시 적용 | 큐에이플러스",
       "privacy_status": "private",
       "uploaded_at_kst": "2026-10-12T06:21:14+09:00"
+    },
+    "2026-10-14": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "38469422418",
+      "topic": "금속검출기 한계기준 변경",
+      "reserved_at_kst": "2026-10-14T06:21:49+09:00"
     }
   }
 }
