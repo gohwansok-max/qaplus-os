@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-15",
+    "topic": "식품공장 GMP 위반 TOP10",
+    "title": "식약처 불시점검 때 99% 털리는 곳은? 식품공장 GMP 위반 사례 TOP 10과 실무 대응법",
+    "file": "outputs/2026/10/15/[블로그최종]_식품공장_GMP_위반_TOP10.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1466183104236256522",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
