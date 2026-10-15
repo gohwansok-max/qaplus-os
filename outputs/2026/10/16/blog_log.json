@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-16",
+    "topic": "CIP COP 세정방식 비교",
+    "title": "CIP vs COP 차이점 완벽 비교 및 세척 유효성 검증 가이드 (HACCP·FSSC 22000 실무)",
+    "file": "outputs/2026/10/16/[블로그최종]_CIP_COP_세정방식_비교.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4718951627697865340",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
