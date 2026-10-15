@@ -62,11 +62,14 @@
       "uploaded_at_kst": "2026-10-15T06:22:41+09:00"
     },
     "2026-10-16": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "38808685929",
+      "video_id": "2gh2yybtvhk",
+      "url": "https://youtube.com/shorts/2gh2yybtvhk",
       "topic": "식품업체가 개선 지적을 받는 주요 사유 10가지",
-      "reserved_at_kst": "2026-10-16T06:22:07+09:00"
+      "title": "[HACCP 심사 대비] 식품업체가 개선 지적을 받는 주요 사유 10가지 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-16T06:22:07+09:00"
     }
   }
 }
