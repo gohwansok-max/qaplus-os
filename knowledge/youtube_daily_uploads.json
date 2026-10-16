@@ -72,11 +72,14 @@
       "uploaded_at_kst": "2026-10-16T06:22:07+09:00"
     },
     "2026-10-17": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "38968293812",
+      "video_id": "cjZbXkfTcYc",
+      "url": "https://youtube.com/shorts/cjZbXkfTcYc",
       "topic": "잘못된 보관 개선필요",
-      "reserved_at_kst": "2026-10-17T06:21:07+09:00"
+      "title": "[HACCP 실무] 잘못된 보관 개선필요 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-17T06:21:07+09:00"
     }
   }
 }
