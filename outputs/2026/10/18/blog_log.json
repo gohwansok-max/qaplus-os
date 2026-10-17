@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-18",
+    "topic": "리본블렌더 패들믹서 비교",
+    "title": "리본블렌더 vs 패들믹서, 분말 배합기 선택 기준 총정리 (20년 차 식품품질 실무 가이드)",
+    "file": "outputs/2026/10/18/[블로그최종]_리본블렌더_패들믹서_비교.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3685817859126711187",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
