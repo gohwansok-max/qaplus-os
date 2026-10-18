@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-19",
+    "topic": "식품산업 바이오필름",
+    "title": "식품공장 바이오필름(Biofilm) 원인 분석부터 CIP 배관 완전 박멸 실무 가이드",
+    "file": "outputs/2026/10/19/[블로그최종]_식품산업_바이오필름.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "7054486014006497511",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
