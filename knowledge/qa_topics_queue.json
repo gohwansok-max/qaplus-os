@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-17 21:20:12",
+  "last_run": "2026-10-18 21:20:24",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -712,7 +712,8 @@
       "topic": "식품업 GMP 핵심요건",
       "filename": "89_식품업 GMP 핵심요건.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\89_식품업 GMP 핵심요건.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-18_식품업_GMP_핵심요건_hyperframes_shorts.mp4"
     },
     {
       "id": 90,
