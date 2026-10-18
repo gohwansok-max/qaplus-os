@@ -92,11 +92,14 @@
       "uploaded_at_kst": "2026-10-18T06:20:16+09:00"
     },
     "2026-10-19": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "39167147106",
+      "video_id": "NV5fDBsVHNQ",
+      "url": "https://youtube.com/shorts/NV5fDBsVHNQ",
       "topic": "식품업 GMP 핵심요건",
-      "reserved_at_kst": "2026-10-19T06:20:28+09:00"
+      "title": "[HACCP 실무] 식품업 GMP 핵심요건 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-19T06:20:28+09:00"
     }
   }
 }
