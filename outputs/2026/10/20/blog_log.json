@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-20",
+    "topic": "QC 면접질문과답변",
+    "title": "식품 QC 면접 질문 Best 7과 모범 답변: 20년 차 품질차장이 밝히는 합격 공식",
+    "file": "outputs/2026/10/20/[블로그최종]_QC_면접질문과답변.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8100846232044808826",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
