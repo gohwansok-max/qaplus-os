@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-21",
+    "topic": "ATP테스트 신속위생검증",
+    "title": "세척 후 10초 만에 끝내는 위생 점검: 식품공장 ATP 신속위생검증 실무 가이드 (RLU 기준 설정부터 트러블슈팅까지)",
+    "file": "outputs/2026/10/21/[블로그최종]_ATP테스트_신속위생검증.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8069049133990940680",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
