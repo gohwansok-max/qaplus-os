@@ -112,11 +112,14 @@
       "uploaded_at_kst": "2026-10-20T06:20:55+09:00"
     },
     "2026-10-21": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "39500570849",
+      "video_id": "HpVu9ko1qLc",
+      "url": "https://youtube.com/shorts/HpVu9ko1qLc",
       "topic": "CCP는 원료에 정하나요 공정에 정하나요",
-      "reserved_at_kst": "2026-10-21T06:32:03+09:00"
+      "title": "[HACCP CCP 관리] CCP는 원료에 정하나요 공정에 정하나요 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-21T06:32:03+09:00"
     }
   }
 }
