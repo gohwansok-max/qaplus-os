@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-19 21:20:52",
+  "last_run": "2026-10-20 21:32:00",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -728,7 +728,8 @@
       "topic": "CCP는 원료에 정하나요 공정에 정하나요",
       "filename": "91_CCP는 원료에 정하나요 공정에 정하나요.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\91_CCP는 원료에 정하나요 공정에 정하나요.png",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-20_CCP는_원료에_정하나요_공정에_정하나요_hyperframes_shorts.mp4"
     },
     {
       "id": 92,
