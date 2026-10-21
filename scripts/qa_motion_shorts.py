@@ -277,6 +277,15 @@ def _local_fallback(topic: str, angle: dict, story_id: str) -> dict:
     return {"badge": "품질 실무", "scenes": sc}
 
 
+def _narration_metrics(parsed: Any) -> str:
+    """검증 실패 로그용: 실제 narration 글자 수(씬별·합계)를 요약한다. 값은 로그에만 쓴다."""
+    try:
+        lens = [len(_s(sc.get("narration"), 500)) for sc in parsed["scenes"]]
+        return f"씬별 {lens}, 합계 {sum(lens)}자 (기준 전체 260~340자, 씬 28~85자)"
+    except (TypeError, KeyError, AttributeError):
+        return "글자 수 측정 불가(응답 구조 오류)"
+
+
 def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dict, dict]:
     topic = eng._topic(topic)
     story_id = eng._story_id()
@@ -293,6 +302,8 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
         max_attempts = 5
     max_attempts = min(max(1, max_attempts), 5)
     script, provider = None, "local_verified_fallback"
+    got_response = False
+    last_codes: list[str] = []
     feedback_by_code = {
         "invalid_json": "마크다운이나 설명 없이 파싱 가능한 JSON 객체 하나만 반환하세요.",
         "root_schema": "최상위 JSON은 badge 문자열과 scenes 배열을 포함해야 합니다.",
@@ -300,7 +311,7 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
         "scene_shape": "scenes 배열의 모든 항목은 JSON 객체여야 합니다.",
         "scene_order": "첫 씬은 hook, 마지막 씬은 outro여야 합니다.",
         "unsupported_scene_type": "씬 type은 hook/stat/flow/compare/checklist/outro 중 하나만 사용하세요.",
-        "narration_length": "각 narration은 15~100자 범위로 작성하세요.",
+        "narration_length": "각 narration은 28~85자 범위로 작성하세요.",
         "hook_fields": "hook은 kicker, headline, sub 필수 항목을 모두 채우세요.",
         "stat_source_number": "stat은 숫자가 공식 출처 문맥에 실제로 있을 때만 사용하고, 없으면 다른 씬 유형을 쓰세요.",
         "flow_fields": "flow는 title과 3~4개의 steps를 채우세요.",
@@ -309,7 +320,7 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
         "checklist_fields": "checklist는 title과 3~4개 items를 채우세요.",
         "outro_field": "outro는 takeaway를 채우세요.",
         "banned_phrase": "보장·과장 표현 및 금지 문구를 제거하세요.",
-        "total_narration_length": "전체 narration 합계는 240~380자 범위로 맞추세요.",
+        "total_narration_length": "전체 narration 합계는 260~340자 범위로 맞추세요.",
         "scene_variety": "hook/outro 사이에서 서로 다른 가운데 씬 유형을 3종 이상 사용하세요.",
         "duplicate_fingerprint": "최근 대본과 문장·표현을 겹치지 않도록 새 앵글과 완전히 새로운 narration으로 작성하세요.",
         "malformed_response": "필수 필드와 자료형을 확인하고 JSON 스키마에 맞춰 작성하세요.",
@@ -327,7 +338,9 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
                 break
             if raw is None:
                 break
+            got_response = True
             diagnostics: list[str] = []
+            parsed: Any = None
             try:
                 parsed = json.loads(eng._strip_json_fence(raw))
                 cand = validate_script(parsed, sources, info["text"] if info else "", diagnostics)
@@ -345,15 +358,25 @@ def generate_motion_script(topic: str, topic_id: int | None = None) -> tuple[dic
             if not diagnostics:
                 diagnostics = ["malformed_response"]
             reason_codes = list(dict.fromkeys(diagnostics))
+            last_codes = reason_codes
             print("  [LLM] " + name + " 검증 실패 코드: " + ",".join(reason_codes) + " (시도 " + str(attempt) + "/" + str(max_attempts) + ")")
+            if parsed is not None:
+                print("  [LLM] 측정: " + _narration_metrics(parsed))
             guidance = " ".join(feedback_by_code.get(code, "JSON 스키마와 모든 검증 조건을 다시 확인하세요.") for code in reason_codes)
             retry_feedback = "\n\n[직전 응답 수정 요청]\n" + guidance + " 안전·근거·중복검사 기준은 완화하지 말고, JSON 객체 하나만 반환하세요."
         if script:
             break
     if not script:
         if os.environ.get("QA_ALLOW_FALLBACK") != "1":
+            if got_response:
+                raise RuntimeError(
+                    "Claude 응답은 받았지만 대본 검증을 통과하지 못했습니다. "
+                    f"마지막 사유: {','.join(last_codes) or '알 수 없음'}. "
+                    "시크릿 문제가 아니므로 재실행하거나 검증 로그의 글자 수 측정값을 확인하세요. "
+                    "(다른 모델·로컬 대본으로 대체하지 않습니다)"
+                )
             raise RuntimeError(
-                "Claude 구독 모델로 대본을 생성하지 못했습니다. CLAUDE_CODE_OAUTH_TOKEN(claude setup-token) 시크릿과 "
+                "Claude 구독 모델 호출이 응답하지 않았습니다. CLAUDE_CODE_OAUTH_TOKEN(claude setup-token) 시크릿과 "
                 "Claude Code CLI 설치를 확인하세요. (다른 모델·로컬 대본으로 대체하지 않습니다)"
             )
         script = _local_fallback(topic, angle, story_id)
