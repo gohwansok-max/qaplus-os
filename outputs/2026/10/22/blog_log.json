@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-22",
+    "topic": "우유균질화 중요성과효과",
+    "title": "우유 균질화(Homogenization) 완벽 가이드: 크리밍 방지 원리부터 2단 압력 세팅·트러블슈팅까지",
+    "file": "outputs/2026/10/22/[블로그최종]_우유균질화_중요성과효과.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1448263106069104676",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
