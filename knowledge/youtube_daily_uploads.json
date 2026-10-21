@@ -120,6 +120,13 @@
       "title": "[HACCP CCP 관리] CCP는 원료에 정하나요 공정에 정하나요 | 큐에이플러스",
       "privacy_status": "private",
       "uploaded_at_kst": "2026-10-21T06:32:03+09:00"
+    },
+    "2026-10-22": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "39677522916",
+      "topic": "금속검출기의 원리",
+      "reserved_at_kst": "2026-10-22T06:20:38+09:00"
     }
   }
 }
