@@ -122,11 +122,14 @@
       "uploaded_at_kst": "2026-10-21T06:32:03+09:00"
     },
     "2026-10-22": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "39677522916",
+      "video_id": "5WNv9qvdtj8",
+      "url": "https://youtube.com/shorts/5WNv9qvdtj8",
       "topic": "금속검출기의 원리",
-      "reserved_at_kst": "2026-10-22T06:20:38+09:00"
+      "title": "[HACCP CCP 관리] 금속검출기의 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-22T06:20:38+09:00"
     }
   }
 }
