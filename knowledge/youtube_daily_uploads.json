@@ -132,11 +132,14 @@
       "uploaded_at_kst": "2026-10-22T06:20:38+09:00"
     },
     "2026-10-23": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "39857302777",
+      "video_id": "7PSmtF5JKUY",
+      "url": "https://youtube.com/shorts/7PSmtF5JKUY",
       "topic": "물리적 위해요소 예시",
-      "reserved_at_kst": "2026-10-23T07:01:22+09:00"
+      "title": "[HACCP 실무] 물리적 위해요소 예시 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-23T07:01:22+09:00"
     }
   }
 }
