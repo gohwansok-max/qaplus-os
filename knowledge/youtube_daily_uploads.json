@@ -142,11 +142,14 @@
       "uploaded_at_kst": "2026-10-23T07:01:22+09:00"
     },
     "2026-10-24": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "40025626976",
+      "video_id": "TcyykmkGvkg",
+      "url": "https://youtube.com/shorts/TcyykmkGvkg",
       "topic": "화학적 위해요소 예시",
-      "reserved_at_kst": "2026-10-24T06:21:16+09:00"
+      "title": "[HACCP 실무] 화학적 위해요소 예시 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-24T06:21:16+09:00"
     }
   }
 }
