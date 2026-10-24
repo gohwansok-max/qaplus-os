@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-25",
+    "topic": "인도 FSSAI 등록허가조건",
+    "title": "인도 식품 수출 FSSAI 등록 vs 면허 조건 총정리: 센트럴 라이선스부터 라벨링 실무 가이드",
+    "file": "outputs/2026/10/25/[블로그최종]_인도_FSSAI_등록허가조건.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6766256624977221362",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
