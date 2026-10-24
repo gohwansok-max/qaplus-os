@@ -152,11 +152,14 @@
       "uploaded_at_kst": "2026-10-24T06:21:16+09:00"
     },
     "2026-10-25": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "40133532798",
+      "video_id": "0oY5vrNHFzo",
+      "url": "https://youtube.com/shorts/0oY5vrNHFzo",
       "topic": "생물학적 위해요소 예시",
-      "reserved_at_kst": "2026-10-25T06:20:49+09:00"
+      "title": "[HACCP 실무] 생물학적 위해요소 예시 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-25T06:20:49+09:00"
     }
   }
 }
