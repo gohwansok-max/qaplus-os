@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-26",
+    "topic": "곰팡이독소 마이코톡신",
+    "title": "곰팡이독소(마이코톡신) 완벽 정리: 가열해도 안 사라지는 화학적 위해요소 관리법",
+    "file": "outputs/2026/10/26/[블로그최종]_곰팡이독소_마이코톡신.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "2359249909410389034",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
