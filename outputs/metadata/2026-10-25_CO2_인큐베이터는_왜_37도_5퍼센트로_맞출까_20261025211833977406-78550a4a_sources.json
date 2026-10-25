@@ -1,0 +1,88 @@
+{
+  "story_id": "20261025211833977406-78550a4a",
+  "topic": "CO2 인큐베이터는 왜 37도 5퍼센트로 맞출까",
+  "story_angle": "junior-mistake",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "7ae4ba3bfec591a46d306b9de71cd7f3330539ed69c0e0c4e53949966a21aeb7",
+  "official_sources": [
+    {
+      "title": "전문정보 > 법령 정보 > 식품안전 기준ㆍ규격 정보 모음 | 식품안전나라",
+      "url": "https://www.foodsafetykorea.go.kr/portal/specialinfo/infoMapCodex.do?menu_grp=MENU_NEW04&menu_no=2848",
+      "snippet": "식품안전 기준·규격 정보 모음 ... 담당부서 식생활영양안전정책과 연락처 043-719-2280 챗봇 푸디 (28159) 충청북도 청주시 흥덕구 오송읍 오송생명2로 187 오송보건의료행정타운 식품의약품안전처 > 시스템 문의"
+    }
+  ],
+  "source_count": 1,
+  "infographic_id": 97,
+  "infographic_chars": 565,
+  "generated_at": "2026-10-25T21:19:06+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "CO2 인큐베이터",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "인큐베이터 점검표, 옆 회사 양식 그대로 복사하셨나요?",
+        "kicker": "주니어 실수",
+        "headline": "37℃ 5%\n복사 금지",
+        "sub": "숫자보다 근거를 먼저 확인하세요"
+      },
+      {
+        "type": "stat",
+        "narration": "37℃, CO2 5%는 많은 포유류 세포와 중탄산염 배지에서 쓰는 대표 조건입니다. 모든 세포의 정답은 아니에요.",
+        "label": "대표 설정 온도",
+        "value": "37℃",
+        "caption": "많은 포유류 세포의 대표 조건",
+        "note": "QA+ 인포그래픽(대표 검수)"
+      },
+      {
+        "type": "flow",
+        "narration": "쉽게 말하면 CO2는 배지 pH를 붙잡아 주는 장치입니다. 부족하면 알칼리성, 과하면 산성으로 변할 수 있어요.",
+        "title": "CO2 5%가 하는 일",
+        "steps": [
+          "CO2 + 물",
+          "중탄산염과 평형",
+          "배지 pH 안정"
+        ]
+      },
+      {
+        "type": "compare",
+        "narration": "복사한 양식의 숫자가 우리 세포주와 배지에 맞는지는 아무도 보증하지 않습니다.",
+        "title": "양식 복사 vs 근거 확인",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "옆 회사 설정값 그대로",
+            "세포주 확인 생략",
+            "SOP와 불일치"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "세포주·배지 확인",
+            "제품정보·SOP 대조",
+            "우리 조건으로 기재"
+          ]
+        }
+      },
+      {
+        "type": "checklist",
+        "narration": "습도도 놓치기 쉽습니다. 높은 습도는 배지 증발을 줄여 삼투 스트레스를 막아 주니, 가습 상태도 함께 확인하세요.",
+        "title": "설정 전 확인 4가지",
+        "items": [
+          "세포주가 요구하는 조건",
+          "배지 종류(중탄산염 여부)",
+          "제품정보와 SOP",
+          "가습 상태(RH 90~95%)"
+        ]
+      },
+      {
+        "type": "outro",
+        "narration": "숫자는 빌려 와도 근거는 빌릴 수 없습니다. 최종 설정은 최신 고시와 사업장 SOP, 제품정보를 확인해 정하세요.",
+        "takeaway": "양식은 복사 말고, 근거부터 확인",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}
