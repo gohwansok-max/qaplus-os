@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-27",
+    "topic": "식품시료 수집절차 8단계",
+    "title": "식품시료 수집절차 8단계 실무 가이드: 식품공전 기준 무균성과 대표성 확보 매뉴얼",
+    "file": "outputs/2026/10/27/[블로그최종]_식품시료_수집절차_8단계.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4071273924844044397",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
