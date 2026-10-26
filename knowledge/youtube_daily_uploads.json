@@ -172,11 +172,14 @@
       "uploaded_at_kst": "2026-10-26T06:20:38+09:00"
     },
     "2026-10-27": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "40403048882",
+      "video_id": "VxfbFRRgWBk",
+      "url": "https://youtube.com/shorts/VxfbFRRgWBk",
       "topic": "냉동하면 모든 세균이 죽을까",
-      "reserved_at_kst": "2026-10-27T06:21:02+09:00"
+      "title": "[HACCP 실무] 냉동하면 모든 세균이 죽을까 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-10-27T06:21:02+09:00"
     }
   }
 }
