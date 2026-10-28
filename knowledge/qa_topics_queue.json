@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-27 21:20:58",
+  "last_run": "2026-10-28 21:21:35",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -796,7 +796,8 @@
       "filename": "101_QA+_식품산업_GMP_핵심_요구사항_TOP20_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\101_QA+_식품산업_GMP_핵심_요구사항_TOP20_202608.png",
       "drive_file_id": "1llMy9yKMA_99BVv2u-3vgxr999BelwVM",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-28_식품산업_GMP_핵심_요구사항_TOP20_hyperframes_shorts.mp4"
     },
     {
       "id": 102,
