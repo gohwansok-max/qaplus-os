@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-30",
+    "topic": "원재료명 vs 원산지 인포그래픽",
+    "title": "원재료명 vs 원산지 표시 차이 완벽 정리: 식품 표시사항 표시기준 및 행정처분 예방 실무 가이드",
+    "file": "outputs/2026/10/30/[블로그최종]_원재료명_vs_원산지_인포그래픽.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "2163193223544116332",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]

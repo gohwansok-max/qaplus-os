@@ -1,0 +1,351 @@
+<!-- QA+ 블로그 최종본 — Blogger 편집기 HTML 모드에 붙여넣기 -->
+<!-- 제목: 원재료명 vs 원산지 표시 차이 완벽 정리: 식품 표시사항 표시기준 및 행정처분 예방 실무 가이드 -->
+<!-- 검색 설명: 식약처(원재료명, 전 성분 배합비 순서)와 농관원(원산지, 정제수 제외 상위 2개 원료)의 법적 차이, 복합원재료 5% 룰, 수입국 변동 시 스티커 작업 및 외국산 포괄 표기 노하우와 실제 적발 사례를 총정리합니다. -->
+
+<article class="food-qa-post">
+  <header class="post-header">
+    <h1 class="entry-title">원재료명 vs 원산지 표시, 헷갈리는 식품 실무자용 완벽 비교 가이드</h1>
+    <blockquote class="lead-summary" style="border-left: 4px solid #0056b3; padding: 12px 18px; background-color: #f8f9fa; margin: 15px 0; color: #333;">
+      <strong>20년 실무 선배의 한 줄 요약:</strong> 원재료명은 <strong>식약처(배합비 내림차순, 모든 원료)</strong>, 원산지는 <strong>농관원(상위 1~2순위 원료, 거짓표시 형사처벌)</strong> 관할입니다. 이 두 법률의 뿌리가 다르다는 사실만 정확히 머릿속에 박아두어도 표시사항 행정처분의 99%를 예방할 수 있습니다.
+    </blockquote>
+  </header>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>1. 현장에서 왜 원재료명과 원산지 표시가 가장 헷갈릴까요?</h2>
+    <p>식품공장 품질관리팀(QA/QC)이나 연구소에 갓 입사한 후배들이 포장지 라벨 문안을 검토하면서 가장 많이 저지르는 실수가 바로 '원재료명'과 '원산지'를 한 덩어리로 묶어서 생각하는 것입니다. 디자인 외주업체에서 넘어온 포장지 시안을 받아 들고 "어? 배합비 1위 원료니까 원산지 적고, 배합비 2위도 적었네. 그럼 됐나?" 하고 대수롭지 않게 도장을 찍었다가, 몇 달 뒤 관할 구청 위생과나 국립농산물품질관리원(농관원) 단속반의 불시 점검을 받고 사색이 되어 제 방 문을 두드리는 후배들을 지난 20년간 수없이 보아왔습니다.</p>
+    <p>현장에서 이 문제가 지속적으로 터지는 근본 원인은 물리적으로 하나의 포장지, 하나의 '원재료명 및 함량' 박스 안에 두 가지 정보가 섞여 인쇄되기 때문입니다. 실무자 눈에는 그냥 검은색 텍스트 몇 줄로 보이지만, 대한민국 법체계 안에서는 전혀 다른 두 부처가 완전히 다른 잣대를 들이대며 현미경 검증을 진행하는 영역입니다. 하나는 소비자의 안전과 알 권리(알레르기 유발물질, 투입 원료의 실체)를 감시하는 식품의약품안전처이고, 다른 하나는 국내 농어가 보호와 원산지 둔갑 행위를 단속하는 농림축산식품부(단속: 농관원) 및 해양수산부입니다.</p>
+    <p>쉽게 말하면, 원재료명은 "이 식품을 만들 때 솥단지에 도대체 무엇무엇을 집어넣었는가?"를 증명하는 레시피의 투명한 공개이고, 원산지는 "그 들어간 재료 중에서 핵심 원료의 국적이 어디인가?"를 따지는 국적 증명서입니다. 솥단지에 들어간 순서대로 줄을 세워야 하는 규칙과, 국적을 반드시 밝혀야 하는 핵심 대상을 골라내는 규칙이 서로 다른 알고리즘으로 돌아가고 있는데, 이를 동일한 규칙으로 오해하니 에러가 발생할 수밖에 없는 구조입니다.</p>
+    <p>여기에 글로벌 공급망 이슈로 원료 수급처가 중국에서 베트남으로, 다시 미국으로 수시로 바뀌는 현실이 얹어지면 실무자의 뇌는 정지 상태에 빠집니다. 원재료 배합비 수정 보고를 해야 하는지, 포장지를 전량 폐기해야 하는지, 스티커 덧붙임 작업을 해도 합법인지 갈피를 잡지 못하다가 치명적인 표시위반 행정처분이나 심할 경우 형사고발로 이어지게 됩니다.</p>
+
+    <figure class="post-image" style="margin: 25px 0; text-align: center;">
+      <img src="https://raw.githubusercontent.com/gohwansok-max/qaplus-os/main/outputs/2026/10/30/images/cover_5bbe967e4608.jpg" alt="포장지 라벨 상에서 식약처 소관 원재료명과 농식품부 소관 원산지 표시가 분리 대조되는 인포그래픽" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+      <figcaption style="font-size: 0.9em; color: #6c757d; margin-top: 8px;">[그림 1] 식약처 원재료명 규정과 농식품부 원산지 표시 규정의 라벨 분리 대조 구조도</figcaption>
+    </figure>
+
+    <p>이제 두 법률의 뼈대를 나란히 세워놓고 무엇이 같고 무엇이 다른지, 5가지 핵심 축을 통해 명쾌하게 정리해 드리겠습니다.</p>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>2. 관할 부처부터 다르다! 법적 근거와 5대 핵심 차이점 비교</h2>
+    <p>원재료명과 원산지 표시의 충돌을 예방하려면 가장 먼저 머릿속에 '관할 이원화' 지도를 그려야 합니다. 식약처가 점검을 나올 때는 표시·광고법과 식품등의 표시기준을 들고 오고, 농관원 특사경(특별사법경찰관)이 들이닥칠 때는 농수산물의 원산지 표시 등에 관한 법률을 들고 옵니다.</p>
+    <p>공무원이 가방에서 꺼내는 법전이 다르다는 것은, 위반 시 여러분의 회사와 공장장이 받게 될 처벌의 성격과 무게 또한 완전히 다르다는 것을 뜻합니다. 식약처 위반은 주로 시정명령, 품목제조정지, 과태료 같은 행정처분 중심이지만, 농관원의 원산지 거짓표시는 곧바로 검찰 송치 및 형사처벌(징역형, 벌금형)과 업체명 대외 공표로 직결됩니다.</p>
+
+    <div class="table-responsive" style="overflow-x: auto; margin: 20px 0;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95em;">
+        <thead>
+          <tr style="background-color: #f1f3f5; border-bottom: 2px solid #dee2e6;">
+            <th style="padding: 12px; border: 1px solid #dee2e6;">비교 구분 항목</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">원재료명 표시 (식약처 소관)</th>
+            <th style="padding: 12px; border: 1px solid #dee2e6;">원산지 표시 (농림축산식품부·해수부 소관)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">근거 법률 및 규정</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">식품 등의 표시·광고에 관한 법률<br>식품등의 표시기준 (식약처 고시)</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">농수산물의 원산지 표시 등에 관한 법률<br>농수산물의 원산지 표시요령 (농식품부 고시)</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">주요 단속 기관</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">식약처, 각 지자체 위생과</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">국립농산물품질관리원(농관원), 지자체 특사경</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">기본 표시 대상 범위</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">제조·가공 시 투입한 <strong>모든 원재료</strong><br>(정제수 포함 중량 순 배치, 가공보조제 제외)</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">가공식품 내 배합비율 <strong>상위 2개 원료</strong><br>(1개 원료 98% 이상 시 1개만 표시)</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">원료 배열 순서 기준</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">정제수를 제외하고 <strong>배합비율(중량)이 높은 순서에서 낮은 순서로</strong> 내림차순 정렬</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">배합비 순서와 무관하게 원재료명 옆 괄호 병기 또는 원산지 별도 표시구역에 명시</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">제품명 연계 규제</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">제품명에 특정 원재료명을 사용할 경우, 주표시면에 원재료명과 <strong>그 함량(%)</strong> 의무 표시</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">제품명에 특정 원재료명을 사용할 경우, 배합 순위와 상관없이 <strong>해당 원료의 원산지 표시 의무</strong></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #dee2e6; font-weight: bold; background-color: #fafafa;">표시 위반 시 법적 처벌</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;">시정명령, 품목제조정지(15일~),<br>과태료 부과</td>
+            <td style="padding: 12px; border: 1px solid #dee2e6;"><strong>거짓표시</strong>: 7년 이하 징역 또는 1억 원 이하 벌금<br><strong>미표시</strong>: 1천만 원 이하 과태료</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>위의 비교표를 보시면 두 규정의 온도 차이가 느껴지실 겁니다. 식품등의 표시기준에서 말하는 원재료명은 "소비자가 돈을 주고 사는 물건 안에 무엇이 들어있는지 투명하게 다 까놓아라"는 성격이 강합니다. 그래서 방부제 하나, 유화제 한 방울, 정제수까지 빠짐없이 원칙적으로 기재해야 합니다.</p>
+    <p>반면 농수산물원산지표시법은 "이 가공식품의 본질을 구성하는 농수산물이 국산인가 외국산인가? 소비자를 속여 폭리를 취하려 하지 않았는가?"를 집요하게 파고듭니다. 따라서 모든 원료의 국적을 다 적으라고 강요하지 않습니다. 대신 배합비의 절대적 비중을 차지하는 1위, 2위 원료만큼은 국적을 속이지 말고 100% 진실되게 적으라는 철학을 가지고 있습니다.</p>
+    <p>이렇게 목적과 취지가 다른 두 제도가 현장에서는 하나의 라벨 공간에 공존하다 보니 충돌이 빚어집니다. 그렇다면 이제 각 영역의 세부 작동 알고리즘을 현장 눈높이에서 하나씩 뜯어보겠습니다.</p>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>3. 식약처 소관 '원재료명' 완벽 정복: 배합비 순서와 복합원재료 산정 룰</h2>
+    <p>원재료명을 작성할 때 현장 실무자가 지켜야 할 철칙 중의 철칙은 바로 '품목제조보고서 원본과의 100% 일치성'과 '중량 기준 내림차순 정렬'입니다. 제품 개발 연구원이 작성한 최종 배합표(배합비율 100% 산정 기준)를 들고 포장지 문안을 앉힐 때, 정제수를 어떻게 다룰 것인가가 첫 번째 난관입니다.</p>
+    <p>식품등의 표시기준 규정을 쉽게 말하면, 원재료는 <strong>제조·가공 시 투입한 중량이 많은 순서부터 적은 순서로</strong> 차례대로 적어야 합니다. 단, 여기서 물(정제수)은 제조 과정에서 증발하거나 최종 제품의 수분으로 남더라도 배합비 순서 자체를 셀 때는 포함하되, 원재료명 목록을 적어나갈 때는 맨 마지막에 적거나 배합비 순서대로 적을 수 있습니다. 그러나 실무적으로 가장 안전한 표준은 실제 투입된 배합비(중량) 순서 그대로 적는 것입니다. 단, 최종 완제품에 잔류하지 않는 물이나 가공공정상 휘발되는 주정 등은 표시를 생략할 수 있는 예외가 있습니다.</p>
+
+    <pre style="background-color: #2d3748; color: #f7fafc; padding: 15px; border-radius: 6px; overflow-x: auto;"><code>[배합비 순서 작성 표준 공식]
+원재료명: A원료(40%), B원료(25%), 정제수(15%), C원료(10%), D원료(8%), 유화제(2%)
+-&gt; 실제 투입 중량 순서대로 정확하게 내림차순 배치 완료</code></pre>
+
+    <p>두 번째로 실무자들의 골머리를 썩이는 것이 바로 '복합원재료'의 표시 규정입니다. 복합원재료란 두 가지 이상의 원재료를 결합하여 만든 가공식품(예: 혼합간장, 마요네즈, 불고기양념장, 카레분 등)을 우리 제품의 원료로 다시 사 와서 투입하는 경우를 말합니다.</p>
+    <p>식품등의 표시기준에서는 복합원재료를 사용할 때 다음과 같은 '5% 룰'을 적용합니다:</p>
+    <ol style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>복합원재료가 완제품 전체 배합비의 5% 이상을 차지하는 경우</strong>: 복합원재료의 명칭(또는 식품의 유형)을 적고, 그 뒤에 괄호를 열어 그 복합원재료를 만드는 데 가장 많이 들어간 <strong>상위 1위, 2위 원재료명</strong>을 반드시 적어야 합니다.
+        <br /><em>예시: 불고기양념장 12% 투입 시 -&gt; 불고기양념장[양조간장{탈지대두(외국산), 천일염(호주산)}, 백설탕]</em></li>
+      <li><strong>복합원재료가 완제품 전체 배합비의 5% 미만인 경우</strong>: 괄호 열고 상위 원료를 풀어서 적을 필요 없이, 그냥 그 복합원재료의 명칭(예: 복합조미식품, 카레분 등) 하나만 덜렁 적고 끝내도 법적으로 아무런 문제가 없습니다.</li>
+    </ol>
+    <p>여기서 초보 실무자들이 치명적인 실수를 저지릅니다. "어? 우리 소스에 들어가는 혼합간장이 배합비 4.5%니까 5% 미만이네? 그럼 간장 뒤에 괄호 안 치고 그냥 '혼합간장'이라고만 쓰면 식약처 기준 패스겠구나!" 하고 넘어갑니다. 네, 식약처 원재료명 표시기준은 완벽하게 통과했습니다. 하지만 뒤이어 소개할 농관원의 원산지 표시 기준에서 폭탄이 터지게 됩니다.</p>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>4. 농관원 소관 '원산지 표시' 완벽 정복: 상위 2개 원료와 제품명 나비효과</h2>
+    <p>식약처 기준을 만족했다고 안도하는 순간, 농관원의 원산지 표시 규정이 발목을 잡습니다. 가공식품의 원산지 표시는 배합비 순위 상위 원료를 어떻게 추려내느냐가 승패를 가릅니다.</p>
+    <p>농수산물의 원산지 표시 등에 관한 법률 시행령 제3조에 따른 원산지 표시 대상 선정의 기본 원칙은 다음과 같습니다:</p>
+    <ol style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>원칙(상위 2개)</strong>: 배합비율이 높은 순서대로 <strong>상위 2개 원료</strong>.</li>
+      <li><strong>예외 1 (단일 원료 98% 이상)</strong>: 배합비율이 98% 이상인 원료가 딱 1개 있는 경우, 그 1개 원료만 원산지를 표시하면 끝납니다. (예: 옥수수 99% 팝콘용 옥수수 가공품 -&gt; 옥수수의 원산지만 표시).</li>
+      <li><strong>예외 2 (단일 원료 98% 미만 97% 이상 + 물)</strong>: 물(정제수)을 제외한 배합비율이 98% 이상인 원료가 1개인 경우도 그 1개 원료만 표시합니다.</li>
+      <li><strong>특정 고시 품목 예외</strong>: 김치류의 고춧가루처럼 배합 순위와 상관없이 법령 고시로 지목된 원료는 순위 밖이어도 무조건 원산지를 밝혀야 합니다. (배추김치는 배추와 고춧가루 무조건 표시).</li>
+    </ol>
+
+    <figure class="post-image" style="margin: 25px 0; text-align: center;">
+      
+      <figcaption style="font-size: 0.9em; color: #6c757d; margin-top: 8px;">[그림 2] 배합비 데이터 내 정제수 소거 및 순수 원료 상위 1, 2순위 산정 알고리즘</figcaption>
+    </figure>
+
+    <p>여기서 가장 중요한 실무 공식이 등장합니다. <strong>"원산지 표시 대상 상위 1, 2순위를 산정할 때 '정제수(물)'는 무조건 분모와 분자에서 제외한다!"</strong>는 점입니다. 식약처 원재료명에서는 물도 당당한 투입 중량이므로 순위에 포함되지만, 농관원 원산지 표시에서는 물을 농수산물로 보지 않습니다.</p>
+    <p>예를 들어 배합비가 [정제수 50%, 소고기 25%, 양파 15%, 간장 10%]인 레토르트 갈비탕이 있다고 가정해 봅시다.</p>
+    <ul style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>식약처 원재료명 순서</strong>: 정제수 -&gt; 소고기 -&gt; 양파 -&gt; 간장</li>
+      <li><strong>농관원 원산지 표시 대상</strong>: 정제수를 싹 지우고 남은 원료 중에서 1위(소고기), 2위(양파)를 선정하여 원산지를 표기해야 합니다.</li>
+    </ul>
+    <p>그리고 실무자들이 가장 무서워해야 하는 규정이 바로 <strong>'제품명 연계 표시 의무(나비효과 규정)'</strong>입니다. 제품의 이름에 특정 농축수산물이나 원재료의 명칭을 사용했다면(예: '제주 당근 주스', '리얼 딸기 우유', '한우 사골곰탕'), 그 원료는 배합비 순위가 5위든 10위든 0.1%가 들어갔든 상관없이 <strong>무조건 원산지 표시 대상 강제 징집</strong>입니다.</p>
+    <p>상위 1, 2위가 [원유(국산), 정백당]이라 할지라도, 제품명이 '딸기 우유'라면 3순위 밖의 딸기 농축액 원산지를 무조건 라벨에 표기해야 합니다. 만약 제품명에 원재료명을 썼는데 배합비 상위 2개에 안 든다고 원산지를 쏙 뺐다? 농관원 단속반이 현장에 들이닥쳐 원산지 미표시로 즉시 과태료 처분을 통지서에 찍어줍니다.</p>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>5. 20년 선배의 실전 트러블슈팅: 수입국 변동 시 스티커 작업과 '외국산' 포괄 표기 노하우</h2>
+    <p>현업에서 품질팀장을 가장 미치게 만드는 순간은 원자재 구매팀에서 전화가 올 때입니다. "차장님! 우크라이나 사태 때문에 해바라기유 스페인산이 전멸했습니다. 내일부터 당장 아르헨티나산으로 입고되는데, 공장 라인 세울 수 없으니 일단 생산해야 합니다. 포장지에는 [스페인산]으로 박혀있는데 어쩌죠?"</p>
+    <p>이때 법률 지식이 없는 초짜 실무자는 둘 중 하나의 극단적인 실수를 저지릅니다.</p>
+    <ol style="padding-left: 20px; line-height: 1.7;">
+      <li>"일단 생산하고 나중에 포장지 새로 찍어 바꾸죠." -&gt; <strong>원산지 거짓표시로 형사입건(7년 이하 징역 또는 1억 원 이하 벌금)되는 지옥문으로 직행하는 행위입니다.</strong></li>
+      <li>"원산지가 바뀌었으니 기존 동판 포장지 수억 원어치 전량 소각 폐기하고 새 포장지 나올 때까지 한 달간 공장 올스톱합시다." -&gt; <strong>경영진에게 엄청난 경제적 타격을 안기고 역량 부족으로 질타를 받게 됩니다.</strong></li>
+    </ol>
+    <p>베테랑 20년 차는 법령에 명시된 <strong>'예외 조항'과 '스티커 덧붙임 규정'</strong>을 능숙하게 활용하여 합법적으로 공장을 돌립니다.</p>
+
+    <h3>노하우 1. 스티커 덧붙임(오버라벨링) 작업의 합법적 요건</h3>
+    <p>원산지가 변경되었을 때, 새 포장지를 인쇄하기 전까지 기존 포장재의 원산지 표기 부분을 스티커로 덧붙여 수정하는 것은 법적으로 완전히 허용됩니다. 단, 조건이 매우 까다롭습니다:</p>
+    <ul style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>접착력 요건</strong>: 유통과정에서 소비자가 손으로 떼어내려 해도 쉽게 떨어지지 않는 강력 접착 라벨을 사용해야 합니다. 살짝 긁었을 때 떨어지면 '은폐 및 훼손'으로 간주되어 단속 적발됩니다.</li>
+      <li><strong>글자 크기 및 폰트 요건</strong>: 기존 포장지의 글자 크기(장평, 자간 포함)와 동등하거나 그 이상이어야 하며, 변경된 원산지 국가명(예: 아르헨티나산)을 선명하게 인쇄하여 완벽히 덮어야 합니다.</li>
+    </ul>
+
+    <h3>노하우 2. 원산지 국가명을 쓰지 않고 '외국산'으로 퉁칠 수 있는 법적 치트키</h3>
+    <p>농수산물의 원산지 표시요령 제5조 별표 1을 샅샅이 뒤져보면, 수급이 불안정한 원료에 대해 매번 국가명을 바꾸지 않고 그냥 <strong>[외국산]</strong> 세 글자로 표기할 수 있는 합법적 면책 특권이 있습니다. 아래 세 가지 요건 중 하나에만 해당하면 됩니다:</p>
+    <ol style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>최근 3개년 동안 연평균 3회 이상 원산지 국가가 변경된 경우</strong></li>
+      <li><strong>최근 1년 동안 원산지 국가가 3개국 이상 변경된 원료를 사용하는 경우</strong></li>
+      <li><strong>정부나 유관기관에서 원료 수급 불안정(전쟁, 가뭄, 통상 마찰 등)을 인정하여 고시한 경우</strong></li>
+    </ol>
+    <p>만약 여러분 공장에서 쓰는 대두유나 팜유의 수급처가 매년 요동친다면, 지난 1~3년간의 원료수불부와 수입신고필증을 엑셀로 증빙 정리하여 관할 지자체나 농관원에 제시할 준비를 해두십시오. 그리고 라벨에 당당하게 <code>대두유[외국산(미국, 브라질, 파라과이 등)]</code> 또는 단순히 <code>외국산</code>으로 인쇄하면, 원자재 수입국이 1년에 다섯 번이 바뀌어도 포장지를 단 1장도 버리지 않고 합법적으로 방어할 수 있습니다.</p>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>6. 실제 현장 적발 및 개선 사례 3선</h2>
+    <p>이론만 알아서는 실무의 지뢰를 피할 수 없습니다. 서로 다른 세 가지 식품 제조 업종에서 실제로 발생했던 뼈아픈 적발 사례와, 이를 제가 현장에서 어떻게 뜯어고쳤는지 근본 원인부터 결과까지 생생하게 복기해 드리겠습니다.</p>
+
+    <div class="case-card" style="border: 1px solid #ced4da; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #fff;">
+      <h3 style="color: #c92a2a; margin-top: 0;">사례 1. 냉동만두 제조 공장 — 복합원재료 혼합간장의 원산지 추적 누락 사건</h3>
+      <ul style="padding-left: 20px; line-height: 1.7;">
+        <li><strong>업종 및 공정</strong>: 냉동만두(만두류) 제조가공업, 만두소 배합 및 포장 공정</li>
+        <li><strong>상황</strong>: 냉동만두 만두소 제조 시 맛과 색을 내기 위해 시판 가공용 '혼합간장'을 전체 배합비의 4.2% 비율로 투입하여 생산하던 중이었습니다.</li>
+        <li><strong>문제 발생</strong>: 지자체 위생과와 농관원의 합동 기획단속에서 원산지 표시 위반으로 적발되어 과태료 부과 및 시정명령 사전통지서가 날아왔습니다.</li>
+        <li><strong>원인 분석</strong>: 품질 신입 담당자는 혼합간장이 배합비 5% 미만(4.2%)이라는 이유로 식약처 식품등의 표시기준만 생각하고 원재료명에 <code>혼합간장</code>이라고만 표기했습니다. 그러나 농관원 기준에서 만두소의 정제수를 뺀 원료 중 상위 1위는 돼지고기(국산 28%), 상위 2위는 소맥분(미국산 22%), 그리고 야채류를 제외한 가공원료 중 혼합간장 내의 탈지대두가 주요 농산물 원료로 포착되었습니다. 특히 제품 포장지에 '감칠맛 풍부한 진간장 만두'라는 문구를 보조 제품명처럼 얹어놓은 탓에 간장 원료의 원산지 표기가 강제 의무화되었던 것입니다. 원재료명 규정만 쳐다보고 농수산물원산지표시법의 제품명 연계 조항을 완벽히 간과한 것이 근본 원인이었습니다.</li>
+        <li><strong>실제 해결/개선 조치</strong>: 즉시 기존 출고 대기 중이던 만두 제품 4,500박스에 대해 출고를 보류하고, 주표시면 문구에서 오해 소지가 있는 문안을 삭제함과 동시에 원재료명란에 <code>혼합간장[탈지대두(외국산: 인도, 미국, 중국)]</code>으로 정확히 오버라벨링 스티커 작업을 전량 진행했습니다. 아울러 협력업체로부터 간장 내 상위 원료의 원산지 증명서를 징구하여 농관원에 자진 소명자료를 제출했습니다.</li>
+        <li><strong>결과</strong>: 고의성이 없는 단순 규정 오인으로 참작되어 형사고발을 면하고 시정명령으로 종결되었으며, 이후 사내 '신제품 라벨 크로스 체크리스트'에 '복합원재료 5% 미만이라도 원산지 의무 발생하는 3대 케이스'를 등록하여 재발을 원천 봉쇄했습니다.</li>
+      </ul>
+    </div>
+
+    <div class="case-card" style="border: 1px solid #ced4da; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #fff;">
+      <h3 style="color: #c92a2a; margin-top: 0;">사례 2. 소스류 레토르트 제조 공장 — 수입산 고춧가루 혼용 표기 오류</h3>
+      <ul style="padding-left: 20px; line-height: 1.7;">
+        <li><strong>업종 및 공정</strong>: 떡볶이 소스 및 찌개 양념장(복합조미식품/소스류) 레토르트 살균 공정</li>
+        <li><strong>상황</strong>: 매운맛 떡볶이 소스를 생산하면서 주원료로 중국산 고춧가루(배합비 12%)와 베트남산 고추양념(배합비 8%)을 함께 솥에 투입해 배합 및 살균 포장을 진행하고 있었습니다.</li>
+        <li><strong>문제 발생</strong>: 농관원 유전자 분석 및 현장 원료수불부 대사 점검 과정에서 포장지에 적힌 원산지와 실제 투입 원료의 배합 비율이 불일치한다는 이유로 '원산지 거짓표시 혐의'로 품질부서장이 입건 위기에 처했습니다.</li>
+        <li><strong>원인 분석</strong>: 포장지에는 단순히 <code>고춧가루(중국산 100%)</code>로 인쇄되어 있었으나, 원가 절감을 위해 베트남산 고추양념 다대기를 섞어 사용하면서도 "어차피 둘 다 외국산 고추니까 대충 중국산으로 퉁치면 되겠지"라고 안일하게 판단한 생산부와 이를 제대로 검증하지 않은 채 원료수불부를 마감한 QC팀의 공조 프로세스 부재가 근본 원인이었습니다. 농관원 수사관은 중국산과 베트남산의 유전자 및 성분 함량비가 다른 점을 과학적으로 입증해 압박해 왔습니다.</li>
+        <li><strong>실제 해결/개선 조치</strong>: 혐의를 즉시 인정하고 반성문을 제출하는 한편, 위반 물량의 유통 경로를 투명하게 추적하여 전량 회수 조치에 착수했습니다. 이후 라벨 표기를 <code>고춧가루[중국산 60%, 베트남산 40%]` 또는 `고춧가루(외국산: 중국, 베트남)</code> 형태로 합법적 배합 비율을 명시하도록 전면 재작업했습니다. ERP 시스템 내에 자재 바코드가 원산지 표시 문안과 1:1로 매칭되지 않으면 칭량 계량기가 열리지 않도록 SQM(Standard Quality Management, QA 활동의 표준화) 차원의 배합 인터록 시스템을 강제 구축했습니다.</li>
+        <li><strong>결과</strong>: 법원으로부터 악의적 원산지 둔갑(국산 둔갑)이 아닌 수입국 간 혼용 표시 오류로 인정받아 벌금형 감경 처분을 받았으며, 원자재 입고부터 표시까지 추적 관리하는 QCM(Quality Chain Management, 원료-공정-제품의 검사·판정 품질 흐름 관리) 체계가 공장 전체에 성공적으로 안착되었습니다.</li>
+      </ul>
+    </div>
+
+    <div class="case-card" style="border: 1px solid #ced4da; border-radius: 8px; padding: 20px; margin-bottom: 25px; background-color: #fff;">
+      <h3 style="color: #c92a2a; margin-top: 0;">사례 3. 과채음료 제조 공장 — 정제수 계산 착오로 인한 주원료 원산지 탈락 사건</h3>
+      <ul style="padding-left: 20px; line-height: 1.7;">
+        <li><strong>업종 및 공정</strong>: 어린이용 과채음료(음료베이스) 배합, UHT 순간살균 및 아셉틱 충전 공정</li>
+        <li><strong>상황</strong>: 사과농축액(배합비 15%), 배농축액(배합비 10%), 포도농축액(배합비 5%), 정제수(65%), 비타민C 등을 혼합하여 과채음료 완제품을 생산해 대형마트에 납품하던 프로젝트였습니다.</li>
+        <li><strong>문제 발생</strong>: 대형마트 품질안전팀의 사전 표시사항 감사(Audit) 과정에서 원산지 표시 대상 2순위 원료가 잘못 선정되었다는 지적을 받고 납품 계약 해지 위기에 직면했습니다.</li>
+        <li><strong>원인 분석</strong>: 개발 담당 연구원이 식약처 품목제조보고서 상의 투입 배합비만 보고 <code>1위: 정제수, 2위: 사과농축액, 3위: 배농축액</code>으로 순위를 매긴 뒤, "상위 2개만 원산지를 쓰면 되는데 정제수는 원산지가 없으니 사과농축액(국산) 하나만 원산지를 표시하면 되겠네!"라고 자의적으로 해석하여 라벨에 사과만 원산지를 기재하고 배농축액의 원산지를 완전히 누락한 것이 화근이었습니다. 농관원 규정상 정제수를 뺀 나머지 농산물 원료 중 1위인 사과농축액과 2위인 배농축액 둘 다 원산지를 적었어야 마땅했습니다.</li>
+        <li><strong>실제 해결/개선 조치</strong>: 제품 포장재 인쇄를 전면 중단시키고, 표시 문안을 즉시 <code>사과농축액(사과: 국산), 배농축액(배: 칠레산)</code>으로 수정 반영했습니다. 또한 전사 R&D 및 QA 부서원을 대상으로 '가공식품 원산지표시법 상위 원료 산출 표준 가이드' 교육을 4시간 동안 긴급 소집하여 이수토록 조치했습니다.</li>
+        <li><strong>결과</strong>: 인쇄 동판 롤 3개를 폐기하는 선에서 약 400만 원의 손실로 막아내며, 대형마트 납품 중단 및 관할 청의 1천만 원 이하 과태료 처분 리스크를 사전에 완벽히 차단했습니다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>7. 자주 묻는 질문 (FAQ) & 심사관 대응 팁</h2>
+    <p>현업 실무자들이 품질팀 단톡방이나 사내 메신저로 매주 단골로 물어보는 5대 질문을 엄선하여 속 시원한 해답을 드립니다.</p>
+
+    <div class="faq-item" style="margin-bottom: 20px;">
+      <h3 style="color: #1971c2; margin-bottom: 8px;">Q1. 원재료명 적는 곳 괄호 안에 원산지를 같이 써도 되나요, 아니면 따로 떼어내서 써야 하나요?</h3>
+      <p><strong>A. 둘 다 법적으로 완벽하게 가능하며, 현장에서는 '병기 표시(괄호 표기)'를 훨씬 추천합니다.</strong><br />식품등의 표시기준과 원산지표시법 모두 원재료명 옆에 괄호를 치고 원산지를 병기하는 방식(예: <code>소고기(호주산), 양파(국산)</code>)을 정식으로 인정합니다. 별도의 원산지 표시구역(예: <code>[원산지] 소고기: 호주산, 양파: 국산</code>)을 따로 만들어 기재할 수도 있지만, 이 경우 공간을 이중으로 차지하고 포장지 디자인 수정 시 양쪽을 다 고쳐야 하므로 오기재 실수가 발생할 확률이 두 배로 높아집니다. 괄호 병기 방식이 실수를 줄이는 가장 깔끔한 방법입니다.</p>
+    </div>
+
+    <div class="faq-item" style="margin-bottom: 20px;">
+      <h3 style="color: #1971c2; margin-bottom: 8px;">Q2. 수입산 원료의 국가명이 라벨에 적힌 것과 다른 나라로 들어왔는데, 스티커를 칠 때 한글표시사항 전체를 다 덮어야 하나요?</h3>
+      <p><strong>A. 아닙니다. 원산지가 변경된 해당 텍스트 부분만 정확히 타겟팅하여 덧붙여도 무방합니다.</strong><br />예를 들어 <code>소맥분(밀: 미국산)</code>으로 인쇄되어 있던 부분에 <code>호주산</code> 글자만 가리도록 깔끔하게 미니 스티커를 부착해도 법 위반이 아닙니다. 다만, 기존 글자가 스티커 밖으로 삐져나오거나 비쳐 보이지 않도록 암전(차폐) 처리가 된 은무데드롱지나 두꺼운 유포지 스티커를 사용해야 단속 공무원의 시비를 원천 차단할 수 있습니다.</p>
+    </div>
+
+    <div class="faq-item" style="margin-bottom: 20px;">
+      <h3 style="color: #1971c2; margin-bottom: 8px;">Q3. 제품명이 '고소한 옥수수 치즈 피자'인데, 치즈가 배합비 10위 밖(1%)입니다. 치즈 원산지도 써야 하나요?</h3>
+      <p><strong>A. 네, 피할 수 없습니다. 무조건 적어야 합니다.</strong><br />앞서 강조한 '제품명 나비효과' 때문입니다. 제품명에 '옥수수'와 '치즈'라는 원재료명을 직접 사용했기 때문에, 이 두 원료는 전체 배합 순위가 꼴찌여도 무조건 원산지 표시 강제 징집 대상입니다. 옥수수와 치즈의 원산지를 포장지 라벨에 밝히지 않으면 농수산물원산지표시법 제5조 위반으로 즉시 단속 적발 대상이 됩니다. 제품명을 지을 때 마케팅팀이 원재료명을 마구 갖다 쓰지 못하도록 품질팀이 반드시 제동을 걸어야 하는 이유가 바로 여기에 있습니다.</p>
+    </div>
+
+    <div class="faq-item" style="margin-bottom: 20px;">
+      <h3 style="color: #1971c2; margin-bottom: 8px;">Q4. OEM으로 제품을 생산하는데, 위탁자가 원료 원산지를 속여서 넘겨주면 수탁 제조공장도 처벌받나요?</h3>
+      <p><strong>A. 네, 형사처벌을 함께 받을 수 있으므로 원료 시험성적서와 원산지증명서(수입신고필증)를 반드시 교차 검증해야 합니다.</strong><br />법원은 식품제조가공업자에게 원료의 진위 여부를 확인할 '주의 의무'를 대단히 엄격하게 요구합니다. 위탁업체가 넘겨준 스펙시트만 믿고 공장에서 가공했다가 국산 둔갑으로 적발될 경우, 제조공장 역시 양벌규정에 의해 대표이사 입건 및 품목제조정지 처분을 피해 갈 수 없습니다. 반드시 원료 입고 시 원산지증명 서류를 수불부와 대조하는 절차를 SQM 품질보증 매뉴얼에 명시해 두셔야 합니다.</p>
+    </div>
+
+    <div class="faq-item" style="margin-bottom: 20px;">
+      <h3 style="color: #1971c2; margin-bottom: 8px;">Q5. 볶음밥 제품에 들어가는 '당근'이 국내산 70%, 중국산 30%로 섞여서 입고됩니다. 어떻게 표시해야 제일 안전한가요?</h3>
+      <p><strong>A. 섞여 있는 중량 비율이 높은 순서대로 국가명과 비율을 함께 적는 것이 가장 정석입니다.</strong><br />원칙적인 표기법은 <code>당근[국산 70%, 중국산 30%]</code>처럼 섞인 비율을 솔직하게 적는 것입니다. 만약 계절별로 수급 상황에 따라 이 비율이 수시로 변동된다면, <code>당근(국산, 중국산)</code>처럼 비율을 생략하고 많이 들어간 순서대로 국가명만 나열하여 기재하는 것도 법적으로 허용됩니다. 단, 비율이 역전되었는데도 표기 순서를 바꾸지 않으면 허위표시 논란에 휩싸일 수 있으니 주의해야 합니다.</p>
+    </div>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <section class="post-section">
+    <h2>8. 한눈에 검토하는 라벨 인쇄 전 최종 체크리스트</h2>
+    <p>포장지 동판을 파거나 최종 인쇄 승인(Sign-off)을 내리기 전, 아래 표를 인쇄하여 품질팀 책상 옆에 붙여두고 형광펜으로 하나씩 체크해 보시기 바랍니다. 이 10가지 필터만 통과하면 관청 점검에서 지적받을 일은 결코 없습니다.</p>
+
+    <figure class="post-image" style="margin: 25px 0; text-align: center;">
+      
+      <figcaption style="font-size: 0.9em; color: #6c757d; margin-top: 8px;">[그림 3] 법적 행정처분 방지를 위한 포장지 표시문안 최종 사인오프 프로세스</figcaption>
+    </figure>
+
+    <div class="table-responsive" style="overflow-x: auto; margin: 20px 0;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
+        <thead>
+          <tr style="background-color: #f1f3f5; border-bottom: 2px solid #dee2e6;">
+            <th style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">점검 번호</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">세부 점검 항목</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">법적 근거 기준</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6;">확인 방법 및 실무 합격 기준</th>
+            <th style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">확인 (V)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 1</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">품목제조보고서 원본 배합비 일치 여부</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">식품등의 표시기준</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">품목보고서 레시피와 라벨 상의 원재료명이 토씨 하나 안 틀리고 100% 일치하는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 2</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원재료명 내림차순 정렬 적정성</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">식품등의 표시기준</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">정제수를 포함하여 투입 중량이 높은 순서부터 낮은 순서로 빠짐없이 배열되었는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 3</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">복합원재료 5% 룰 적용 검토</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">식품등의 표시기준</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">전체 5% 이상인 복합원재료는 괄호를 열고 상위 1, 2순위 원료를 풀어서 표기했는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 4</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">정제수 제외 순수 원료 상위 2개 추출</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지표시법 시행령</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">물(정제수)을 뺀 상태에서 배합비 1위, 2위 원료를 정확히 엑셀로 발라내었는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 5</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">제품명 사용 원재료의 원산지 포함 여부</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지표시법 제5조</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">제품명에 들어간 단어(딸기, 사과, 치즈 등)가 순위와 상관없이 원산지 목록에 들어갔는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 6</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">단일 원료 98% 룰 해당 여부</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지표시법 시행령</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">단일 원료가 98% 이상이어서 2순위 원료 표시를 생략할 수 있는지 적법성을 확인했는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 7</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">고시 지정 특정 품목 누락 여부</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지표시요령</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">김치류의 고춧가루 등 법적으로 강제 지정된 원료의 원산지가 순위 밖이어도 적혔는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 8</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">수입 원료 국가명 최신 증빙 대조</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지표시법</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">자재창고에 실제 입고된 원료의 수입신고필증 상 국가명과 라벨 인쇄 문안이 일치하는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 9</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원산지 변경 시 오버라벨링 스펙 확인</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">농관원 단속 지침</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">덧붙임 스티커가 쉽게 떨어지지 않는 초강력 접착지이며 기존 글자를 완벽히 가리는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">Check 10</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">알레르기 유발물질 별도 표기 연계</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">식품등의 표시기준</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6;">원재료명 및 원산지 표기와 별개로 알레르기 유발물질 표시란에 누락 없이 연동되었는가?</td>
+            <td style="padding: 10px; border: 1px solid #dee2e6; text-align: center;">[ ]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;" />
+
+  <footer class="post-footer">
+    <h2>9. 맺음말 & 후배 실무자들을 위한 20년 차의 응원</h2>
+    <p>오늘 배운 원재료명과 원산지 표시의 핵심 골격을 딱 세 줄로 요약해 드립니다:</p>
+    <ol style="padding-left: 20px; line-height: 1.7;">
+      <li><strong>원재료명(식약처)</strong>은 솥단지에 들어간 모든 원료를 정제수 포함 중량 순서(내림차순)대로 나열하는 소비자의 알 권리 영역입니다.</li>
+      <li><strong>원산지(농관원)</strong>는 정제수를 뺀 상위 1~2위 핵심 농수산물과 제품명에 쓴 원료의 국적을 거짓 없이 밝히는 공정 거래의 영역입니다.</li>
+      <li>원료 수급이 바뀌었을 때는 절대 임의로 출고하지 말고, <strong>합법적인 스티커 오버라벨링</strong>이나 <strong>'외국산' 포괄 표기 요건</strong>을 방패 삼아 선제적으로 대응해야 합니다.</li>
+    </ol>
+    <p>품질관리(QA/QC) 업무는 공장에서 티는 잘 안 나면서, 삐끗하면 과태료와 행정처분이라는 거대한 책임을 온몸으로 뒤집어써야 하는 외롭고 고단한 자리입니다. 포장지 라벨 하나를 검토할 때도 마케팅팀의 화려한 미사여구와 구매팀의 단가 절감 압박, 생산팀의 라인 가동 독촉 사이에서 홀로 법률의 칼날을 쥐고 회사를 지켜내는 최후의 보루가 바로 여러분입니다.</p>
+    <p>라벨을 보다가 "어라? 이 복합원재료 원산지가 왜 이러지?", "이거 원산지 표시 대상 상위 2개에 드는 건가 마는 건가?" 하고 헷갈리는 순간이 오면 절대 대충 넘기지 마세요. 10분만 더 투자해서 원료수불부를 뒤져보고 이 글의 체크리스트를 대조해 보시기 바랍니다. 여러분이 기울인 그 10분의 꼼꼼함이 회사의 수억 원대 손실과 여러분 자신의 소중한 커리어를 지켜줄 것입니다.</p>
+    <p>현장에서 부딪히는 까다로운 원재료 배합비 계산이나 포장지 문안 해석 때문에 밤잠 설치고 계신가요? 막히는 부분이 있다면 댓글로 구체적인 원료 배합 상황을 편하게 남겨주세요. 20년 묵은 실무 노하우를 아낌없이 털어서 후배님들의 정시 퇴근을 든든하게 지원사격해 드리겠습니다. 대한민국 모든 식품 품질관리 실무자 여러분, 오늘 하루도 진심으로 고생 많으셨습니다!</p>
+  </footer>
+</article>
