@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-10-31",
+    "topic": "HACCP 법규 개정(8월 11일), 교육 관련",
+    "title": "HACCP 법규 개정 핵심 정리: 우리 공장 정기 교육, 올해 면제 대상일까? (팀장 16시간·정기 4시간 기준 완벽 가이드)",
+    "file": "outputs/2026/10/31/[블로그최종]_HACCP_법규_개정(8월_11일),_교육_관련.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3233630823766372456",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
