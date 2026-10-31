@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-10-29 21:21:24",
+  "last_run": "2026-10-31 21:21:04",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -814,7 +814,8 @@
       "filename": "103_QA+_오토클레이브는_왜_121도를_사용할까_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\103_QA+_오토클레이브는_왜_121도를_사용할까_202608.png",
       "drive_file_id": "1Y_pRdOd0KKm_O0EKN0XNtWlV2Zyy8N61",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-10-31_오토클레이브는_왜_121도를_사용할까_hyperframes_shorts.mp4"
     },
     {
       "id": 104,
