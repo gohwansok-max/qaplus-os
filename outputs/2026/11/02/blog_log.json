@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-02",
+    "topic": "푸드 QR 표시 적용",
+    "title": "식품 표시 고민 끝내는 푸드 QR(스마트 e-라벨) 적용 완벽 실무 가이드",
+    "file": "outputs/2026/11/02/[블로그최종]_푸드_QR_표시_적용.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "8351453915230455784",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
