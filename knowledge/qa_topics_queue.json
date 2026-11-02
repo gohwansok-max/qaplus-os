@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-01 21:21:02",
+  "last_run": "2026-11-02 21:22:53",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -832,7 +832,8 @@
       "filename": "105_QA+_HACCP_핵심_원칙과_용어_TOP20_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\105_QA+_HACCP_핵심_원칙과_용어_TOP20_202608.png",
       "drive_file_id": "1eWv-tkPY636sGM1QfzsWfJWfHs0NsthV",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-02_HACCP_핵심_원칙과_용어_TOP20_hyperframes_shorts.mp4"
     },
     {
       "id": 106,
