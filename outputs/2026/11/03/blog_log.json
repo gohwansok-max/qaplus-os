@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-03",
+    "topic": "금속검출기 한계기준 변경",
+    "title": "금속검출기 한계기준 변경 가이드: HACCP 심사 통과를 위한 유효성 검증 5단계 매뉴얼",
+    "file": "outputs/2026/11/03/[블로그최종]_금속검출기_한계기준_변경.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "733577121524289689",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
