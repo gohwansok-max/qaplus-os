@@ -232,11 +232,14 @@
       "uploaded_at_kst": "2026-11-02T06:21:06+09:00"
     },
     "2026-11-03": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "41526939578",
+      "video_id": "Grn4MWNqSt0",
+      "url": "https://youtube.com/shorts/Grn4MWNqSt0",
       "topic": "HACCP 핵심 원칙과 용어 TOP20",
-      "reserved_at_kst": "2026-11-03T06:22:57+09:00"
+      "title": "[HACCP CCP 관리] HACCP 핵심 원칙과 용어 TOP20 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-03T06:22:57+09:00"
     }
   }
 }
