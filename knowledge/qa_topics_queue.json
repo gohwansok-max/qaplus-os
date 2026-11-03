@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-02 21:22:53",
+  "last_run": "2026-11-03 21:29:41",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -841,7 +841,8 @@
       "filename": "106_QA+_유량계의_종류_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\106_QA+_유량계의_종류_202608.png",
       "drive_file_id": "1EcZL9mmvYitY25SB7ozWLH3GP7Oxxk6v",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-03_유량계의_종류_hyperframes_shorts.mp4"
     },
     {
       "id": 107,
