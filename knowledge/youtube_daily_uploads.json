@@ -242,11 +242,14 @@
       "uploaded_at_kst": "2026-11-03T06:22:57+09:00"
     },
     "2026-11-04": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "41721005926",
+      "video_id": "Z8CQy9NeMGw",
+      "url": "https://youtube.com/shorts/Z8CQy9NeMGw",
       "topic": "유량계의 종류",
-      "reserved_at_kst": "2026-11-04T06:29:44+09:00"
+      "title": "[HACCP 실무] 유량계의 종류 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-04T06:29:44+09:00"
     }
   }
 }
