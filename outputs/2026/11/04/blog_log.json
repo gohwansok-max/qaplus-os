@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-04",
+    "topic": "ISO22000 2018 용어정리",
+    "title": "ISO 22000:2018 용어정리 완벽 가이드: 심사관도 고개 끄덕이는 PRP, oPRP, CCP 및 검증 체계 구분법",
+    "file": "outputs/2026/11/04/[블로그최종]_ISO22000_2018_용어정리.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1055107066892465802",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
