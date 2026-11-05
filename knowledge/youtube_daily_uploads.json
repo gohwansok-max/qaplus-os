@@ -262,11 +262,14 @@
       "uploaded_at_kst": "2026-11-05T06:21:30+09:00"
     },
     "2026-11-06": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "42111226853",
+      "video_id": "6iN_GVSmpAA",
+      "url": "https://youtube.com/shorts/6iN_GVSmpAA",
       "topic": "캘리브레이션은 왜 해야 할까",
-      "reserved_at_kst": "2026-11-06T06:22:10+09:00"
+      "title": "[HACCP 실무] 캘리브레이션은 왜 해야 할까 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-06T06:22:10+09:00"
     }
   }
 }
