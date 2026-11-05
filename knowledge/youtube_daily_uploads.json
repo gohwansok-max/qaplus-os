@@ -260,6 +260,13 @@
       "title": "[HACCP 실무] 원심펌프의 이해 | 큐에이플러스",
       "privacy_status": "private",
       "uploaded_at_kst": "2026-11-05T06:21:30+09:00"
+    },
+    "2026-11-06": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "42111226853",
+      "topic": "캘리브레이션은 왜 해야 할까",
+      "reserved_at_kst": "2026-11-06T06:22:10+09:00"
     }
   }
 }
