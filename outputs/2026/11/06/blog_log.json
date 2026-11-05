@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-06",
+    "topic": "잘못된 보관 개선필요",
+    "title": "창고 바닥에 그냥 두셨나요? 식품 보관기준 위반 개선 가이드 및 불시점검 단골 지적 완벽 타파법",
+    "file": "outputs/2026/11/06/[블로그최종]_잘못된_보관_개선필요.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "2383319419122243224",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
