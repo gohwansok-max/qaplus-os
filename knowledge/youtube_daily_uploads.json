@@ -272,11 +272,14 @@
       "uploaded_at_kst": "2026-11-06T06:22:10+09:00"
     },
     "2026-11-07": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "42295441336",
+      "video_id": "HJzgbCb7F1I",
+      "url": "https://youtube.com/shorts/HJzgbCb7F1I",
       "topic": "pH미터는 왜 측정 전에 교정할까",
-      "reserved_at_kst": "2026-11-07T06:20:34+09:00"
+      "title": "[HACCP 실무] pH미터는 왜 측정 전에 교정할까 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-07T06:20:34+09:00"
     }
   }
 }
