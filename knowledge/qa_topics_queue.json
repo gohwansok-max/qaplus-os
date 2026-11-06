@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-05 21:22:05",
+  "last_run": "2026-11-06 21:20:31",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -868,7 +868,8 @@
       "filename": "109_QA+_pH미터는_왜_측정_전에_교정할까_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\109_QA+_pH미터는_왜_측정_전에_교정할까_202608.png",
       "drive_file_id": "1WJDoSgpbg41kuB6NvpKPouvLhoxw31zz",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-06_pH미터는_왜_측정_전에_교정할까_hyperframes_shorts.mp4"
     },
     {
       "id": 110,
