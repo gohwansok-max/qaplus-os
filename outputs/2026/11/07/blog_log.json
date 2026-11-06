@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-07",
+    "topic": "뜨거운 음식 밤새 실온에 보관해도 되나",
+    "title": "\"팔팔 끓였으니 괜찮다?\" 뜨거운 국 밤새 실온에 두면 생기는 일 (HACCP 냉각 관리 기준과 현장 프로토콜)",
+    "file": "outputs/2026/11/07/[블로그최종]_뜨거운_음식_밤새_실온에_보관해도_되나.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "34234132786290874",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
