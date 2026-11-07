@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-08",
+    "topic": "식품업 GMP 핵심요건",
+    "title": "식품업 GMP 핵심요건 총정리: 공장 시설 설계부터 식약처·HACCP 심사 대응까지 (20년차 QA 가이드)",
+    "file": "outputs/2026/11/08/[블로그최종]_식품업_GMP_핵심요건.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "2964118123666465419",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
