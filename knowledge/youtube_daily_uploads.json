@@ -282,11 +282,14 @@
       "uploaded_at_kst": "2026-11-07T06:20:34+09:00"
     },
     "2026-11-08": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "42415119016",
+      "video_id": "QhQX2okDSAY",
+      "url": "https://youtube.com/shorts/QhQX2okDSAY",
       "topic": "분리막의 종류",
-      "reserved_at_kst": "2026-11-08T06:20:37+09:00"
+      "title": "[HACCP 실무] 분리막의 종류 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-08T06:20:37+09:00"
     }
   }
 }
