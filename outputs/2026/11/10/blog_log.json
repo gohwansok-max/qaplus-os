@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-10",
+    "topic": "CCP는 원료에 정하나요 공정에 정하나요",
+    "title": "CCP는 원료에 정하나요, 공정에 정하나요? 20년 차 QA가 정리한 HACCP 기준 수립 가이드",
+    "file": "outputs/2026/11/10/[블로그최종]_CCP는_원료에_정하나요_공정에_정하나요.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "659993112916328540",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
