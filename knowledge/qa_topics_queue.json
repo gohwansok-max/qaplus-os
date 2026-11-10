@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-09 21:20:46",
+  "last_run": "2026-11-10 21:21:03",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -904,7 +904,8 @@
       "filename": "113_QA+_쿨링타워의_이해_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\113_QA+_쿨링타워의_이해_202608.png",
       "drive_file_id": "1pGrCr27yQBvmOWYPXhUt11fvXDXTsstw",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-10_쿨링타워의_이해_hyperframes_shorts.mp4"
     },
     {
       "id": 114,
