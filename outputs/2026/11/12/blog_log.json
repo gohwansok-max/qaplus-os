@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-12",
+    "topic": "물리적 위해요소 예시",
+    "title": "머리카락도 물리적 위해요소일까? 식품공장 실무자가 꼭 알아야 할 물리적 위해요소 예시와 분류 가이드",
+    "file": "outputs/2026/11/12/[블로그최종]_물리적_위해요소_예시.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "7056376133692785777",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
