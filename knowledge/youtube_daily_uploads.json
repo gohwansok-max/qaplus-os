@@ -322,11 +322,14 @@
       "uploaded_at_kst": "2026-11-11T06:21:06+09:00"
     },
     "2026-11-12": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "43101714414",
+      "video_id": "y4AwTsQRkuQ",
+      "url": "https://youtube.com/shorts/y4AwTsQRkuQ",
       "topic": "제어밸브의 작동 원리",
-      "reserved_at_kst": "2026-11-12T06:21:27+09:00"
+      "title": "[HACCP 실무] 제어밸브의 작동 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-12T06:21:27+09:00"
     }
   }
 }
