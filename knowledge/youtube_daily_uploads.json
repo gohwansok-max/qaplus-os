@@ -320,6 +320,13 @@
       "title": "[HACCP 실무] 쿨링타워의 이해 | 큐에이플러스",
       "privacy_status": "private",
       "uploaded_at_kst": "2026-11-11T06:21:06+09:00"
+    },
+    "2026-11-12": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "43101714414",
+      "topic": "제어밸브의 작동 원리",
+      "reserved_at_kst": "2026-11-12T06:21:27+09:00"
     }
   }
 }
