@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-13",
+    "topic": "화학적 위해요소 예시",
+    "title": "HACCP 화학적 위해요소 분석 완벽 가이드: 3대 분류 예시부터 CCP·PRP 판정과 현장 트러블슈팅",
+    "file": "outputs/2026/11/13/[블로그최종]_화학적_위해요소_예시.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3879542368521951286",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
