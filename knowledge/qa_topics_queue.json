@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-11 21:21:23",
+  "last_run": "2026-11-12 21:20:59",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -922,7 +922,8 @@
       "filename": "115_QA+_압력용기의_이해_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\115_QA+_압력용기의_이해_202608.png",
       "drive_file_id": "11bKHAL4NeGHww9ggQX9CnTrxHRoV6Ku1",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-12_압력용기의_이해_hyperframes_shorts.mp4"
     },
     {
       "id": 116,
