@@ -332,11 +332,14 @@
       "uploaded_at_kst": "2026-11-12T06:21:27+09:00"
     },
     "2026-11-13": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "43308733284",
+      "video_id": "w4cyuM2hrfg",
+      "url": "https://youtube.com/shorts/w4cyuM2hrfg",
       "topic": "압력용기의 이해",
-      "reserved_at_kst": "2026-11-13T06:21:02+09:00"
+      "title": "[HACCP 실무] 압력용기의 이해 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-13T06:21:02+09:00"
     }
   }
 }
