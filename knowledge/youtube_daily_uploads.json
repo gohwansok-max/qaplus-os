@@ -342,11 +342,14 @@
       "uploaded_at_kst": "2026-11-13T06:21:02+09:00"
     },
     "2026-11-15": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "43641990152",
+      "video_id": "HG-ir9dAU8E",
+      "url": "https://youtube.com/shorts/HG-ir9dAU8E",
       "topic": "정확도와 정밀도",
-      "reserved_at_kst": "2026-11-15T06:20:36+09:00"
+      "title": "[HACCP 실무] 정확도와 정밀도 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-15T06:20:36+09:00"
     }
   }
 }
