@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-16",
+    "topic": "냉동하면 모든 세균이 죽을까",
+    "title": "냉동실에 넣으면 세균이 죽을까? 현직 품질팀장이 밝히는 냉동과 살균의 진실 (해동 관리 매뉴얼)",
+    "file": "outputs/2026/11/16/[블로그최종]_냉동하면_모든_세균이_죽을까.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "1772002932588141945",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
