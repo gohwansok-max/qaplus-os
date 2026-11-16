@@ -362,11 +362,14 @@
       "uploaded_at_kst": "2026-11-16T06:21:07+09:00"
     },
     "2026-11-17": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "43958511305",
+      "video_id": "1fDMO2vVOYc",
+      "url": "https://youtube.com/shorts/1fDMO2vVOYc",
       "topic": "펌프의 종류",
-      "reserved_at_kst": "2026-11-17T06:21:56+09:00"
+      "title": "[HACCP 실무] 펌프의 종류 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-17T06:21:56+09:00"
     }
   }
 }
