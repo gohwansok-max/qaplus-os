@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-17",
+    "topic": "수분활성도와 수분함량",
+    "title": "수분함량 8%인데 곰팡이가? 수분활성도(aw)와 수분함량 차이 완벽 정리",
+    "file": "outputs/2026/11/17/[블로그최종]_수분활성도와_수분함량.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3652874930208337850",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
