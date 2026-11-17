@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-18",
+    "topic": "식품산업 GMP 핵심 요구사항 TOP20",
+    "title": "식약처 불시점검 완벽 대비! 20년 차 QA가 꼽은 식품 GMP 필수 체크리스트 20가지 총정리",
+    "file": "outputs/2026/11/18/[블로그최종]_식품산업_GMP_핵심_요구사항_TOP20.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3026348222532513260",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
