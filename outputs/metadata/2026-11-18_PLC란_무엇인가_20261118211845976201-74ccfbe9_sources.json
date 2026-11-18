@@ -1,0 +1,83 @@
+{
+  "story_id": "20261118211845976201-74ccfbe9",
+  "topic": "PLC란 무엇인가",
+  "story_angle": "audit-defense",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "af2e529adab780591ad8e91d3acd18a9e6b6df9afa17312cfc18f2734973cf66",
+  "official_sources": [],
+  "source_count": 0,
+  "infographic_id": 121,
+  "infographic_chars": 781,
+  "generated_at": "2026-11-18T21:19:27+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "PLC 기초",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "심사원이 PLC 기록을 펼치면 제일 먼저 뭘 물을까요?",
+        "kicker": "심사 방어",
+        "headline": "심사원이 묻습니다\nPLC, 근거는요?",
+        "sub": "기록을 펼치면 바로 나오는 질문"
+      },
+      {
+        "type": "flow",
+        "narration": "PLC는 센서 신호를 받아 저장된 프로그램대로 설비를 제어하는 산업용 컴퓨터입니다. 쉽게 말하면 설비의 두뇌입니다.",
+        "title": "PLC 한 줄 정의",
+        "steps": [
+          "센서·스위치 신호 입력",
+          "저장된 프로그램 판단",
+          "모터·밸브 출력"
+        ]
+      },
+      {
+        "type": "flow",
+        "narration": "스캔 사이클은 읽기, 실행, 갱신을 짧은 주기로 반복합니다. 쉽게 말하면 보고, 판단하고, 움직이기의 반복입니다.",
+        "title": "스캔 사이클",
+        "steps": [
+          "① 입력 읽기",
+          "② 프로그램 실행",
+          "③ 출력 갱신",
+          "④ 통신·진단 후 반복"
+        ]
+      },
+      {
+        "type": "compare",
+        "narration": "'원래 그렇게 해요'는 통하지 않습니다. 최신 고시 원문과 사업장 유효성 평가 기록으로 근거를 보여 주세요.",
+        "title": "근거를 물으면",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "'원래 그렇게 해요'라고 답함",
+            "설정 근거를 못 찾음"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "최신 고시 원문 제시",
+            "사업장 유효성 평가 기록"
+          ]
+        }
+      },
+      {
+        "type": "checklist",
+        "narration": "제어 대상 설비, 입출력 구성, 프로그램 변경 이력, 설정값 근거를 한 묶음으로 챙기세요.",
+        "title": "PLC 기록 준비 4가지",
+        "items": [
+          "제어 대상 설비 목록",
+          "입력·출력 구성 자료",
+          "프로그램 변경 이력",
+          "설정값 근거 문서"
+        ]
+      },
+      {
+        "type": "outro",
+        "narration": "PLC는 입력을 받아 프로그램대로 출력을 제어합니다. 세부 기준은 최신 고시 원문과 사업장 기준을 꼭 확인하세요.",
+        "takeaway": "입력→프로그램→출력, 근거도 함께",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}
