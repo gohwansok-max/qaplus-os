@@ -382,11 +382,14 @@
       "uploaded_at_kst": "2026-11-18T06:20:27+09:00"
     },
     "2026-11-19": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "44399865636",
+      "video_id": "1-Apr_RZwJc",
+      "url": "https://youtube.com/shorts/1-Apr_RZwJc",
       "topic": "PLC란 무엇인가",
-      "reserved_at_kst": "2026-11-19T06:20:42+09:00"
+      "title": "[HACCP 실무] PLC란 무엇인가 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-19T06:20:42+09:00"
     }
   }
 }
