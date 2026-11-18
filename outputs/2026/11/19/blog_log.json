@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-19",
+    "topic": "식품시험에 자주 사용하는 실험실 장비 TOP20",
+    "title": "식품공장 QC 선배가 짚어주는 식품 실험실 필수 장비 TOP 20 & 실무 관리법 (공전 규격·검교정·트러블슈팅 완벽 가이드)",
+    "file": "outputs/2026/11/19/[블로그최종]_식품시험에_자주_사용하는_실험실_장비_TOP20.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4138992060726094431",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
