@@ -392,11 +392,14 @@
       "uploaded_at_kst": "2026-11-19T06:20:42+09:00"
     },
     "2026-11-20": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "44617213144",
+      "video_id": "JtV2cINqzrI",
+      "url": "https://youtube.com/shorts/JtV2cINqzrI",
       "topic": "O링의 이해",
-      "reserved_at_kst": "2026-11-20T06:25:11+09:00"
+      "title": "[HACCP 실무] O링의 이해 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-20T06:25:11+09:00"
     }
   }
 }
