@@ -1,0 +1,81 @@
+{
+  "story_id": "20261119212308961450-ae460d0e",
+  "topic": "O링의 이해",
+  "story_angle": "audit-defense",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "8155de5a3ddec5ea2a0669ab26e82c69d1d1a7681aef0158ebf5feecbf79ef99",
+  "official_sources": [],
+  "source_count": 0,
+  "infographic_id": 122,
+  "infographic_chars": 1643,
+  "generated_at": "2026-11-19T21:23:46+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "O링의 이해",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "O링 기록 펴면 바로 묻습니다. 왜 이 재질이죠?",
+        "kicker": "심사 방어",
+        "headline": "O링 기록,\n근거는요?",
+        "sub": "재질 선정 이유를 남기세요"
+      },
+      {
+        "type": "compare",
+        "narration": "재질은 쓰던 대로가 아니라 압력, 온도, 유체 같은 사용 환경에 맞춰 고르는 것이 기준입니다.",
+        "title": "재질 선정의 근거",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "쓰던 걸로 그냥 교체",
+            "선정 이유 기록 없음"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "압력·온도·유체 확인",
+            "환경에 맞는 재질 선택"
+          ]
+        }
+      },
+      {
+        "type": "flow",
+        "narration": "O링은 홈에 넣고 조립하면 압축되고, 그 탄성 복원력이 틈새를 막습니다. 쉽게 말하면 눌렸다 되돌아오는 힘으로 막는 겁니다.",
+        "title": "O링이 막는 원리",
+        "steps": [
+          "홈에 삽입",
+          "부품 조립",
+          "O링 압축",
+          "탄성 복원력으로 밀봉"
+        ]
+      },
+      {
+        "type": "stat",
+        "narration": "압축량은 보통 단면의 10~30%입니다. 모자라면 누설, 과하면 변형과 찢어짐이 생깁니다.",
+        "label": "적정 압축량",
+        "value": "10~30%",
+        "caption": "단면 대비 보통 범위",
+        "note": "QA+ 인포그래픽 O링의 이해"
+      },
+      {
+        "type": "checklist",
+        "narration": "기록에는 재질 선정 이유, 홈 치수 규격, 설치 시 비틀림 확인을 남겨 두면 근거 질문에 답할 수 있습니다.",
+        "title": "기록에 남길 근거",
+        "items": [
+          "재질 선정 이유",
+          "홈 치수 규격 확인",
+          "설치 시 비틀림 확인",
+          "사용 환경 조건"
+        ]
+      },
+      {
+        "type": "outro",
+        "narration": "정확한 기준은 최신 규격 원문과 사업장 기준을 꼭 확인하세요. 근거가 남은 기록이 든든한 방어선입니다.",
+        "takeaway": "O링도 근거가 남아야 방어됩니다",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}
