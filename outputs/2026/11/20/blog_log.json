@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-20",
+    "topic": "오토클레이브는 왜 121도를 사용할까",
+    "title": "오토클레이브는 왜 121℃일까? 고압증기멸균 원리부터 현장 트러블슈팅·점검표까지 총정리",
+    "file": "outputs/2026/11/20/[블로그최종]_오토클레이브는_왜_121도를_사용할까.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4367396861048619636",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
