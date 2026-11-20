@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-21",
+    "topic": "뜨거운 음식은 밤새 실온에 두어도 안전할까",
+    "title": "조리식품 밤새 실온 방치하면 재가열해도 위험한 이유! 퍼프린젠스 식중독 원인과 2단계 급속 냉각 가이드",
+    "file": "outputs/2026/11/21/[블로그최종]_뜨거운_음식은_밤새_실온에_두어도_안전할까.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "7036726648322484249",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
