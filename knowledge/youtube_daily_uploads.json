@@ -402,11 +402,14 @@
       "uploaded_at_kst": "2026-11-20T06:25:11+09:00"
     },
     "2026-11-21": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "44818950579",
+      "video_id": "_ySbc99GS8k",
+      "url": "https://youtube.com/shorts/_ySbc99GS8k",
       "topic": "미생물 성장곡선 4단계",
-      "reserved_at_kst": "2026-11-21T06:21:37+09:00"
+      "title": "[HACCP 실무] 미생물 성장곡선 4단계 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-21T06:21:37+09:00"
     }
   }
 }
