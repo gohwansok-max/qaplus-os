@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-22",
+    "topic": "HACCP 핵심 원칙과 용어 TOP20",
+    "title": "심사관 앞에서도 당당한 HACCP 핵심 원칙과 필수 실무 용어 TOP 20 완벽 해설",
+    "file": "outputs/2026/11/22/[블로그최종]_HACCP_핵심_원칙과_용어_TOP20.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4630968368827392610",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
