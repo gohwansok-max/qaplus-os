@@ -412,11 +412,14 @@
       "uploaded_at_kst": "2026-11-21T06:21:37+09:00"
     },
     "2026-11-22": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "44950727582",
+      "video_id": "8pOJ7TQVKWw",
+      "url": "https://youtube.com/shorts/8pOJ7TQVKWw",
       "topic": "OCR과 BCR의 차이점",
-      "reserved_at_kst": "2026-11-22T06:21:03+09:00"
+      "title": "[HACCP 실무] OCR과 BCR의 차이점 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-22T06:21:03+09:00"
     }
   }
 }
