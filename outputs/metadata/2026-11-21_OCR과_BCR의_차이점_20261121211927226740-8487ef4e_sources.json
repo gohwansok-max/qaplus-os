@@ -1,0 +1,94 @@
+{
+  "story_id": "20261121211927226740-8487ef4e",
+  "topic": "OCR과 BCR의 차이점",
+  "story_angle": "response-window",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "3be468ed1444ff82802a4a52164c6ccd25baffb726b82a8f11ded92f4ad3f635",
+  "official_sources": [],
+  "source_count": 0,
+  "infographic_id": 124,
+  "infographic_chars": 994,
+  "generated_at": "2026-11-21T21:19:36+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "OCR vs BCR",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "리더기가 LOT를 못 읽는다면 장비부터 바꿔야 할까요?",
+        "kicker": "현장 장면",
+        "headline": "LOT가 안 읽혀요\n뭘 바꿀까요?",
+        "sub": "코드냐 문자냐부터 구분하세요"
+      },
+      {
+        "type": "compare",
+        "narration": "BCR은 코드를 읽고, OCR은 문자를 읽습니다. 쉽게 말하면 BCR은 줄무늬 해독, OCR은 사람 눈처럼 글자를 읽는 방식입니다.",
+        "title": "BCR과 OCR의 차이",
+        "bad": {
+          "label": "BCR",
+          "items": [
+            "바코드·QR·Data Matrix",
+            "코드 패턴을 읽어 해독",
+            "지정된 코드가 있어야 함"
+          ]
+        },
+        "good": {
+          "label": "OCR",
+          "items": [
+            "인쇄·각인된 문자",
+            "문자 모양을 분석해 변환",
+            "글꼴·오염·조명 영향 큼"
+          ]
+        }
+      },
+      {
+        "type": "checklist",
+        "narration": "코드가 붙은 물류와 이력 추적은 BCR, 포장에 찍힌 LOT와 유통기한 판독은 OCR이 강점입니다.",
+        "title": "어디에 쓰는지 구분",
+        "items": [
+          "BCR: 물류·생산이력·제품 추적",
+          "BCR: 부품 ID, 코드 기반 관리",
+          "OCR: LOT 번호, 유통기한 판독",
+          "OCR: 시리얼 번호, 각인 검사"
+        ]
+      },
+      {
+        "type": "flow",
+        "narration": "판독 실패를 발견하면 원인 추정보다 해당 제품 식별과 격리 보류가 먼저입니다. 그다음 코드인지 문자인지 읽는 방식을 확인하세요.",
+        "title": "판독 실패 직후 순서",
+        "steps": [
+          "해당 제품 식별",
+          "격리·보류 표시",
+          "읽는 방식 확인",
+          "조건 점검"
+        ]
+      },
+      {
+        "type": "compare",
+        "narration": "OCR은 글꼴, 오염, 조명, 각도에 따라 성능 차이가 큽니다. 장비를 바꾸기 전에 환경 조건부터 점검하고 사업장 기준으로 재검증하세요.",
+        "title": "OCR 실패 점검",
+        "bad": {
+          "label": "흔한 실수",
+          "items": [
+            "원인 모르고 장비 교체",
+            "읽힌 것만 통과 처리"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "글꼴·오염·조명·각도 확인",
+            "사업장 기준으로 재검증"
+          ]
+        }
+      },
+      {
+        "type": "outro",
+        "narration": "코드는 BCR, 문자는 OCR이고 이탈 직후엔 식별과 격리가 먼저입니다. 세부 기준은 최신 고시와 사업장 기준서를 꼭 확인하세요.",
+        "takeaway": "먼저 격리, 그다음 원인 확인",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}

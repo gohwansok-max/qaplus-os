@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-20 21:21:34",
+  "last_run": "2026-11-21 21:20:59",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -994,7 +994,8 @@
       "filename": "124_QA+_OCR과_BCR의_차이점_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\124_QA+_OCR과_BCR의_차이점_202608.png",
       "drive_file_id": "17tZfBP33x-Zn1yg1l1XupBlJSeczE5aH",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-21_OCR과_BCR의_차이점_hyperframes_shorts.mp4"
     },
     {
       "id": 125,
