@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-23",
+    "topic": "유량계의 종류",
+    "title": "식품공장 엔지니어가 콕 짚어주는 유량계 종류 6가지와 라인별 선정 공식 (CIP/SIP 대응부터 HACCP CCP 검증까지)",
+    "file": "outputs/2026/11/23/[블로그최종]_유량계의_종류.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "550532233496586245",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
