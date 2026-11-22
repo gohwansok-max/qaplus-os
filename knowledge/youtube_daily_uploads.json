@@ -422,11 +422,14 @@
       "uploaded_at_kst": "2026-11-22T06:21:03+09:00"
     },
     "2026-11-23": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "45071233278",
+      "video_id": "J1yheFeggUo",
+      "url": "https://youtube.com/shorts/J1yheFeggUo",
       "topic": "수분활성도와 수분함량 비교형",
-      "reserved_at_kst": "2026-11-23T06:20:43+09:00"
+      "title": "[HACCP 실무] 수분활성도와 수분함량 비교형 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-23T06:20:43+09:00"
     }
   }
 }
