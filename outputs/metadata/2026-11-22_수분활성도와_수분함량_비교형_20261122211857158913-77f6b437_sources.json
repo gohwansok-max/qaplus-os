@@ -1,0 +1,81 @@
+{
+  "story_id": "20261122211857158913-77f6b437",
+  "topic": "수분활성도와 수분함량 비교형",
+  "story_angle": "response-window",
+  "generation_mode": "claude_cli",
+  "renderer": "remotion",
+  "script_fingerprint": "fc8b71d0a9c1d55544dd192640349e5affe5ec011abb75c9781ef8285563c660",
+  "official_sources": [],
+  "source_count": 0,
+  "infographic_id": 125,
+  "infographic_chars": 1065,
+  "generated_at": "2026-11-22T21:19:33+00:00",
+  "review_note": "게시 전 최신 고시 원문·사업장 유효성 평가·표현 적정성을 최종 확인하세요.",
+  "script": {
+    "badge": "수분 vs aw",
+    "scenes": [
+      {
+        "type": "hook",
+        "narration": "수분함량은 기준 안인데 왜 곰팡이가 올라왔을까요?",
+        "kicker": "현장 장면",
+        "headline": "수분은 정상인데\n곰팡이가?",
+        "sub": "수분함량만 보면 놓치는 것"
+      },
+      {
+        "type": "compare",
+        "narration": "수분함량은 물의 총량이고, 수분활성도는 미생물이 쓸 수 있는 물의 정도예요. 쉽게 말하면 있는 물과 쓸 수 있는 물의 차이입니다.",
+        "title": "수분함량 vs 수분활성도",
+        "bad": {
+          "label": "흔한 착각",
+          "items": [
+            "수분함량 낮으면 안전",
+            "두 지표는 같은 값"
+          ]
+        },
+        "good": {
+          "label": "이렇게",
+          "items": [
+            "수분함량: 물의 총량",
+            "aw: 쓸 수 있는 물의 정도"
+          ]
+        }
+      },
+      {
+        "type": "stat",
+        "narration": "인포그래픽 예시로 건포도와 빵은 수분이 둘 다 약 15%여도 aw는 약 0.60과 0.95로 갈립니다.",
+        "label": "수분 ~15%인 두 식품",
+        "value": "aw 0.60 vs 0",
+        "caption": "건포도와 빵, 같은 수분 다른 aw",
+        "note": "QA+ 인포그래픽 예시"
+      },
+      {
+        "type": "flow",
+        "narration": "이탈을 발견하면 원인 추정보다 먼저 제품을 식별하고 격리하세요. 쉽게 말하면 의심 제품이 섞이지 않게 먼저 묶어두는 겁니다.",
+        "title": "이탈 발견 직후 순서",
+        "steps": [
+          "제품 식별",
+          "격리·보류",
+          "기록 확보",
+          "원인 분석"
+        ]
+      },
+      {
+        "type": "checklist",
+        "narration": "그다음 로트, 보관 위치, 측정값을 기록하고 재측정과 원인 분석은 격리 뒤에 순서대로 하세요.",
+        "title": "격리 때 남길 기록",
+        "items": [
+          "로트·생산일자",
+          "보관 위치와 수량",
+          "수분함량·aw 측정값",
+          "측정 일시와 장비"
+        ]
+      },
+      {
+        "type": "outro",
+        "narration": "수분활성도 기준과 판정은 최신 고시와 사업장 기준을 꼭 확인하세요. 막히면 언제든 편하게 물어보세요.",
+        "takeaway": "원인 추정보다 식별·격리가 먼저",
+        "cta": "매일 무료 자료 · 큐에이플러스 오픈채팅"
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-21 21:20:59",
+  "last_run": "2026-11-22 21:20:40",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -1003,7 +1003,8 @@
       "filename": "125_QA+_수분활성도와_수분함량_비교형_202608.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\125_QA+_수분활성도와_수분함량_비교형_202608.png",
       "drive_file_id": "1gjJpnZHg7tkOfbgMC1AzmWhtZ4-a5Ljv",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-22_수분활성도와_수분함량_비교형_hyperframes_shorts.mp4"
     },
     {
       "id": 126,
