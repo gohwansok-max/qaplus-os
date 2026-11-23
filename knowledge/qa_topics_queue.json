@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-22 21:20:40",
+  "last_run": "2026-11-23 21:21:05",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -1012,7 +1012,8 @@
       "filename": "126_QA+_설비 오염도 검사 구간별 실시.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\126_QA+_설비 오염도 검사 구간별 실시.png",
       "drive_file_id": "1fCFS79Jvshfun9tPEdAAhT-f7-3fVeuw",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-23_설비_오염도_검사_구간별_실시_hyperframes_shorts.mp4"
     },
     {
       "id": 127,
