@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-24",
+    "topic": "원심펌프의 이해",
+    "title": "원심펌프 작동 원리부터 캐비테이션·누수 해결까지: 식품 현장 공무 및 QA를 위한 실무 가이드",
+    "file": "outputs/2026/11/24/[블로그최종]_원심펌프의_이해.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "5322769741256931372",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
