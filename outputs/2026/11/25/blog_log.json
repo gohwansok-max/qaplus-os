@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-25",
+    "topic": "캘리브레이션은 왜 해야 할까",
+    "title": "식품공장 계측기 교정(검교정) 실무 가이드: 성적서 해석부터 일상점검 및 CAPA 대응까지",
+    "file": "outputs/2026/11/25/[블로그최종]_캘리브레이션은_왜_해야_할까.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "4924103161086871077",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
