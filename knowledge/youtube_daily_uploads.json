@@ -440,6 +440,13 @@
       "title": "[HACCP 실무] 설비 오염도 검사 구간별 실시 | 큐에이플러스",
       "privacy_status": "private",
       "uploaded_at_kst": "2026-11-24T06:21:08+09:00"
+    },
+    "2026-11-25": {
+      "status": "uploading",
+      "privacy_status": "private",
+      "run_id": "45489532851",
+      "topic": "포충기 구조와 원리",
+      "reserved_at_kst": "2026-11-25T06:20:53+09:00"
     }
   }
 }
