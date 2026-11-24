@@ -442,11 +442,14 @@
       "uploaded_at_kst": "2026-11-24T06:21:08+09:00"
     },
     "2026-11-25": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "45489532851",
+      "video_id": "YHsAx2Z1UKc",
+      "url": "https://youtube.com/shorts/YHsAx2Z1UKc",
       "topic": "포충기 구조와 원리",
-      "reserved_at_kst": "2026-11-25T06:20:53+09:00"
+      "title": "[HACCP 실무] 포충기 구조와 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-25T06:20:53+09:00"
     }
   }
 }
