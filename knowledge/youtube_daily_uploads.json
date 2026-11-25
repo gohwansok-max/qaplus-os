@@ -452,11 +452,14 @@
       "uploaded_at_kst": "2026-11-25T06:20:53+09:00"
     },
     "2026-11-26": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "45702922014",
+      "video_id": "M1RkaPI5EPU",
+      "url": "https://youtube.com/shorts/M1RkaPI5EPU",
       "topic": "익스트루더의 원리",
-      "reserved_at_kst": "2026-11-26T06:21:15+09:00"
+      "title": "[HACCP 실무] 익스트루더의 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-26T06:21:15+09:00"
     }
   }
 }
