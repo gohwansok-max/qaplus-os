@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-26",
+    "topic": "pH미터는 왜 측정 전에 교정할까",
+    "title": "pH미터를 측정 직전에 반드시 교정해야 하는 과학적 이유와 실무 관리 가이드",
+    "file": "outputs/2026/11/26/[블로그최종]_pH미터는_왜_측정_전에_교정할까.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "3236918782362185307",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
