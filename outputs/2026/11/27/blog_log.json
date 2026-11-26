@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-27",
+    "topic": "분리막의 종류",
+    "title": "식품 공정 분리막 4종(MF·UF·NF·RO) 완벽 비교와 파울링(Fouling) 트러블슈팅 매뉴얼",
+    "file": "outputs/2026/11/27/[블로그최종]_분리막의_종류.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "753376953812360075",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
