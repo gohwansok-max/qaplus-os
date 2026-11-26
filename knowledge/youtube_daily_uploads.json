@@ -462,11 +462,14 @@
       "uploaded_at_kst": "2026-11-26T06:21:15+09:00"
     },
     "2026-11-27": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "45897068346",
+      "video_id": "0RZxWhR8q3c",
+      "url": "https://youtube.com/shorts/0RZxWhR8q3c",
       "topic": "에어커튼의 원리",
-      "reserved_at_kst": "2026-11-27T06:20:16+09:00"
+      "title": "[HACCP 실무] 에어커튼의 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-27T06:20:16+09:00"
     }
   }
 }
