@@ -472,11 +472,14 @@
       "uploaded_at_kst": "2026-11-27T06:20:16+09:00"
     },
     "2026-11-28": {
-      "status": "uploading",
-      "privacy_status": "private",
+      "status": "uploaded",
       "run_id": "46069292344",
+      "video_id": "8qUmhbKPoeo",
+      "url": "https://youtube.com/shorts/8qUmhbKPoeo",
       "topic": "와류 세척기의 원리",
-      "reserved_at_kst": "2026-11-28T06:20:54+09:00"
+      "title": "[식품공장 위생점검] 와류 세척기의 원리 | 큐에이플러스",
+      "privacy_status": "private",
+      "uploaded_at_kst": "2026-11-28T06:20:54+09:00"
     }
   }
 }
