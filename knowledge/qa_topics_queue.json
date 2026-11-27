@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-11-26 21:20:12",
+  "last_run": "2026-11-27 21:20:51",
   "total_topics": 238,
   "infographic_dir": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽",
   "topics": [
@@ -1048,7 +1048,8 @@
       "filename": "130_QA+_와류 세척기의 원리.png",
       "infographic_path": "G:\\내 드라이브\\02_유튜브_콘텐츠\\03_QA_플러스\\01) 오픈채팅방 무료 자료\\94_정기 발간 인포그래픽\\130_QA+_와류 세척기의 원리.png",
       "drive_file_id": "1rX5lAwqhl3FsRj-roY3N6LQt39oW0E9E",
-      "status": "pending"
+      "status": "completed",
+      "rendered_file": "outputs/videos/2026-11-27_와류_세척기의_원리_hyperframes_shorts.mp4"
     },
     {
       "id": 131,
