@@ -1,0 +1,22 @@
+[
+  {
+    "date": "2026-11-28",
+    "topic": "밸브의 종류",
+    "title": "식품공장 밸브 종류 총정리: 공정별 새니터리 밸브 선정 기준부터 CIP 위생 관리까지",
+    "file": "outputs/2026/11/28/[블로그최종]_밸브의_종류.html",
+    "status": "blogger_임시저장",
+    "blogger_url": "https://qaplus-haccp.blogspot.com/",
+    "blogger_post_id": "6901272018817669990",
+    "validation": {
+      "image_count": 1,
+      "internal_code_count": 0,
+      "passed": true
+    },
+    "llm_providers": {
+      "research": "Gemini(gemini-3.8-flash)",
+      "writer": "Gemini(gemini-3.8-flash)",
+      "image_prompt": "realistic-cover-only",
+      "editor": "Gemini(gemini-3.8-flash)"
+    }
+  }
+]
