@@ -31,9 +31,61 @@ async function telegram(env, method, payload) {
   if (!res.ok || !data.ok) throw new Error(`telegram_${method}_${res.status}`);
 }
 
+const CONF3_CORS_HOSTS = new Set(['https://conf3.qaplus.kr', 'https://gohwansok-max.github.io']);
+
+// 접속 1건을 Google Sheets 웹앱(CONF3_SHEET_URL)으로 비동기 전송한다. 실패해도 텔레그램 알림에는 영향이 없다.
+export function conf3Sheet(env, d) {
+  if (!env.CONF3_SHEET_URL) return Promise.resolve();
+  const ts = new Date().toLocaleString('sv-SE', {timeZone: 'Asia/Seoul'}).replace('T', ' ');
+  const [country, ...city] = String(d.loc || '').split(' ');
+  const payload = {
+    ts, day: ts.slice(0, 10), hour: `${ts.slice(11, 13)}시`,
+    device: d.dev, country: country || '', city: city.join(' '),
+    ref: d.ref, path: d.path, src: (/[?&]src=([^&\s]+)/.exec(d.path) || [])[1] || '',
+  };
+  return fetch(env.CONF3_SHEET_URL, {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload), redirect: 'manual',
+  }).catch(() => {});
+}
+
+export async function handleConf3Visit(request, env, ctx) {
+  const origin = request.headers.get('Origin') || '';
+  const allowed = CONF3_CORS_HOSTS.has(origin);
+  const cors = {
+    'Access-Control-Allow-Origin': allowed ? origin : 'https://conf3.qaplus.kr',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    Vary: 'Origin',
+  };
+  if (request.method === 'OPTIONS') return new Response(null, {status: 204, headers: cors});
+  if (request.method !== 'POST') return new Response('Method not allowed', {status: 405, headers: cors});
+  if (origin && !allowed) return new Response('Forbidden', {status: 403, headers: cors});
+  const ua = request.headers.get('User-Agent') || '';
+  if (/bot|crawler|spider|kakaotalk|facebookexternalhit|slackbot|telegrambot|whatsapp|headless|curl|python/i.test(ua)) return Response.json({ok: true, skipped: 'bot'}, {headers: cors});
+  let body = {};
+  try { body = await request.json(); } catch {}
+  const ref = String(body.ref || '직접 접속').slice(0, 120);
+  const path = String(body.path || '/').slice(0, 80);
+  const dev = /Mobi|Android|iPhone|iPad/i.test(ua) ? '모바일' : 'PC';
+  const cf = request.cf || {};
+  const loc = [cf.country, cf.city].filter(Boolean).join(' ') || '위치 미상';
+  const now = new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
+  const text = ['🔔 [CONF3 링크허브 접속]', `• 시각: ${now}`, `• 기기/위치: ${dev} (${loc})`, `• 유입: ${ref}`, `• 경로: ${path}`].join('\n');
+  const sheet = conf3Sheet(env, {dev, loc, ref, path});
+  try {
+    await telegram(env, 'sendMessage', {chat_id: env.TELEGRAM_CHAT_ID, text});
+    if (ctx && ctx.waitUntil) ctx.waitUntil(sheet);
+    return Response.json({ok: true}, {headers: cors});
+  } catch {
+    return Response.json({ok: false}, {status: 502, headers: cors});
+  }
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
+    if (path === '/conf3-visit') return handleConf3Visit(request, env, ctx);
     const ready = ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'QA_DISPATCH_TOKEN', 'WEBHOOK_SECRET'].every(k => !!env[k]);
     if (path === '/health' && request.method === 'GET') return Response.json({ok: ready}, {status: ready ? 200 : 503});
     if (path !== '/telegram') return new Response('Not found', {status: 404});

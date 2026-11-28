@@ -4,7 +4,7 @@
   "compatibility_date": "2026-09-16",
   "account_id": "ff60de4c6d6aa9e84aa7c07a72a7d057",
   "workers_dev": true,
-  "vars": {"GITHUB_REPOSITORY": "gohwansok-max/qaplus-os"},
+  "vars": {"GITHUB_REPOSITORY": "gohwansok-max/qaplus-os", "CONF3_SHEET_URL": "https://script.google.com/macros/s/AKfycbzB5Xy_x0wxCakCCsewoC0h86PpomZ-NzR_M7P9QBdCrO4S-nOzp2mcaUePIafBlEeD/exec"},
   "durable_objects": {"bindings": [{"name": "UPDATES", "class_name": "TelegramUpdate"}]},
   "migrations": [{"tag": "v1", "new_sqlite_classes": ["TelegramUpdate"]}],
   "observability": {"enabled": true, "logs": {"enabled": true, "invocation_logs": false}}
